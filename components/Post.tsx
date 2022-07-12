@@ -16,8 +16,8 @@ export type PostProps = {
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const authorName = post.author ? post.author.name : "Unknown author";
   return (
-    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="w-52 ">
-      <div className="bg-gray-300 w-full h-40 flex items-center justify-center">
+    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="w-52 hover:shadow-sm  hover:shadow-black mb-4">
+      <div className="bg-gray-300 w-full h-40 flex items-center justify-center ">
         <span>PILT</span>
       </div>
       <div className="p-4">

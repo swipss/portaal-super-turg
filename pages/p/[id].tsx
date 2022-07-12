@@ -51,9 +51,91 @@ const Post: React.FC<PostProps> = (props) => {
   return (
     <Layout>
       <div>
-        <h2>{title}</h2>
-        <p>By {props?.author?.name || "Unknown author"}</p>
-        <ReactMarkdown children={props.content} />
+        <h2 className="text-center font-bold text-2xl">{title}</h2>
+        <p className="text-center">Postitatud {props?.author?.name || "Unknown author"} poolt</p>
+        <div className="bg-gray-300 h-96 flex items-center justify-center p-2">
+          <div className="flex justify-between w-full text-xl">
+            <span className="cursor-pointer">{"<"}</span>
+            <span>Pilt 1</span>
+            <span className="cursor-pointer">{">"}</span>
+          </div>
+        </div>
+        <p className="text-center text-blue-500 my-5">Suurenda pilti</p>
+        <div className="flex gap-4">
+          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 1</div>
+          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 2</div>
+          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 3</div>
+          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 4</div>
+          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 5</div>
+          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 6</div>
+          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center"> Pilt 7</div>
+        </div>
+        
+        <ReactMarkdown children={props.content} className="my-5 mx-2"/>
+        <div className="flex justify-center items-center">
+          <select name="currency" id="currency" className="border mr-2">
+              <option>EUR</option>
+              <option>USD</option>
+              <option>RUB</option>
+          </select>
+          <p className="font-bold text-3xl">10 000.00</p>
+        </div>
+        <p className="text-center font-bold my-5">Tapa, Lääne-Virumaa</p>
+        <hr className="mx-3"></hr>
+        <div className="flex justify-between mt-5 m-5 ">
+          <div className="flex flex-col">
+            <span>34,5</span>
+            <span>Prindi</span>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-5 ">
+            <button>Muuda</button>
+            <p>Kuulutus aktiivne 18.02.2018 - 02.03.2018</p>
+          </div>
+          <div className="flex flex-col ">
+            <span>Lisa lemmikuks</span>
+            <span className="text-right">Teata</span>
+          </div>
+        </div>
+
+        <div className="flex">
+          <div className="flex bg-gray-400 p-5">
+            <p>Müüja</p>
+          </div>
+          <div className="flex bg-gray-300 p-5">
+            <p>Küsimused</p>
+          </div>
+        </div>
+        <div>
+          <div className="flex items-center justify-between mx-5 my-2">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+              <a href="#" className="mr-2">Username</a>
+              <p>Tere, miks te nii odavalt müüte?</p>
+            </div>
+            <span className="text-red-500 font-bold">!</span>
+          </div>
+          <div className="flex items-center justify-between mx-5 my-2">
+            <div className="flex items-center">
+              <a href="#" className="mr-2 ml-10 font-bold">Vastus:</a>
+              <p>Tere, miks te nii odavalt müüte?</p>
+            </div>
+            <span className="text-red-500 font-bold">!</span>
+          </div>
+          <div className="flex items-center justify-between mx-5 my-2">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+              <a href="#" className="mr-2">Username2</a>
+              <p>Sama küsimus...</p>
+            </div>
+            <span className="text-red-500 font-bold">!</span>
+          </div>
+        </div>
+        <p className="text-right mr-5 text-blue-600 text-xs">Salvesta kuulutuse kõvatõmmis</p>
+        <div className="bg-blue-600 flex items-center justify-center gap-5 p-2">
+          <p className="text-white hover:text-gray-300 cursor-pointer">Reklaam</p>
+          <p className="text-white hover:text-gray-300 cursor-pointer">Tingimused</p>
+          <p className="text-white hover:text-gray-300 cursor-pointer">Kontakt</p>
+        </div>
         {!props.published && userHasValidSession && postBelongsToUser && (
           <button onClick={() => publishPost(props.id)}>Avalda</button>
         )}
