@@ -10,8 +10,13 @@ export type PostProps = {
     email: string;
   } | null;
   content: string;
-  price?: number;
+  price: number;
   published: boolean;
+  isActive: boolean;
+  location: string;
+  images: string[];
+
+
 };
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {

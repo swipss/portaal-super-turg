@@ -8,13 +8,16 @@ datasource db {
 }
 
 model Post {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   title     String
   content   String?
-  published Boolean @default(false)
+  published Boolean  @default(false)
   authorId  String?
-  price     Int?
-  author    User?   @relation(fields: [authorId], references: [id])
+  price     Int
+  isActive  Boolean
+  location  String
+  images    String[]
+  author    User?    @relation(fields: [authorId], references: [id])
 }
 
 model Account {

@@ -1,5 +1,5 @@
 import React from "react"
-import { GetServerSideProps } from "next"
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next"
 import ReactMarkdown from "react-markdown"
 import Layout from "../../components/Layout"
 import { PostProps } from "../../components/Post"
@@ -22,6 +22,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     props: post,
   }
 }
+
 
 async function publishPost(id: string): Promise<void> {
   await fetch(`/api/publish/${id}`, {
@@ -80,7 +81,7 @@ const Post: React.FC<PostProps> = (props) => {
           </select>
           <p className="font-bold text-3xl">{props.price?.toFixed(2) || '0.00'}€</p>
         </div>
-        <p className="text-center font-bold my-5">Tapa, Lääne-Virumaa</p>
+        <p className="text-center font-bold my-5">{props.location}</p>
         <hr className="mx-3"></hr>
         <div className="flex justify-between mt-5 m-5 ">
           <div className="flex flex-col">
