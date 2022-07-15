@@ -51,8 +51,8 @@ const Post: React.FC<PostProps> = (props) => {
   return (
     <Layout>
       <div>
-        <h2 className="text-center font-bold text-2xl">{title}</h2>
-        <p className="text-center">Postitatud {props?.author?.name || "Unknown author"} poolt</p>
+        <h2 className="text-center font-bold text-2xl my-4">{title}</h2>
+        <p className="text-center my-4">Postitatud {props?.author?.name || "Unknown author"} poolt</p>
         <div className="bg-gray-300 h-96 flex items-center justify-center p-2">
           <div className="flex justify-between w-full text-xl">
             <span className="cursor-pointer">{"<"}</span>

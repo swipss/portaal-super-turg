@@ -6,7 +6,7 @@ type Props = {
 };
 
 const Layout: React.FC<Props> = (props) => (
-  <div className="border mt-4 max-w-[750px] m-auto">
+  <div className=" mt-4 max-w-[1000px] m-auto">
     <Header />
     <div className="">{props.children}</div>
   </div>
