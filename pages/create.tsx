@@ -5,11 +5,13 @@ import Router from 'next/router'
 const Draft: React.FC = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
+    const [price, setPrice] = useState(0)
+    
+
     const submitData = async (e: React.SyntheticEvent) => {
         e.preventDefault()
-
         try {
-            const body = {title, content}
+            const body = {title, content, price}
             await fetch('api/post', {
                 method: "POST",
                 headers: { "Content-Type": "application/json"},
@@ -33,6 +35,14 @@ const Draft: React.FC = () => {
                 type={"text"}
                 value={title}
                 />
+                <input
+                autoFocus
+                onChange={(e) => setPrice(parseInt(e.target.value))}
+                placeholder="Summa"
+                type={"number"}
+                min={0}
+                value={price}
+                />
                 <textarea 
                 cols={50}
                 onChange={(e) => setContent(e.target.value)}
@@ -40,7 +50,7 @@ const Draft: React.FC = () => {
                 rows={8}
                 value={content}
                 />
-                <input disabled={!content || !title} type="submit" value={"Postita"} />
+                <input disabled={!content || !title || !price} type="submit" value={"Postita"} />
                 <a className="back" href="#" onClick={() => Router.push('/')}>
                     või tühista
                 </a>
@@ -56,6 +66,7 @@ const Draft: React.FC = () => {
         }
 
         input[type='text'],
+        input[type='number'],
         textarea {
           width: 100%;
           padding: 0.5rem;

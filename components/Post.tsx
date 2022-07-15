@@ -10,6 +10,7 @@ export type PostProps = {
     email: string;
   } | null;
   content: string;
+  price?: number;
   published: boolean;
 };
 
@@ -22,7 +23,7 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
       </div>
       <div className="p-4">
         <h2 className="text-center">{post.title}</h2>
-        <p className="flex justify-center font-bold text-xs">10 000 EUR</p>
+        <p className="flex justify-center font-bold text-xs">{post.price || '0'}€</p>
 
       </div>
       {/* <ReactMarkdown children={post.content} /> */}

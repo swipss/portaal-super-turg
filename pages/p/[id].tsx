@@ -78,7 +78,7 @@ const Post: React.FC<PostProps> = (props) => {
               <option>USD</option>
               <option>RUB</option>
           </select>
-          <p className="font-bold text-3xl">10 000.00</p>
+          <p className="font-bold text-3xl">{props.price?.toFixed(2) || '0.00'}€</p>
         </div>
         <p className="text-center font-bold my-5">Tapa, Lääne-Virumaa</p>
         <hr className="mx-3"></hr>

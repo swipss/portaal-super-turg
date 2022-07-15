@@ -8,13 +8,13 @@ import prisma from "../../../lib/prisma";
 // Optional fields in body: content
 
 export default async function handle (req, res) {
-    const { title, content } = req.body
-
+    const { title, content, price } = req.body
     const session = await getSession({ req })
     const result = await prisma.post.create({
         data: {
             title: title,
             content: content,
+            price: price,
             author: { connect: { email: session?.user?.email }}
         }
     })
