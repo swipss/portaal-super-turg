@@ -104,6 +104,13 @@ const Post: React.FC<PostProps> = (props) => {
     setComment('')
     setSelectedComment('')
   }
+  const handlePostComment = async (id: string, comment: string) => {
+    if (!comment) return
+    await postComment(id, comment)
+    setReply('')
+    setComment('')
+    setSelectedComment('')
+  }
 
   let title = props.title
   if (!props.published) {
@@ -212,7 +219,7 @@ const Post: React.FC<PostProps> = (props) => {
             onChange={(e) => setComment(e.target.value)}
             max={250}
             />
-            <button disabled={!comment} onClick={() => postComment(props.id, comment)} className="bg-blue-500 text-white rounded-md  px-7 appearance-none ">Postita</button>
+            <button disabled={!comment} onClick={() => handlePostComment(props.id, comment)} className="bg-blue-500 text-white rounded-md  px-7 appearance-none ">Postita</button>
           </div>
         </div>
         <p className="text-right mr-5 text-blue-600 text-xs">Salvesta kuulutuse kõvatõmmis</p>
