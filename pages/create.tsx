@@ -27,7 +27,7 @@ const Draft: React.FC = () => {
       setLoading(true)
       
 
-      const res = await fetch('http://api.cloudinary.com/v1_1/dva859ust/image/upload',{
+      const res = await fetch('https://api.cloudinary.com/v1_1/dva859ust/image/upload',{
         method: "POST",
         body: data
       })
