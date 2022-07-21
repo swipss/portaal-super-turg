@@ -1,30 +1,25 @@
 import { getSession } from 'next-auth/react'
 import prisma from '../../../lib/prisma'
 
-// delete post
 
 export default async function handle(req, res) {
     const postId = req.query.id
-    const comment = req.body
+    const {comment, commentId} = req.body
     const session = await getSession({ req })
 
 
-    if (req.method === "DELETE") {
-        const post = await prisma.post.delete({
-            where: {id: postId}
-        })
-        res.json(post)
-    } else if (req.method === 'POST') {
-        console.log('COMMENT', comment)
-        const post = await prisma.comment.create({
+   if (req.method === 'POST') {
+        console.log('COMMENT', comment, commentId)
+        const post = await prisma.reply.create({
             data: {
                 content: comment,
                 author: { connect: { email: session?.user?.email }},
-                post: {
+                comment: {
                     connect: {
-                        id: postId
+                        id: commentId
                     }
                 }
+
             }
         })
         res.json(post)

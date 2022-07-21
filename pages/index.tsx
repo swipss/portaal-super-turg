@@ -16,7 +16,7 @@ export const getStaticProps: GetStaticProps = async () => {
         select: {
           secureUrl: true
         }
-      }
+      },
     }
   })
 

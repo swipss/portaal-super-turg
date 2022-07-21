@@ -15,8 +15,35 @@ export type PostProps = {
   isActive: boolean;
   location: string;
   images: Image[];
+  comments: Comment[]
   
 };
+
+export type Comment = {
+  id: string;
+  content: string;
+  author: {
+    name: string;
+    email: string;
+  }
+  authorId: string;
+  replies: Reply[];
+  post: PostProps;
+  postId: string
+
+}
+
+export type Reply = {
+  id: string;
+  content: string;
+  author: {
+    name: string;
+    email: string
+  }
+  comment: Comment;
+  commentId: string
+
+}
 
 export type Image = {
   id: string;
