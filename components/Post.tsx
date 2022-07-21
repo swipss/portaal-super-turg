@@ -14,18 +14,25 @@ export type PostProps = {
   published: boolean;
   isActive: boolean;
   location: string;
-  images: string[];
-
-
+  images: Image[];
+  
 };
+
+export type Image = {
+  id: string;
+  secureUrl: string;
+  publicId: string;
+  format: string;
+  version: string;
+  post: PostProps;
+  postId: string;
+}
 
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const authorName = post.author ? post.author.name : "Unknown author";
   return (
-    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="w-52 hover:shadow-sm  hover:shadow-black mb-4">
-      <div className="bg-gray-300 w-full h-40 flex items-center justify-center ">
-        <span>PILT</span>
-      </div>
+    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="w-52 hover:shadow-sm  hover:shadow-black mb-4 flex flex-col items-center justify-center border">
+      <img src={post.images?.[0].secureUrl} className="h-52 object-cover object-center"/>
       <div className="p-4">
         <h2 className="text-center">{post.title}</h2>
         <p className="flex justify-center font-bold text-xs">{post.price || '0'}€</p>

@@ -1,30 +1,74 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Layout from '../components/Layout'
 import Router from 'next/router'
+import prisma from '../lib/prisma'
+
 
 const Draft: React.FC = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [price, setPrice] = useState(0)
     const [location, setLocation] = useState('')
-    const [images, setImages] = useState([])
 
-    console.log(location, images)
+    const [loading, setLoading] = useState(false)
+    
+    const [images, setImages] = useState([])
+    const [imagesData, setImagesData] = useState([])
+
+    
+    // console.log(images)
     
 
-    const submitData = async (e: React.SyntheticEvent) => {
+    const uploadImage = async (e) => {
+      const files = e.target.files
+      const data = new FormData()
+      data.append('file', files[0])
+      data.append('upload_preset', 'portaal')
+      setLoading(true)
+      
+
+      const res = await fetch('http://api.cloudinary.com/v1_1/dva859ust/image/upload',{
+        method: "POST",
+        body: data
+      })
+      const file = await res.json()
+      setImages([...images, file.secure_url])
+      setImagesData([...imagesData, {
+        secureUrl: file.secure_url,
+        publicId: file.public_id,
+        format: file.format,
+        version: file.version.toString()
+      }])
+
+      // const upload = await fetch('/api/upload', {
+      //   method: "POST",
+      //   body: JSON.stringify(file)
+      // })
+      // const uploadRes = await upload.json()
+      setLoading(false)
+      
+    }
+
+    const submitData = async (e) => {
         e.preventDefault()
+
         try {
-            const body = {title, content, price, location}
-            await fetch('api/post', {
+          const body = {title, content, price, location, imagesData }
+            console.log(imagesData)
+            const result = await fetch('api/post', {
                 method: "POST",
                 headers: { "Content-Type": "application/json"},
-                body: JSON.stringify(body),
+                body: JSON.stringify(body)
             })
-            await Router.push('/drafts')
-        } catch (e) {
-            console.log(e)
+            const response = await result.json()
+            console.log(response)
+
+            Router.push('/drafts')
+
+        } catch (error) {
+          console.log(error)
         }
+    
     }
 
   return (
@@ -54,22 +98,6 @@ const Draft: React.FC = () => {
                 type={"text"}
                 value={location}
                 />
-                <input
-                type="file"
-                name="image"
-                min={1}
-                onChange={(event) => {
-                  setImages([...images, event.target.files[0]]);
-                }}
-                />
-                {images.length ? (
-                  <div className='flex gap-1 mt-2 flex-wrap'>
-                    {images.map(image => (
-                      <img alt={image} src={URL.createObjectURL(image)} className="w-48 h-48"/>
-                    ))}
-                  </div>
-                ): null}
-                
                 <textarea 
                 cols={50}
                 onChange={(e) => setContent(e.target.value)}
@@ -77,7 +105,23 @@ const Draft: React.FC = () => {
                 rows={8}
                 value={content}
                 />
-                <input disabled={!content || !title || !price || !location || !images} type="submit" value={"Postita"} className="bg-[#ececec] hover:bg-gray-300 cursor-pointer px-7 py-5 rounded-md" />
+                <input 
+                type={"file"}
+                placeholder='Upload an image'
+                accept='image/*'
+                onChange={uploadImage}
+                />
+                {images ? (
+                  <div className='flex'>
+                    {loading && <p>Laen...</p>}
+                    {images && images?.map(image => (
+                      <div key={image}>
+                        <img  src={image} className="h-32"/>
+                      </div>
+                    ))}
+                  </div>
+                ): null}
+                <input disabled={!title || !price || !location || !content || !images} type="submit" value={"Postita"} className="bg-[#ececec] hover:bg-gray-300 cursor-pointer px-7 py-5 rounded-md" />
                 <a className="ml-5 hover:text-blue-500" href="#" onClick={() => Router.push('/')}>
                     või tühista
                 </a>

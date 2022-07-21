@@ -20,6 +20,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         include: {
             author: {
                 select: {name: true}
+            },
+            images: {
+                select: {secureUrl: true}
             }
         }
     })
@@ -46,7 +49,7 @@ const Drafts: React.FC<Props> = (props) => {
         <Layout>
             <div className='page'>
                 <h1>Minu kuulutused</h1>
-                <main>
+                <main className="flex gap-4 flex-wrap">
                     {props.drafts.map(post => (
                         <div key={post.id} className="post">
                             <Post post={post} />

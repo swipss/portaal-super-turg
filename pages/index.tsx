@@ -11,6 +11,11 @@ export const getStaticProps: GetStaticProps = async () => {
     include: {
       author: {
         select: {name: true}
+      },
+      images: {
+        select: {
+          secureUrl: true
+        }
       }
     }
   })

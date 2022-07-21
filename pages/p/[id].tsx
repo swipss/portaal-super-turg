@@ -15,6 +15,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     include: {
       author: {
         select: {name: true, email: true}
+      },
+      images: {
+        select: {secureUrl: true}
       }
     }
   })
@@ -49,27 +52,21 @@ const Post: React.FC<PostProps> = (props) => {
   if (!props.published) {
     title = `${title} (Draft)`
   }
+  console.log(props)
   return (
     <Layout>
       <div>
         <h2 className="text-center font-bold text-2xl my-4">{title}</h2>
         <p className="text-center my-4">Postitatud {props?.author?.name || "Unknown author"} poolt</p>
-        <div className="bg-gray-300 h-96 flex items-center justify-center p-2">
-          <div className="flex justify-between w-full text-xl">
-            <span className="cursor-pointer">{"<"}</span>
-            <span>Pilt 1</span>
-            <span className="cursor-pointer">{">"}</span>
-          </div>
+        <div className="bg-gray-500 p-4 flex items-center justify-center">
+          <img src={props?.images?.[0]?.secureUrl} className="h-96"/>
         </div>
         <p className="text-center text-blue-500 my-5">Suurenda pilti</p>
         <div className="flex gap-4">
-          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 1</div>
-          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 2</div>
-          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 3</div>
-          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 4</div>
-          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 5</div>
-          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center">Pilt 6</div>
-          <div className="bg-gray-300 w-20 h-20 flex items-center justify-center"> Pilt 7</div>
+          {props?.images?.map(image => (
+            <img key={image.secureUrl} src={image.secureUrl} className="bg-gray-300 w-20 h-20 flex items-center justify-center p-1 cursor-pointer"/>
+          ))}
+        
         </div>
         
         <ReactMarkdown children={props.content} className="my-5 mx-2"/>
