@@ -89,12 +89,21 @@ const Post: React.FC<PostProps> = (props) => {
   const [selectedImage, setSelectedImage] = useState(props?.images?.[0].secureUrl)
   const [comment, setComment] = useState('')
   const [reply, setReply] = useState('')
+  const [selectedComment, setSelectedComment] = useState('')
   const { data: session, status } = useSession();
   if (status === 'loading') {
     return <div>Login sisse...</div>;
   }
   const userHasValidSession = Boolean(session);
   const postBelongsToUser = session?.user?.email === props.author?.email;
+
+  const handlePostReply = async (id: string, reply: string, commentId: string) => {
+    if (!reply) return
+    await postReply(id, reply, commentId)
+    setReply('')
+    setComment('')
+    setSelectedComment('')
+  }
 
   let title = props.title
   if (!props.published) {
@@ -155,11 +164,11 @@ const Post: React.FC<PostProps> = (props) => {
             <div className="flex items-center justify-between mx-5 my-2">
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                <a href="#" className="mr-2">{com?.author?.name}:</a>
+                <a href="#" className="mr-2 font-bold">{com?.author?.name}:</a>
                 <p>{com?.content}</p>
               </div>
               <div>
-                <button onClick={() => postReply(props.id, reply, com.id)}>Vasta</button>
+                <button onClick={() => setSelectedComment(com.id)} className="text-blue-500 text-sm">Vasta</button>
                 <button className="text-red-500 text-sm">Teavita</button>
               </div>
               
@@ -172,14 +181,20 @@ const Post: React.FC<PostProps> = (props) => {
                 </div>
               </div>
             ))}
-            {/* <input 
-            type={"text"}
-            value={reply}
-            onChange={(e) => console.log(com.id, reply.id)}
-            className="border rounded-md w-full p-2 break-words"
-            placeholder="Vasta..."
+            {com.id === selectedComment && (
+              <div className="flex gap-4">
+                <input 
+                type={"text"}
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                className="border rounded-md w-full p-2 break-words"
+                placeholder="Vasta..."
+    
+                />
+                <button onClick={() => handlePostReply(props.id, reply, com.id)} className=" text-white bg-blue-500 px-5 rounded-md">Vasta</button>
+              </div>
 
-            /> */}
+            )}
             
             
           </div>
@@ -187,7 +202,7 @@ const Post: React.FC<PostProps> = (props) => {
           
         ))}
         <div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 my-5">
             <input 
             type={"text"}
             className="border rounded-md w-full p-2 break-words"
@@ -197,7 +212,7 @@ const Post: React.FC<PostProps> = (props) => {
             onChange={(e) => setComment(e.target.value)}
             max={250}
             />
-            <button disabled={!comment} onClick={() => postComment(props.id, comment)} className="bg-gray-300 py-5 px-7 appearance-none ">Postita</button>
+            <button disabled={!comment} onClick={() => postComment(props.id, comment)} className="bg-blue-500 text-white rounded-md  px-7 appearance-none ">Postita</button>
           </div>
         </div>
         <p className="text-right mr-5 text-blue-600 text-xs">Salvesta kuulutuse kõvatõmmis</p>
