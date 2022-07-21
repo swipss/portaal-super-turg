@@ -86,7 +86,7 @@ async function postReply(id: string, comment: string, commentId: string): Promis
 const Post: React.FC<PostProps> = (props) => {
   console.log(props.comments?.[0]?.replies)
   const [visible, setVisible] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(props?.images?.[0].secureUrl)
+  const [selectedImage, setSelectedImage] = useState(props?.images?.[0]?.secureUrl)
   const [comment, setComment] = useState('')
   const [reply, setReply] = useState('')
   const [selectedComment, setSelectedComment] = useState('')
