@@ -52,9 +52,9 @@ const Draft: React.FC = () => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
       onDrop,
       multiple: true,
-      accept: {
-        'image/*': ['.png', '.jpeg', 'jpg']
-      }
+      // accept: {
+      //   'image/*': ['.png', '.jpeg', 'jpg']
+      // }
     })
 
     const submitData = async (e) => {
