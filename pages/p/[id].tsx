@@ -136,6 +136,10 @@ const Post: React.FC<PostProps> = (props) => {
   
   }
 
+  const isImageSelected = (image) => {
+    return image.secureUrl === selectedImage.secureUrl
+  }
+
   let title = props.title
   if (!props.published) {
     title = `${title} (Draft)`
@@ -145,11 +149,17 @@ const Post: React.FC<PostProps> = (props) => {
       <div>
         <h2 className="text-center font-bold text-2xl my-4">{title}</h2>
         <p className="text-center my-4">Postitatud {props?.author?.name || "Unknown author"} poolt</p>
-        <div className=" p-4 flex items-center justify-center">
-          <img src={selectedImage.secureUrl} className="h-96 object-cover object-center" onClick={() => setIsFullscreen(!isFullscreen)}/>
+        <div className=" p-4 flex items-center justify-center ">
+          <div className="relative w-full flex items-center justify-center">
+              <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="absolute right-0 text-5xl text-gray-300 cursor-pointer"/>
+              <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowLeft} className="absolute left-0 text-5xl text-gray-300 cursor-pointer"/>
+
+              <img src={selectedImage.secureUrl}  className="cursor-pointer h-96 object-cover object-center" onClick={() => setIsFullscreen(!isFullscreen)}/>
+
+          </div>
           {isFullscreen && (
             <div className="w-screen h-full absolute inset-0" >
-              <button onClick={() => setIsFullscreen(!isFullscreen)} className="absolute right-0 m-5 text-white z-20  text-2xl">X</button>
+              <button onClick={() => setIsFullscreen(!isFullscreen)} className="absolute cursor-pointer right-0 m-5 text-white z-20  text-2xl">X</button>
               <div>
                 {props?.images?.length > 1 && (
                   <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="cursor-pointer text-white z-20 text-5xl absolute right-0 top-2/4 mr-5 "/>
@@ -159,16 +169,15 @@ const Post: React.FC<PostProps> = (props) => {
                   <FontAwesomeIcon icon={faArrowLeft} onClick={() => handleImageChangeBackward()} className="cursor-pointer text-white z-20 text-5xl absolute  top-2/4 ml-5 "/>
                 )}
               </div>
-              <div className="bg-black w-fill h-full opacity-50 absolute inset-0 z-0" />
+              <div className="bg-black w-fill h-full absolute inset-0 z-0" />
             </div>
           )}
         </div>
-        <p className="text-center text-blue-500 my-5">Suurenda pilti</p>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center ">
           <div className="w-11/12 overflow-y-hidden">
-            <div className="flex gap-4">
+            <div className="flex gap-4 ">
               {props?.images?.map(image => (
-                <img onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className="w-20 h-20 object-cover object-center flex items-center justify-center cursor-pointer"/>
+                <img onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className={`${isImageSelected(image) && 'border-4 border-blue-500 '} w-20 h-20 object-cover object-center flex items-center justify-center cursor-pointer`}/>
               ))}
             
             </div>

@@ -119,9 +119,8 @@ const Draft: React.FC = () => {
                     <input {...getInputProps()} />
                     <p className='text-center text-lg text-gray-500'>Lohista pildid või vajuta üleslaadimiseks*</p>
                   </div>
-                  <div className='w-11/12 overflow-y-hidden mt-5 mx-2'>
                       {loading && <p>Laen...</p>}
-                    <ul className='flex gap-1 w-max'>
+                    <ul className='flex flex-wrap  gap-1 w-full ml-10 mt-5'>
                       {uploadedFiles.map(file => (
                         <li key={file.public_id}>
                           <Image
@@ -133,7 +132,6 @@ const Draft: React.FC = () => {
                         </li>
                       ))}
                     </ul>
-                  </div>
 
                 <input disabled={!isFormFilled()} type="submit" value={"Postita"} className={`bg-[#ececec] ${isFormFilled() && 'hover:bg-gray-300 cursor-pointer'}  px-7 py-5 rounded-md`} />
                 <a className="ml-5 hover:text-blue-500" href="#" onClick={() => Router.push('/')}>
