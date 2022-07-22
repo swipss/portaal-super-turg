@@ -58,11 +58,11 @@ export type Image = {
 const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   const authorName = post.author ? post.author.name : "Unknown author";
   return (
-    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="w-52 hover:shadow-sm  hover:shadow-black mb-4 flex flex-col items-center justify-center border">
-      <img src={post.images?.[0]?.secureUrl} className="h-52 object-cover object-center"/>
-      <div className="p-4">
+    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="rounded-md w-52 transform hover:-translate-y-3 ease-out duration-100  hover:shadow-black overflow-hidden mb-4 flex flex-col items-center justify-center border ">
+      <img src={post.images?.[0]?.secureUrl} className="z-0  h-52 object-cover object-center hover:scale-110 ease-in-out duration-100"/>
+      <div className="p-4 overflow-hidden z-10 w-full bg-white">
         <h2 className="text-center">{post.title}</h2>
-        <p className="flex justify-center font-bold text-xs">{post.price || '0'}€</p>
+        <p className="flex justify-center font-bold text-xs">{post.price || '0'} EUR</p>
 
       </div>
       {/* <ReactMarkdown children={post.content} /> */}
