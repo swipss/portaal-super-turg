@@ -175,9 +175,9 @@ const Post: React.FC<PostProps> = (props) => {
         </div>
         <div className="flex items-center justify-center ">
           <div className="w-11/12">
-            <div className="flex gap-4 flex-wrap ">
+            <div className="flex gap-2  flex-wrap ">
               {props?.images?.map(image => (
-                <img onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className={`${isImageSelected(image) && 'border-4 border-blue-500 '} w-20 h-20 object-cover object-center flex items-center justify-center cursor-pointer`}/>
+                <img onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className={`${isImageSelected(image) && 'transform scale-110 shadow-md shadow-gray-400'} w-20 h-20 object-cover object-center flex items-center justify-center cursor-pointer`}/>
               ))}
             
             </div>
