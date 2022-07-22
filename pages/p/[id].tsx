@@ -151,22 +151,22 @@ const Post: React.FC<PostProps> = (props) => {
         <p className="text-center my-4">Postitatud {props?.author?.name || "Unknown author"} poolt</p>
         <div className=" p-4 flex items-center justify-center ">
           <div className="relative w-full flex items-center justify-center">
-              <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="absolute right-0 text-5xl text-gray-300 cursor-pointer"/>
-              <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowLeft} className="absolute left-0 text-5xl text-gray-300 cursor-pointer"/>
+              <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="absolute right-0 text-5xl text-gray-300 cursor-pointer hover:transform hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-black"/>
+              <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowLeft} className="absolute left-0 text-5xl text-gray-300 cursor-pointer hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-black"/>
 
               <img src={selectedImage.secureUrl}  className="cursor-pointer h-96 object-cover object-center" onClick={() => setIsFullscreen(!isFullscreen)}/>
 
           </div>
           {isFullscreen && (
             <div className="w-screen h-full absolute inset-0" >
-              <button onClick={() => setIsFullscreen(!isFullscreen)} className="absolute cursor-pointer right-0 m-5 text-white z-20  text-2xl">X</button>
+              <button onClick={() => setIsFullscreen(!isFullscreen)} className="absolute cursor-pointer right-0 m-5 text-gray-800 hover:text-white z-20  text-2xl hover:transform hover:scale-125 ease-in-out duration-100">X</button>
               <div>
                 {props?.images?.length > 1 && (
-                  <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="cursor-pointer text-white z-20 text-5xl absolute right-0 top-2/4 mr-5 "/>
+                  <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="cursor-pointer text-gray-800 z-20 text-5xl absolute right-0 top-2/4 mr-5  hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-white"/>
                 )}
-                <img onClick={() => setIsFullscreen(!isFullscreen)} src={selectedImage.secureUrl}  className={`sm:h-screen m-auto absolute object-cover object-center inset-0 opacity-100 z-10`}/>
+                <img onClick={() => setIsFullscreen(!isFullscreen)} src={selectedImage.secureUrl}  className={`sm:h-screen m-auto absolute object-cover object-center inset-0 opacity-100 z-10 `}/>
                 {props?.images?.length > 1 && (
-                  <FontAwesomeIcon icon={faArrowLeft} onClick={() => handleImageChangeBackward()} className="cursor-pointer text-white z-20 text-5xl absolute  top-2/4 ml-5 "/>
+                  <FontAwesomeIcon icon={faArrowLeft} onClick={() => handleImageChangeBackward()} className="cursor-pointer text-gray-800 z-20 text-5xl absolute  top-2/4 ml-5  hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-white"/>
                 )}
               </div>
               <div className="bg-black w-fill h-full absolute inset-0 z-0" />
