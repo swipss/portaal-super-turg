@@ -1,11 +1,15 @@
 import React, { useState } from "react"
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next"
+import next, { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next"
 import ReactMarkdown from "react-markdown"
 import Layout from "../../components/Layout"
 import { PostProps } from "../../components/Post"
 import prisma from "../../lib/prisma"
 import Router from "next/router"
 import { useSession } from "next-auth/react"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons"
+
+
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post = await prisma.post.findUnique({
@@ -84,9 +88,9 @@ async function postReply(id: string, comment: string, commentId: string): Promis
 }
 
 const Post: React.FC<PostProps> = (props) => {
-  console.log(props.comments?.[0]?.replies)
   const [visible, setVisible] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(props?.images?.[0]?.secureUrl)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(props?.images?.[0])
   const [comment, setComment] = useState('')
   const [reply, setReply] = useState('')
   const [selectedComment, setSelectedComment] = useState('')
@@ -112,6 +116,26 @@ const Post: React.FC<PostProps> = (props) => {
     setSelectedComment('')
   }
 
+  const handleImageChangeForward = () => {
+    let currIndex = props?.images?.indexOf(selectedImage)
+    let nextIndex = currIndex + 1
+    console.log(currIndex, nextIndex)
+    if (!props?.images?.[nextIndex]) {
+      nextIndex = 0
+    }
+    setSelectedImage(props?.images?.[nextIndex])
+  }
+  const handleImageChangeBackward = () => {
+    let currIndex = props?.images?.indexOf(selectedImage) 
+    let nextIndex = currIndex - 1
+    console.log(currIndex, nextIndex)
+    if (!props?.images?.[nextIndex]) {
+      nextIndex = props?.images?.length - 1
+    }
+    setSelectedImage(props?.images?.[nextIndex])
+  
+  }
+
   let title = props.title
   if (!props.published) {
     title = `${title} (Draft)`
@@ -122,14 +146,33 @@ const Post: React.FC<PostProps> = (props) => {
         <h2 className="text-center font-bold text-2xl my-4">{title}</h2>
         <p className="text-center my-4">Postitatud {props?.author?.name || "Unknown author"} poolt</p>
         <div className=" p-4 flex items-center justify-center">
-          <img src={selectedImage} className="h-96"/>
+          <img src={selectedImage.secureUrl} className="h-96 object-cover object-center" onClick={() => setIsFullscreen(!isFullscreen)}/>
+          {isFullscreen && (
+            <div className="w-screen h-full absolute inset-0" >
+              <button onClick={() => setIsFullscreen(!isFullscreen)} className="absolute right-0 m-5 text-white z-20  text-2xl">X</button>
+              <div>
+                {props?.images?.length > 1 && (
+                  <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="cursor-pointer text-white z-20 text-5xl absolute right-0 top-2/4 mr-5 "/>
+                )}
+                <img onClick={() => setIsFullscreen(!isFullscreen)} src={selectedImage.secureUrl}  className={`sm:h-screen m-auto absolute object-cover object-center inset-0 opacity-100 z-10`}/>
+                {props?.images?.length > 1 && (
+                  <FontAwesomeIcon icon={faArrowLeft} onClick={() => handleImageChangeBackward()} className="cursor-pointer text-white z-20 text-5xl absolute  top-2/4 ml-5 "/>
+                )}
+              </div>
+              <div className="bg-black w-fill h-full opacity-50 absolute inset-0 z-0" />
+            </div>
+          )}
         </div>
         <p className="text-center text-blue-500 my-5">Suurenda pilti</p>
-        <div className="flex gap-4">
-          {props?.images?.map(image => (
-            <img onClick={() => setSelectedImage(image.secureUrl)} key={image.secureUrl} src={image.secureUrl} className="w-20 h-20 object-cover object-center flex items-center justify-center cursor-pointer"/>
-          ))}
-        
+        <div className="flex items-center justify-center">
+          <div className="w-11/12 overflow-y-hidden">
+            <div className="flex gap-4">
+              {props?.images?.map(image => (
+                <img onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className="w-20 h-20 object-cover object-center flex items-center justify-center cursor-pointer"/>
+              ))}
+            
+            </div>
+          </div>
         </div>
         
         <ReactMarkdown children={props.content} className="my-5 mx-2"/>
@@ -213,13 +256,13 @@ const Post: React.FC<PostProps> = (props) => {
             <input 
             type={"text"}
             className="border rounded-md w-full p-2 break-words"
-            
-            placeholder="Küsi midagi..."
+            disabled={!userHasValidSession}
+            placeholder={!userHasValidSession ? 'Kommenteerimiseks logi sisse' : 'Küsi midagi...'}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             max={250}
             />
-            <button disabled={!comment} onClick={() => handlePostComment(props.id, comment)} className="bg-blue-500 text-white rounded-md  px-7 appearance-none ">Postita</button>
+            <button disabled={!comment || !userHasValidSession} onClick={() => handlePostComment(props.id, comment)} className="bg-blue-500 text-white rounded-md  px-7 appearance-none ">Postita</button>
           </div>
         </div>
         <p className="text-right mr-5 text-blue-600 text-xs">Salvesta kuulutuse kõvatõmmis</p>
