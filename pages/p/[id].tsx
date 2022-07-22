@@ -164,12 +164,12 @@ const Post: React.FC<PostProps> = (props) => {
                 {props?.images?.length > 1 && (
                   <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="cursor-pointer text-gray-800 z-20 text-5xl absolute right-0 top-2/4 mr-5  hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-white"/>
                 )}
-                <img onClick={() => setIsFullscreen(!isFullscreen)} src={selectedImage.secureUrl}  className={`sm:h-screen m-auto absolute object-cover object-center inset-0 opacity-100 z-10 `}/>
+                <img onClick={() => setIsFullscreen(!isFullscreen)} src={selectedImage.secureUrl}  className={`sm:h-screen m-auto absolute object-cover object-center inset-0 opacity-100 z-20 `}/>
                 {props?.images?.length > 1 && (
                   <FontAwesomeIcon icon={faArrowLeft} onClick={() => handleImageChangeBackward()} className="cursor-pointer text-gray-800 z-20 text-5xl absolute  top-2/4 ml-5  hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-white"/>
                 )}
               </div>
-              <div className="bg-black w-fill h-full absolute inset-0 z-0" />
+              <div className="bg-black w-fill h-full absolute inset-0 z-10" />
             </div>
           )}
         </div>
@@ -177,7 +177,7 @@ const Post: React.FC<PostProps> = (props) => {
           <div className="w-11/12">
             <div className="flex gap-2  flex-wrap ">
               {props?.images?.map(image => (
-                <img onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className={`${isImageSelected(image) && 'transform ease-in-out duration-200 scale-110 shadow-md shadow-gray-400'} w-20 h-20 object-cover object-center flex items-center justify-center cursor-pointer`}/>
+                <img onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className={`${isImageSelected(image) && 'transform ease-in-out duration-200 scale-110 shadow-md shadow-gray-400'} w-20 h-20 object-cover object-center flex items-center z-0 justify-center cursor-pointer`}/>
               ))}
             
             </div>
