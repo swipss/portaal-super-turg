@@ -8,7 +8,7 @@ import prisma from "../../../lib/prisma";
 // Optional fields in body: content
 
 export default async function handle (req, res) {
-    const { title, content, price, location, imagesData } = req.body
+    const { title, content, price, address, imagesData } = req.body
     console.log(imagesData)
     const session = await getSession({ req })
 
@@ -19,7 +19,7 @@ export default async function handle (req, res) {
             title: title,
             content: content,
             price: price,
-            location: location,
+            location: address,
             isActive: true,
             author: { connect: { email: session?.user?.email }},
 

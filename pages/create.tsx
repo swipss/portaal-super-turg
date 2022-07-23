@@ -2,8 +2,9 @@ import React, {useCallback, useEffect, useState} from 'react'
 import Layout from '../components/Layout'
 import Router from 'next/router'
 import {Image} from 'cloudinary-react'
-import prisma from '../lib/prisma'
 import { useDropzone } from 'react-dropzone'
+import PlacesAutocomplete from 'react-places-autocomplete'
+
 
 
 const Draft: React.FC = () => {
@@ -16,8 +17,10 @@ const Draft: React.FC = () => {
     const [imagesData, setImagesData] = useState([])
     const [uploadedFiles, setUploadedFiles] = useState([])
 
+    const [address, setAddress] = useState('')
+
     const isFormFilled = () => {
-      if (!title || !price || !location || !content || !imagesData.length) {
+      if (!title || !price || !address || !content || !imagesData.length) {
         return false
       } else {
         return true
@@ -61,7 +64,7 @@ const Draft: React.FC = () => {
         e.preventDefault()
 
         try {
-          const body = {title, content, price, location, imagesData }
+          const body = {title, content, price, address, imagesData }
             console.log(imagesData)
             const result = await fetch('api/post', {
                 method: "POST",
@@ -76,6 +79,10 @@ const Draft: React.FC = () => {
         } catch (error) {
           console.log(error)
         }
+    }
+
+    const handleAddressSelect = async (value) => {
+      setAddress(value)
     }
 
   return (
@@ -99,13 +106,26 @@ const Draft: React.FC = () => {
                 min={0}
                 value={price}
                 />
-                <input
-                autoFocus
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Asukoht*"
-                type={"text"}
-                value={location}
-                />
+                {/* PLACES API */}
+                <PlacesAutocomplete value={address} onChange={setAddress} onSelect={handleAddressSelect}>
+                  {({getInputProps, suggestions, getSuggestionItemProps, loading}) => (
+                    <div>
+                      <input {...getInputProps({placeholder: "Alusta aadressi kirjutamisega..."})}/>
+
+                      <div>
+                        {loading ? <div>...loading</div> : null}
+
+                        {suggestions.map(suggestion => {
+                          const style = {
+                            backgroundColor: suggestion.active ? '#ccc' : '#fff'
+                          }
+
+                          return <div {...getSuggestionItemProps(suggestion, {style})}>{suggestion.description}</div>
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </PlacesAutocomplete>
                 <textarea 
                 cols={50}
                 onChange={(e) => setContent(e.target.value)}

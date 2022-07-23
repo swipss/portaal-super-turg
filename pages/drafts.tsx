@@ -1,5 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/react";
+import Head from "next/head";
 import React from "react";
 import Layout from "../components/Layout";
 import Post, { PostProps } from "../components/Post";
@@ -47,6 +48,7 @@ const Drafts: React.FC<Props> = (props) => {
     }
     return (
         <Layout>
+            
             <div className='page'>
                 <h1>Minu kuulutused</h1>
                 <main className="flex gap-4 flex-wrap">
