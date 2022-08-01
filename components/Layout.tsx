@@ -9,7 +9,7 @@ type Props = {
 const Layout: React.FC<Props> = (props) => (
   <div className=" mt-4 max-w-[1000px] m-auto">
     <Head>
-      <script src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyAzVX7nLmTpt7_R76b8H-xcQ070Ox1aWTg&libraries=places`}></script>
+      <script src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}></script>
     </Head>
     <Header />
     <div className="">{props.children}</div>
