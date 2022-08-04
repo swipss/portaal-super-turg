@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import next, { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next"
 import ReactMarkdown from "react-markdown"
 import Layout from "../../components/Layout"
-import { PostProps } from "../../components/Post"
+import { PostProps, Image as ImageProps } from "../../components/Post"
 import prisma from "../../lib/prisma"
 import Router from "next/router"
 import { useSession } from "next-auth/react"
@@ -90,7 +90,7 @@ async function postReply(id: string, comment: string, commentId: string): Promis
 const Post: React.FC<PostProps> = (props) => {
   const [visible, setVisible] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [selectedImage, setSelectedImage] = useState(props?.images?.[0])
+  const [selectedImage, setSelectedImage] = useState<ImageProps>(props?.images?.[0])
   const [comment, setComment] = useState('')
   const [reply, setReply] = useState('')
   const [selectedComment, setSelectedComment] = useState('')
@@ -177,7 +177,9 @@ const Post: React.FC<PostProps> = (props) => {
           <div className="w-11/12">
             <div className="flex gap-2  flex-wrap ">
               {props?.images?.map(image => (
-                <img   onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className={`${isImageSelected(image) && 'transform ease-in-out duration-200 scale-110  shadow-gray-400'} hover:transform hover:ease-in-out hover:duration-200 hover:scale-110 shadow-lg shadow-blue-200    w-20 h-20 object-cover object-center flex items-center z-0 justify-center cursor-pointer`}/>
+                <div className={`${isImageSelected(image) && 'transform ease-in-out duration-200 scale-110  shadow-gray-400'} hover:transform hover:ease-in-out hover:duration-200 hover:scale-110 shadow-lg shadow-blue-200    w-20 h-20 object-cover object-center object-cover flex items-center z-0 justify-center cursor-pointer`}>
+                  <Image width={100} height={100}  onClick={() => setSelectedImage(image)} key={image.secureUrl} src={image.secureUrl} className="object-cover object-center"/>
+                  </div>
               ))}
             
             </div>

@@ -12,9 +12,8 @@ const Draft: React.FC = () => {
     const [content, setContent] = useState('')
     const [price, setPrice] = useState<number>()
     const [location, setLocation] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [images, setImages] = useState([])
-    const [imagesData, setImagesData] = useState([])
+    const [loading, setLoading] = useState<boolean>(false)
+    const [imagesData, setImagesData] = useState<Image[]>([])
     const [uploadedFiles, setUploadedFiles] = useState([])
 
     const [address, setAddress] = useState('')
@@ -26,8 +25,7 @@ const Draft: React.FC = () => {
         return true
       }
     }
-    console.log(isFormFilled())
-
+    console.log(uploadedFiles)
     const onDrop = useCallback((acceptedFiles) => {
       const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`
       
@@ -60,7 +58,7 @@ const Draft: React.FC = () => {
       // }
     })
 
-    const submitData = async (e) => {
+    const submitData = async (e): Promise<void> => {
         e.preventDefault()
 
         try {
@@ -81,7 +79,7 @@ const Draft: React.FC = () => {
         }
     }
 
-    const handleAddressSelect = async (value) => {
+    const handleAddressSelect = async (value: string): Promise<void> => {
       setAddress(value)
     }
 
