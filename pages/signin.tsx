@@ -21,7 +21,7 @@ export default function SignIn({ csrfToken }) {
             Logi sisse Facebookiga</button>
         </form>
 
-        <form method="post" action="/api/auth/signin/gmail" className="w-full">
+        <form method="post" action="/api/auth/signin/google" className="w-full">
           <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
           
           <button type="submit" className="flex items-center justify-center  border py-2 w-full rounded-md mt-5 gap-2 bg-blue-100 text-blue-500">
