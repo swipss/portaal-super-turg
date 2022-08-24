@@ -8,11 +8,8 @@ import prisma from "../../../lib/prisma";
 // Optional fields in body: content
 
 export default async function handle (req, res) {
-    const { title, content, price, address, imagesData } = req.body
-    console.log(imagesData)
+    const { title, content, price, address, imagesData, categoryId } = req.body
     const session = await getSession({ req })
-
-    
     
     const postResult = await prisma.post.create({
         data: {
@@ -21,25 +18,20 @@ export default async function handle (req, res) {
             price: price,
             location: address,
             isActive: true,
-            author: { connect: { email: session?.user?.email }},
+            author: { connect: { email: session?.user?.email } },
+            categories: {
+                connect: { id: categoryId}
+            }
 
         }
     })
 
     const imagesDataWithPostId = imagesData.map(data => ({...data, postId: postResult.id}))
-    
-
-    console.log('post id', imagesDataWithPostId)
-
-    console.log('POST RESULT', postResult)
 
     const imageResult = await prisma.image.createMany({
         data: imagesDataWithPostId
 
     })
 
-    
-
-    console.log(imageResult)
     res.json(postResult, imageResult)
 }

@@ -8,17 +8,18 @@ datasource db {
 }
 
 model Post {
-  id        String    @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean   @default(false)
-  authorId  String?
-  price     Int
-  isActive  Boolean
-  location  String
-  images    Image[]
-  author    User?     @relation(fields: [authorId], references: [id])
-  comments  Comment[]
+  id         String     @id @default(cuid())
+  title      String
+  content    String?
+  published  Boolean    @default(false)
+  authorId   String?
+  price      Int
+  isActive   Boolean
+  location   String
+  images     Image[]
+  author     User?      @relation(fields: [authorId], references: [id])
+  comments   Comment[]
+  categories Category[]
 }
 
 model Image {
@@ -39,7 +40,6 @@ model Comment {
   replies  Reply[]
   post     Post?   @relation(fields: [postId], references: [id])
   postId   String?
-
 }
 
 model Reply {
@@ -49,7 +49,13 @@ model Reply {
   authorId  String?
   comment   Comment? @relation(fields: [commentId], references: [id])
   commentId String?
+}
 
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  parentId String?
+  posts    Post[]
 }
 
 model Account {
@@ -94,9 +100,11 @@ model User {
   posts         Post[]
   accounts      Account[]
   sessions      Session[]
+  role          Role      @default(USER)
 
   Comment Comment[]
   Reply   Reply[]
+
   @@map("users")
 }
 
@@ -107,4 +115,9 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+enum Role {
+  USER
+  ADMIN
 }

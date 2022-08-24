@@ -154,7 +154,7 @@ const Post: React.FC<PostProps> = (props) => {
               <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="absolute right-0 text-5xl text-gray-300 cursor-pointer hover:transform hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-black"/>
               <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowLeft} className="absolute left-0 text-5xl text-gray-300 cursor-pointer hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-black"/>
 
-              <img src={selectedImage.secureUrl}  className="cursor-pointer h-96 object-cover object-center" onClick={() => setIsFullscreen(!isFullscreen)}/>
+              <img src={selectedImage?.secureUrl}  className="cursor-pointer h-96 object-cover object-center" onClick={() => setIsFullscreen(!isFullscreen)}/>
 
           </div>
           {isFullscreen && (
@@ -164,7 +164,7 @@ const Post: React.FC<PostProps> = (props) => {
                 {props?.images?.length > 1 && (
                   <FontAwesomeIcon onClick={() => handleImageChangeForward()} icon={faArrowRight} className="cursor-pointer text-gray-800 z-30 text-5xl absolute right-0 top-2/4 mr-5  hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-white"/>
                 )}
-                <img onClick={() => setIsFullscreen(!isFullscreen)} src={selectedImage.secureUrl}  className={`cursor-pointer sm:h-screen m-auto absolute object-cover object-center inset-0 opacity-100 z-20 `}/>
+                <img onClick={() => setIsFullscreen(!isFullscreen)} src={selectedImage?.secureUrl}  className={`cursor-pointer sm:h-screen m-auto absolute object-cover object-center inset-0 opacity-100 z-20 `}/>
                 {props?.images?.length > 1 && (
                   <FontAwesomeIcon icon={faArrowLeft} onClick={() => handleImageChangeBackward()} className="cursor-pointer text-gray-800 z-30 text-5xl absolute  top-2/4 ml-5  hover:-translate-y-2 hover:ease-in-out duration-100 hover:text-white"/>
                 )}
