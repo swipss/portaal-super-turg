@@ -66,11 +66,11 @@ const Post: React.FC<{ post: PostProps }> = ({ post }) => {
   return (
     
     
-    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="flex justify-between items-center pr-3  border my-1 rounded-lg">
+    <div onClick={() => Router.push("/p/[id]", `/p/${post.id}`)} className="flex justify-between items-center pr-3  border my-1 rounded-lg hover:cursor-pointer hover:bg-gray-200">
       {/* Left section */}
       <div className="flex items-center flex-shrink-0">
         {post?.images?.length > 0 && (
-          <Image  src={post?.images?.[0]?.secureUrl} width={150} height={100}  className="object-cover object-center rounded-lg"/>  
+          <Image  src={post?.images?.[0]?.secureUrl} width={150} height={100}  className="object-cover object-center rounded-l-lg"/>  
         )}
         <p className="mx-5 ">{post.title}</p>
       </div>

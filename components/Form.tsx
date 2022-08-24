@@ -68,7 +68,7 @@ const menuItems = [
 
 const MenuItems = ({ items, depthLevel, setCategory }) => {
   const [dropdown, setDropdown] = useState(false);
-  let ref = useRef()
+  let ref: any = useRef()
   useEffect(() => {
     const handler = (event) => {
       if (dropdown && ref.current && !ref.current.contains(event.target)) {
