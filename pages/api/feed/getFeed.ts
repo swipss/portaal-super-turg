@@ -1,25 +1,24 @@
-import prisma from "../../../lib/prisma";
+import prisma from '../../../lib/prisma';
 
-
-export default async function getFeed(searchText = undefined) {
-    const feed = await prisma.post.findMany({
+export default async function getFeed(searchText: string = undefined) {
+  const feed = await prisma.post.findMany({
     where: {
       published: true,
       title: {
         contains: searchText,
-        mode: 'insensitive'
-      }
+        mode: 'insensitive',
+      },
     },
     include: {
       author: {
-        select: {name: true}
+        select: { name: true },
       },
       images: {
         select: {
-          secureUrl: true
-        }
+          secureUrl: true,
+        },
       },
     },
-  })
-  return feed
+  });
+  return feed;
 }

@@ -1,49 +1,43 @@
-import React, { useEffect, useRef, useState } from "react"
-import { GetStaticProps } from "next"
-import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
-import getFeed from "./api/feed/getFeed"
-import Form from "../components/Form"
+import { GetStaticProps, NextPage } from 'next';
+import Layout from '../components/Layout';
+import Form from '../components/Form';
+import prisma from '../lib/prisma';
+import Post from '../components/Post';
+import { Post as PostInterface } from '../types';
 
-
-export const getStaticProps: GetStaticProps = async () => {
-  const feed = await getFeed()
+export const getStaticProps: GetStaticProps = async (context) => {
+  const posts: PostInterface[] = await prisma.post.findMany({
+    where: {
+      published: true,
+    },
+    include: {
+      images: true,
+    },
+  });
   return {
     props: {
-      feed,
-      
+      posts,
     },
     revalidate: 10,
-  }
-}
+  };
+};
 
-
-export type Props = {
-  feed: PostProps[],
-}
-
-
-
-
-
-
-
-const Blog: React.FC<Props> = (props: Props) => {
-  
+const Home: NextPage<{ posts: PostInterface[] }> = ({ posts }) => {
+  console.log(posts);
   return (
     <Layout>
-        <main>
-          <Form />
-          <div className="">
-            {props?.feed?.map((post) => (
-              <div key={post.id}>
-                <Post post={post} />
-              </div>
-            ))}
-          </div>
-        </main>
+      <main>
+        <Form />
+        <div>
+          {posts?.map((post) => (
+            <div key={post.id}>
+              <Post post={post} />
+            </div>
+          ))}
+        </div>
+      </main>
     </Layout>
-  )
-}
+  );
+};
 
-export default Blog
+export default Home;

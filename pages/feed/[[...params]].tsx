@@ -1,23 +1,22 @@
-import { GetServerSideProps } from "next"
-import { Props } from ".."
-import Layout from "../../components/Layout"
-import Post from "../../components/Post"
-import prisma from "../../lib/prisma"
+import React from 'react';
+import { GetServerSideProps } from 'next';
+import { Props } from '..';
+import Layout from '../../components/Layout';
+import Post from '../../components/Post';
+import prisma from '../../lib/prisma';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { title, location, minPrice, maxPrice, category } = query
-  console.log(title)
-  console.log(category)
+  const { title, location, minPrice, maxPrice, category } = query;
   const feed = await prisma.post.findMany({
     where: {
       published: true,
       title: {
         contains: String(title),
-        mode: 'insensitive'
+        mode: 'insensitive',
       },
       location: {
         contains: String(location),
-        mode: 'insensitive'
+        mode: 'insensitive',
       },
       price: {
         gte: Number(minPrice),
@@ -26,42 +25,43 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       categories: {
         some: {
           name: {
-            contains: String(category)
-          }
-        }
-      }
+            contains: String(category),
+          },
+        },
+      },
     },
     include: {
       author: {
-        select: {name: true}
+        select: { name: true },
       },
       images: {
         select: {
-          secureUrl: true
-        }
+          secureUrl: true,
+        },
       },
-    }
-  })
-    
+    },
+  });
+
   return {
     props: {
-      feed
+      feed,
     },
-  }
-}
+  };
+};
 
- const Feed: React.FC<Props> = (props: Props) => {
-    
-    return (
-        <Layout>
-            {props.feed.length === 0 && (
-              <p className="text-center">Valitud parameetritele ei vasta ükski postitus.</p>
-            )}
-            {props?.feed?.map(post => (
-              <Post post={post} />
-            ))}
-        </Layout>
-    )
- }
+const Feed: React.FC<Props> = (props: Props) => {
+  return (
+    <Layout>
+      {props.feed.length === 0 && (
+        <p className="text-center">
+          Valitud parameetritele ei vasta ükski postitus.
+        </p>
+      )}
+      {props?.feed?.map((post) => (
+        <Post post={post} />
+      ))}
+    </Layout>
+  );
+};
 
- export default Feed
+export default Feed;

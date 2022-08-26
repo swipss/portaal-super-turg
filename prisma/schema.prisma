@@ -14,7 +14,6 @@ model Post {
   published  Boolean    @default(false)
   authorId   String?
   price      Int
-  isActive   Boolean
   location   String
   images     Image[]
   author     User?      @relation(fields: [authorId], references: [id])
@@ -28,7 +27,7 @@ model Image {
   publicId  String  @unique
   format    String
   version   String
-  Post      Post?   @relation(fields: [postId], references: [id])
+  post      Post?   @relation(fields: [postId], references: [id])
   postId    String?
 }
 
@@ -102,8 +101,8 @@ model User {
   sessions      Session[]
   role          Role      @default(USER)
 
-  Comment Comment[]
-  Reply   Reply[]
+  comments Comment[]
+  replies   Reply[]
 
   @@map("users")
 }
