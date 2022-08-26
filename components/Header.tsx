@@ -81,11 +81,14 @@ const Header: React.FC = () => {
             <a>Uus kuulutus</a>
           </button>
         </Link>
-        <button onClick={() => signOut()}>Logi välja</button>
-        <div
-          onClick={() => Router.push('/account')}
-          className="h-10 w-10 bg-gray-300 rounded-full shadow-md cursor-pointer"
-        ></div>
+        <Link href={'/account'}>
+          <a>
+            <img
+              className="h-10 w-10 rounded-full shadow-md"
+              src="https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true"
+            ></img>
+          </a>
+        </Link>
       </div>
     );
   }
