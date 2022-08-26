@@ -1,13 +1,13 @@
 import React from 'react';
-import { GetServerSideProps } from 'next';
-import { Props } from '..';
+import { GetServerSideProps, NextPage } from 'next';
 import Layout from '../../components/Layout';
 import Post from '../../components/Post';
 import prisma from '../../lib/prisma';
+import { Post as PostInterface } from '../../types';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { title, location, minPrice, maxPrice, category } = query;
-  const feed = await prisma.post.findMany({
+  const posts = await prisma.post.findMany({
     where: {
       published: true,
       title: {
@@ -44,20 +44,20 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   return {
     props: {
-      feed,
+      posts,
     },
   };
 };
 
-const Feed: React.FC<Props> = (props: Props) => {
+const Feed: NextPage<{ posts: PostInterface[] }> = ({ posts }) => {
   return (
     <Layout>
-      {props.feed.length === 0 && (
+      {posts?.length === 0 && (
         <p className="text-center">
           Valitud parameetritele ei vasta ükski postitus.
         </p>
       )}
-      {props?.feed?.map((post) => (
+      {posts?.map((post) => (
         <Post post={post} />
       ))}
     </Layout>

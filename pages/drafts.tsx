@@ -3,8 +3,9 @@ import { getSession, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import React from 'react';
 import Layout from '../components/Layout';
-import Post, { PostProps } from '../components/Post';
+import Post from '../components/Post';
 import prisma from '../lib/prisma';
+import { Post as PostInterface } from '../types';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getSession({ req });
@@ -35,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 };
 
 type Props = {
-  drafts: PostProps[];
+  drafts: PostInterface[];
 };
 
 const Drafts: React.FC<Props> = (props) => {
