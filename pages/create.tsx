@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import { GetStaticProps } from 'next';
 import prisma from '../lib/prisma';
-import { Category } from '../components/Post';
+import { Category } from '../types';
 
 export const getStaticProps: GetStaticProps = async () => {
   const categories = await prisma.category.findMany();
