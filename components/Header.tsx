@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 const Header: React.FC = () => {
   const router = useRouter();
