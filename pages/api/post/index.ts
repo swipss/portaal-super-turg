@@ -22,7 +22,6 @@ export default async function handle(
       content: content,
       price: price,
       location: address,
-      isActive: true,
       author: { connect: { email: session?.user?.email } },
       categories: {
         connect: { id: categoryId },
