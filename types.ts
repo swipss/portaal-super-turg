@@ -53,4 +53,14 @@ export interface User {
   name?: string;
   email?: string;
   image?: string;
+  phone?: string;
+  socials?: Social[];
+}
+
+export interface Social {
+  id: string;
+  link?: string;
+  name?: string;
+  user?: User;
+  userId: string;
 }

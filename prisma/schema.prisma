@@ -102,9 +102,20 @@ model User {
   role          Role      @default(USER)
 
   comments Comment[]
-  replies   Reply[]
+  replies  Reply[]
+  phone    String?
+  socials  Social[]
 
   @@map("users")
+}
+
+model Social {
+  id   String  @id @default(cuid())
+  name String?
+  link String?
+  user User?   @relation(fields: [userId], references: [id])
+
+  userId String?
 }
 
 model VerificationToken {

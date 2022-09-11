@@ -2,13 +2,14 @@ import React from 'react';
 import Router from 'next/router';
 import Image from 'next/image';
 import { Post } from '../types';
+import Link from 'next/link';
 
 const Post: React.FC<{ post: Post }> = ({ post }) => {
   const { id, images, title, location, price } = post;
   return (
     <div
-      onClick={() => Router.push('/p/[id]', `/p/${id}`)}
-      className="flex justify-between items-center pr-3 border my-3 rounded-lg hover:cursor-pointer hover:bg-gray-200"
+      // onClick={() => Router.push('/p/[id]', `/p/${id}`)}
+      className="flex justify-between items-center pr-3 border my-3 rounded-lg"
     >
       {/* Left section */}
       <div className="flex items-center flex-shrink-0 gap-3">
@@ -20,7 +21,9 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
             className="object-cover object-center rounded-l-lg"
           />
         )}
-        <p>{title}</p>
+        <Link href={`/p/${id}`}>
+          <a className="underline">{title}</a>
+        </Link>
       </div>
 
       {/* Right section */}
