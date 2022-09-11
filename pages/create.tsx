@@ -7,6 +7,8 @@ import PlacesAutocomplete from 'react-places-autocomplete';
 import { GetStaticProps } from 'next';
 import prisma from '../lib/prisma';
 import { Category } from '../types';
+import { LocationAutocomplete } from '../components/LocationAutocomplete';
+import { CreatePostForm } from '../components/CreatePostForm';
 
 export const getStaticProps: GetStaticProps = async () => {
   const categories = await prisma.category.findMany();
@@ -21,7 +23,18 @@ export type Props = {
   categories: Category[];
 };
 
+export interface IPostData {
+  title: string;
+  info?: string;
+  condition?: string;
+  conditionInfo?: string;
+  price: string;
+  location?: string;
+}
+
 const Draft: React.FC<Props> = (props: Props) => {
+  const [postData, setPostData] = useState<IPostData | null>();
+
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [price, setPrice] = useState<number>();
@@ -29,15 +42,13 @@ const Draft: React.FC<Props> = (props: Props) => {
   const [imagesData, setImagesData] = useState<Image[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [categoryId, setCategoryId] = useState('');
-  console.log(categoryId);
-
-  const [address, setAddress] = useState('');
+  console.log(postData);
 
   const isFormFilled = () => {
     if (
       !title ||
       !price ||
-      !address ||
+      // !address ||
       !content ||
       !imagesData.length ||
       !categoryId
@@ -47,10 +58,12 @@ const Draft: React.FC<Props> = (props: Props) => {
       return true;
     }
   };
-  console.log(uploadedFiles);
+  // console.log(uploadedFiles);
   const onDrop = useCallback((acceptedFiles) => {
     const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
-
+    // user selects images
+    // images are shown next to dropdown
+    // images are only uploaded after creating the post
     acceptedFiles.forEach(async (acceptedFile) => {
       setLoading(true);
       const formData = new FormData();
@@ -83,15 +96,15 @@ const Draft: React.FC<Props> = (props: Props) => {
     // }
   });
 
-  const submitData = async (e): Promise<void> => {
+  const onSubmit = async (e): Promise<void> => {
     e.preventDefault();
 
     try {
-      const body = { title, content, price, address, imagesData, categoryId };
+      // const body = { title, content, price, address, imagesData, categoryId };
       const result: Response = await fetch('api/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        // body: JSON.stringify(body),
       });
       const response = await result.json();
       console.log(response);
@@ -102,26 +115,93 @@ const Draft: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const handleAddressSelect = async (value: string): Promise<void> => {
-    setAddress(value);
-  };
-
   return (
     <Layout>
-      <div>
-        <form onSubmit={submitData}>
-          <h1>Uus kuulutus</h1>
-          <p className="text-sm text-red-500">
+      <div className="max-w-xl mx-auto shadow-md p-4 rounded-md mt-4 border">
+        <div className="my-4">
+          <h1 className="font-bold text-xl ">Uus kuulutus</h1>
+          <p className="text-sm text-red-500 ">
             Kohustuslikud väljad on märgitud *-ga
           </p>
-          <input
-            autoFocus
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Pealkiri*"
-            type={'text'}
-            value={title}
-          />
-          <input
+        </div>
+        <form onSubmit={onSubmit}>
+          <div>
+            <label className="font-bold ">
+              Pealkiri <span className="text-red-500">*</span>
+            </label>
+            <input
+              autoFocus
+              onChange={(e) =>
+                setPostData({ ...postData, title: e.target.value })
+              }
+              placeholder="Pealkiri"
+              type={'text'}
+            />
+          </div>
+          {/* TODO: Category selection with autocomplete */}
+          <div className="mt-4">
+            <label className="font-bold">Kuulutuse sisu</label>
+            <textarea
+              onChange={(e) =>
+                setPostData({ ...postData, info: e.target.value })
+              }
+              placeholder="Kuulutuse sisu"
+              rows={6}
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="font-bold ">
+              Seisukorra hinnang (1 - halb seisukord, 5 - väga hea seisukord){' '}
+              <span className="text-red-500">*</span>
+            </label>
+            <select
+              className="border p-2 mt-1 rounded-md"
+              onChange={(e) =>
+                setPostData({ ...postData, condition: e.target.value })
+              }
+            >
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+
+          <div className="mt-4">
+            <label className="font-bold">Seisukorra põhjendus</label>
+            <textarea
+              onChange={(e) =>
+                setPostData({ ...postData, conditionInfo: e.target.value })
+              }
+              placeholder="Seisukorra põhjendus"
+              rows={6}
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="font-bold">
+              Hind <span className="text-red-500">*</span>
+            </label>
+            <input
+              onChange={(e) =>
+                setPostData({ ...postData, price: e.target.value })
+              }
+              placeholder="Hind"
+              type={'number'}
+              min={1}
+            />
+          </div>
+          <div className="mt-4 ">
+            <label className="font-bold">Asukoht</label>
+            <LocationAutocomplete
+              postData={postData}
+              setPostData={setPostData}
+            />
+          </div>
+
+          {/* <input
             autoFocus
             onChange={(e) => setPrice(Number(e.target.value))}
             placeholder="Hind*"
@@ -147,43 +227,7 @@ const Draft: React.FC<Props> = (props: Props) => {
             ))}
           </select>
 
-          {/* PLACES API */}
-          <PlacesAutocomplete
-            value={address}
-            onChange={setAddress}
-            onSelect={handleAddressSelect}
-          >
-            {({
-              getInputProps,
-              suggestions,
-              getSuggestionItemProps,
-              loading,
-            }) => (
-              <div>
-                <input
-                  {...getInputProps({
-                    placeholder: 'Alusta aadressi kirjutamisega...',
-                  })}
-                />
-
-                <div>
-                  {loading ? <div>...loading</div> : null}
-
-                  {suggestions.map((suggestion) => {
-                    const style = {
-                      backgroundColor: suggestion.active ? '#ccc' : '#fff',
-                    };
-
-                    return (
-                      <div {...getSuggestionItemProps(suggestion, { style })}>
-                        {suggestion.description}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </PlacesAutocomplete>
+          
           <textarea
             cols={50}
             onChange={(e) => setContent(e.target.value)}
@@ -192,7 +236,6 @@ const Draft: React.FC<Props> = (props: Props) => {
             value={content}
           />
 
-          {/* DROP ZONE */}
           <div
             {...getRootProps()}
             className={`flex items-center justify-center p-5 border-2 border-dashed ${
@@ -216,7 +259,7 @@ const Draft: React.FC<Props> = (props: Props) => {
                 />
               </li>
             ))}
-          </ul>
+          </ul> */}
 
           <input
             disabled={!isFormFilled()}

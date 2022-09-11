@@ -9,7 +9,7 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
   return (
     <div
       // onClick={() => Router.push('/p/[id]', `/p/${id}`)}
-      className="flex justify-between items-center pr-3 border my-3 rounded-lg"
+      className="flex justify-between items-center pr-3 border my-3 rounded-md"
     >
       {/* Left section */}
       <div className="flex items-center flex-shrink-0 gap-3">

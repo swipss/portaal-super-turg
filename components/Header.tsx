@@ -94,7 +94,7 @@ const Header: React.FC = () => {
   }
 
   return (
-    <nav className="bg-blue-500 flex justify-between items-center rounded-b-lg shadow-md p-6">
+    <nav className="bg-blue-500 flex justify-between items-center p-6">
       {left}
       {right}
     </nav>

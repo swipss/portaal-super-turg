@@ -59,7 +59,7 @@ const Account: NextPage<{ account: User }> = ({ account }) => {
 
   return (
     <Layout>
-      <div className="flex mt-4 mx-auto w-max ">
+      <div className="flex mt-4 mx-auto w-max">
         <Sidebar />
         {/* Account detail component */}
         <div className="ml-4 rounded-md p-4 shadow-md w-full">
