@@ -37,6 +37,8 @@ interface ImageFile extends File {
   preview: string;
 }
 
+const MAX_SIZE_IN_BYTES = 10000000;
+
 const Draft: React.FC<Props> = (props: Props) => {
   const [postData, setPostData] = useState<IPostData>();
 
@@ -133,7 +135,8 @@ const Draft: React.FC<Props> = (props: Props) => {
     accept: {
       'image/*': [],
     },
-    onDrop: (acceptedFiles) => {
+    maxSize: MAX_SIZE_IN_BYTES,
+    onDrop: (acceptedFiles, rejectedFiles) => {
       const newFiles: ImageFile[] = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
@@ -143,6 +146,9 @@ const Draft: React.FC<Props> = (props: Props) => {
         ...postData,
         files: [...newFiles, ...(postData?.files || [])],
       });
+      if (rejectedFiles.length > 0) {
+        alert('Failid ületavad mahupiiri 10MB või on sobimatus formaadis.');
+      }
     },
   });
 
@@ -293,7 +299,7 @@ const Draft: React.FC<Props> = (props: Props) => {
                           >
                             <img
                               src={item.preview}
-                              className="h-32 w-32 object-cover border-2 rounded-md shadow-md p-1"
+                              className="h-32 w-32 object-cover border-2 border-gray-300 rounded-md shadow-md p-1 mb-3"
                             />
                           </div>
                         )}
