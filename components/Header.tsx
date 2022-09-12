@@ -94,9 +94,11 @@ const Header: React.FC = () => {
   }
 
   return (
-    <nav className="bg-blue-500 flex justify-between items-center p-6">
-      {left}
-      {right}
+    <nav className="bg-blue-500 w-full p-6">
+      <div className="max-w-[1400px] mx-auto flex justify-between items-center">
+        {left}
+        {right}
+      </div>
     </nav>
   );
 };

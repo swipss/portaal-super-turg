@@ -8,7 +8,7 @@ import { GetStaticProps } from 'next';
 import prisma from '../lib/prisma';
 import { Category } from '../types';
 import { LocationAutocomplete } from '../components/LocationAutocomplete';
-import { CreatePostForm } from '../components/CreatePostForm';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export const getStaticProps: GetStaticProps = async () => {
   const categories = await prisma.category.findMany();
@@ -28,12 +28,19 @@ export interface IPostData {
   info?: string;
   condition?: string;
   conditionInfo?: string;
-  price: string;
+  price: number;
   location?: string;
+  files?: ImageFile[];
+}
+
+interface ImageFile extends File {
+  preview: string;
 }
 
 const Draft: React.FC<Props> = (props: Props) => {
-  const [postData, setPostData] = useState<IPostData | null>();
+  const [postData, setPostData] = useState<IPostData>();
+
+  // React state to track order of items
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -42,7 +49,7 @@ const Draft: React.FC<Props> = (props: Props) => {
   const [imagesData, setImagesData] = useState<Image[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [categoryId, setCategoryId] = useState('');
-  console.log(postData);
+  // console.log(postData);
 
   const isFormFilled = () => {
     if (
@@ -58,42 +65,85 @@ const Draft: React.FC<Props> = (props: Props) => {
       return true;
     }
   };
-  // console.log(uploadedFiles);
-  const onDrop = useCallback((acceptedFiles) => {
-    const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
-    // user selects images
-    // images are shown next to dropdown
-    // images are only uploaded after creating the post
-    acceptedFiles.forEach(async (acceptedFile) => {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('file', acceptedFile);
-      formData.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
+  const thumbs = postData?.files?.map((file) => (
+    <div
+      key={file.preview}
+      className="border-2 rounded-md shadow-md"
+    >
+      <div>
+        <img
+          src={file.preview}
+          className="w-40"
+          // Revoke data uri after image is loaded
+          onLoad={() => {
+            URL.revokeObjectURL(file.preview);
+          }}
+        />
+      </div>
+    </div>
+  ));
 
-      const response = await fetch(url, {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await response.json();
-      setUploadedFiles((old) => [...old, data]);
-      setImagesData((old) => [
-        ...old,
-        {
-          secureUrl: data.secure_url,
-          publicId: data.public_id,
-          format: data.format,
-          version: data.version.toString(),
-        },
-      ]);
-      setLoading(false);
-    });
-  }, []);
+  // const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
+  // user selects images
+  // images are shown next to dropdown
+  // images are only uploaded after creating the post
+  // acceptedFiles.forEach(async (acceptedFile) => {
+  //   setLoading(true);
+  //   const formData = new FormData();
+  //   formData.append('file', acceptedFile);
+  //   formData.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
+
+  //   const response = await fetch(url, {
+  //     method: 'POST',
+  //     body: formData,
+  //   });
+  //   const data = await response.json();
+  //   setUploadedFiles((old) => [...old, data]);
+  //   setImagesData((old) => [
+  //     ...old,
+  //     {
+  //       secureUrl: data.secure_url,
+  //       publicId: data.public_id,
+  //       format: data.format,
+  //       version: data.version.toString(),
+  //     },
+  //   ]);
+  //   setLoading(false);
+  // });
+  console.log(postData?.files);
+
+  const handleDrop = (droppedItem) => {
+    // Ignore drop outside droppable container
+    if (!droppedItem.destination) return;
+    const updatedList = [...postData?.files];
+    // Remove dragged item
+    const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
+    // Add dropped item
+    updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
+    // Update State
+    setPostData({ ...postData, files: updatedList });
+    // setItemList(updatedList);
+  };
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
     multiple: true,
     // accept: {
     //   'image/*': ['.png', '.jpeg', 'jpg']
     // }
+    accept: {
+      'image/*': [],
+    },
+    onDrop: (acceptedFiles) => {
+      const newFiles: ImageFile[] = acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      );
+      setPostData({
+        ...postData,
+        files: [...newFiles, ...(postData?.files || [])],
+      });
+    },
   });
 
   const onSubmit = async (e): Promise<void> => {
@@ -117,8 +167,8 @@ const Draft: React.FC<Props> = (props: Props) => {
 
   return (
     <Layout>
-      <div className="max-w-xl mx-auto shadow-md p-4 rounded-md mt-4 border">
-        <div className="my-4">
+      <div className="max-w-xl mx-auto shadow-md p-6 rounded-md mt-4 border ">
+        <div className="mb-4">
           <h1 className="font-bold text-xl ">Uus kuulutus</h1>
           <p className="text-sm text-red-500 ">
             Kohustuslikud väljad on märgitud *-ga
@@ -186,7 +236,7 @@ const Draft: React.FC<Props> = (props: Props) => {
             </label>
             <input
               onChange={(e) =>
-                setPostData({ ...postData, price: e.target.value })
+                setPostData({ ...postData, price: Number(e.target.value) })
               }
               placeholder="Hind"
               type={'number'}
@@ -200,6 +250,75 @@ const Draft: React.FC<Props> = (props: Props) => {
               setPostData={setPostData}
             />
           </div>
+          <div className="mt-4">
+            <label className="font-bold">Pildid</label>
+            <div
+              {...getRootProps()}
+              className={`flex items-center justify-center p-5 border-2 rounded-md ${
+                isDragActive ? 'border-blue-500' : 'border-gray-300'
+              } flex justify-center items-center text-2xl cursor-pointer`}
+            >
+              <input {...getInputProps()} />
+              <p className="text-center text-lg text-gray-500">
+                Lohista pildid või vajuta üleslaadimiseks*
+              </p>
+            </div>
+          </div>
+          {/* <div className="grid grid-cols-4 gap-4 items-center mt-4">
+            {thumbs}
+          </div> */}
+          <div className="overflow-scroll">
+            <DragDropContext onDragEnd={handleDrop}>
+              <Droppable
+                droppableId="list-container"
+                direction="horizontal"
+              >
+                {(provided) => (
+                  <div
+                    className="flex gap-2 mt-4 items-center justify-center w-max"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    {postData?.files?.map((item, index) => (
+                      <Draggable
+                        key={item.preview}
+                        draggableId={item.preview}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.dragHandleProps}
+                            {...provided.draggableProps}
+                          >
+                            <img
+                              src={item.preview}
+                              className="h-32 w-32 object-cover border-2 rounded-md shadow-md p-1"
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
+
+          {/* {loading && <p>Laen...</p>}
+          <ul className="flex flex-wrap  gap-1 w-full ml-10 mt-5">
+            {uploadedFiles.map((file) => (
+              <li key={file.public_id}>
+                <Image
+                  className="h-32 object-cover"
+                  cloudName={process.env.NEXT_PUBLIC_CLOUD_NAME}
+                  publicId={file.public_id}
+                  width="125"
+                />
+              </li>
+            ))}
+          </ul> */}
 
           {/* <input
             autoFocus
@@ -236,30 +355,8 @@ const Draft: React.FC<Props> = (props: Props) => {
             value={content}
           />
 
-          <div
-            {...getRootProps()}
-            className={`flex items-center justify-center p-5 border-2 border-dashed ${
-              isDragActive ? 'border-blue-500' : 'border-gray-300'
-            } flex justify-center items-center text-2xl cursor-pointer`}
-          >
-            <input {...getInputProps()} />
-            <p className="text-center text-lg text-gray-500">
-              Lohista pildid või vajuta üleslaadimiseks*
-            </p>
-          </div>
-          {loading && <p>Laen...</p>}
-          <ul className="flex flex-wrap  gap-1 w-full ml-10 mt-5">
-            {uploadedFiles.map((file) => (
-              <li key={file.public_id}>
-                <Image
-                  className="h-32 object-cover"
-                  cloudName={process.env.NEXT_PUBLIC_CLOUD_NAME}
-                  publicId={file.public_id}
-                  width="125"
-                />
-              </li>
-            ))}
-          </ul> */}
+          
+           */}
 
           <input
             disabled={!isFormFilled()}
