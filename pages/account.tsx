@@ -89,8 +89,8 @@ const Account: NextPage<{ account: User }> = ({ account }) => {
 
               <h1 className="font-bold my-2">Kontakt</h1>
               <form onSubmit={handleSubmit}>
-                <div className="flex gap-2 items-center  justify-between">
-                  <label>Telefon</label>
+                <div className="flex flex-col mt-4">
+                  <label className="font-bold">Telefon</label>
                   <input
                     disabled={!isEditing}
                     type={'number'}
@@ -106,9 +106,9 @@ const Account: NextPage<{ account: User }> = ({ account }) => {
                 {accountData?.socials?.map((social) => (
                   <div
                     key={social.id}
-                    className="flex gap-2 items-center  justify-between"
+                    className="flex flex-col mt-4"
                   >
-                    <label>{social.name}</label>
+                    <label className="font-bold">{social.name}</label>
                     <input
                       disabled={!isEditing}
                       value={social.link || 'Määramata'}
@@ -182,6 +182,17 @@ const Account: NextPage<{ account: User }> = ({ account }) => {
           )}
         </div>
       </div>
+      <style jsx>{`
+        input[type='text'],
+        input[type='number'],
+        textarea {
+          width: 100%;
+          padding: 0.5rem;
+          margin: 0.5rem 0;
+          border-radius: 0.25rem;
+          border: 0.125rem solid rgba(0, 0, 0, 0.2);
+        }
+      `}</style>
     </Layout>
   );
 };

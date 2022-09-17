@@ -29,7 +29,7 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
       {/* Right section */}
       <div className="flex gap-2">
         <p className="text-sm text-gray-400">{location}</p>
-        <p className="text-sm font-bold">{price.toFixed(2)} EUR</p>
+        <p className="text-sm font-bold">{price?.toFixed(2)} EUR</p>
       </div>
     </div>
   );

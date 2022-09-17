@@ -9,6 +9,7 @@ import prisma from '../lib/prisma';
 import { Category } from '../types';
 import { LocationAutocomplete } from '../components/LocationAutocomplete';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { TiDelete } from 'react-icons/ti';
 
 export const getStaticProps: GetStaticProps = async () => {
   const categories = await prisma.category.findMany();
@@ -26,7 +27,7 @@ export type Props = {
 export interface IPostData {
   title: string;
   info?: string;
-  condition?: string;
+  conditionRating?: number;
   conditionInfo?: string;
   price: number;
   location?: string;
@@ -38,81 +39,12 @@ interface ImageFile extends File {
 }
 
 const MAX_SIZE_IN_BYTES = 10000000;
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
 
 const Draft: React.FC<Props> = (props: Props) => {
   const [postData, setPostData] = useState<IPostData>();
 
-  // React state to track order of items
-
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [price, setPrice] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [imagesData, setImagesData] = useState<Image[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [categoryId, setCategoryId] = useState('');
-  // console.log(postData);
-
-  const isFormFilled = () => {
-    if (
-      !title ||
-      !price ||
-      // !address ||
-      !content ||
-      !imagesData.length ||
-      !categoryId
-    ) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-  const thumbs = postData?.files?.map((file) => (
-    <div
-      key={file.preview}
-      className="border-2 rounded-md shadow-md"
-    >
-      <div>
-        <img
-          src={file.preview}
-          className="w-40"
-          // Revoke data uri after image is loaded
-          onLoad={() => {
-            URL.revokeObjectURL(file.preview);
-          }}
-        />
-      </div>
-    </div>
-  ));
-
-  // const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
-  // user selects images
-  // images are shown next to dropdown
-  // images are only uploaded after creating the post
-  // acceptedFiles.forEach(async (acceptedFile) => {
-  //   setLoading(true);
-  //   const formData = new FormData();
-  //   formData.append('file', acceptedFile);
-  //   formData.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
-
-  //   const response = await fetch(url, {
-  //     method: 'POST',
-  //     body: formData,
-  //   });
-  //   const data = await response.json();
-  //   setUploadedFiles((old) => [...old, data]);
-  //   setImagesData((old) => [
-  //     ...old,
-  //     {
-  //       secureUrl: data.secure_url,
-  //       publicId: data.public_id,
-  //       format: data.format,
-  //       version: data.version.toString(),
-  //     },
-  //   ]);
-  //   setLoading(false);
-  // });
-  console.log(postData?.files);
 
   const handleDrop = (droppedItem) => {
     // Ignore drop outside droppable container
@@ -129,14 +61,13 @@ const Draft: React.FC<Props> = (props: Props) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: true,
-    // accept: {
-    //   'image/*': ['.png', '.jpeg', 'jpg']
-    // }
     accept: {
       'image/*': [],
     },
     maxSize: MAX_SIZE_IN_BYTES,
     onDrop: (acceptedFiles, rejectedFiles) => {
+      // TODO: check for duplicates
+
       const newFiles: ImageFile[] = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
@@ -144,36 +75,50 @@ const Draft: React.FC<Props> = (props: Props) => {
       );
       setPostData({
         ...postData,
-        files: [...newFiles, ...(postData?.files || [])],
+        files: [...(postData?.files || []), ...newFiles],
       });
       if (rejectedFiles.length > 0) {
         alert('Failid ületavad mahupiiri 10MB või on sobimatus formaadis.');
       }
     },
   });
-
+  const handleDelete = (name) => {
+    const newFiles = postData?.files?.filter((file) => file.name !== name);
+    setPostData({ ...postData, files: newFiles });
+  };
   const onSubmit = async (e): Promise<void> => {
     e.preventDefault();
+    setLoading(true);
+    await fetch('/api/post', {
+      method: 'post',
+      body: JSON.stringify(postData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const fd = new FormData();
+        postData?.files?.forEach(async (file) => {
+          fd.append('file', file);
+          fd.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
 
-    try {
-      // const body = { title, content, price, address, imagesData, categoryId };
-      const result: Response = await fetch('api/post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // body: JSON.stringify(body),
+          await fetch(CLOUDINARY_URL, {
+            method: 'post',
+            body: fd,
+          })
+            .then((res) => res.json())
+            .then((imageData) => {
+              fetch('api/upload/image', {
+                method: 'post',
+                body: JSON.stringify({ data, imageData }),
+              });
+            });
+        });
       });
-      const response = await result.json();
-      console.log(response);
-
-      Router.push('/drafts');
-    } catch (error) {
-      console.log(error);
-    }
+    setLoading(false);
   };
-
+  if (loading) return <p>Postitan...</p>;
   return (
     <Layout>
-      <div className="max-w-xl mx-auto shadow-md p-6 rounded-md mt-4 border ">
+      <div className="max-w-xl mx-auto shadow-md p-6 rounded-md border h-[75vh] overflow-scroll mt-10">
         <div className="mb-4">
           <h1 className="font-bold text-xl ">Uus kuulutus</h1>
           <p className="text-sm text-red-500 ">
@@ -214,7 +159,7 @@ const Draft: React.FC<Props> = (props: Props) => {
             <select
               className="border p-2 mt-1 rounded-md"
               onChange={(e) =>
-                setPostData({ ...postData, condition: e.target.value })
+                setPostData({ ...postData, conditionRating: +e.target.value })
               }
             >
               <option>1</option>
@@ -266,13 +211,11 @@ const Draft: React.FC<Props> = (props: Props) => {
             >
               <input {...getInputProps()} />
               <p className="text-center text-lg text-gray-500">
-                Lohista pildid või vajuta üleslaadimiseks*
+                Lohista pildid või vajuta üleslaadimiseks (limit 10MB)
               </p>
             </div>
           </div>
-          {/* <div className="grid grid-cols-4 gap-4 items-center mt-4">
-            {thumbs}
-          </div> */}
+
           <div className="overflow-scroll">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable
@@ -296,7 +239,14 @@ const Draft: React.FC<Props> = (props: Props) => {
                             ref={provided.innerRef}
                             {...provided.dragHandleProps}
                             {...provided.draggableProps}
+                            className="relative"
                           >
+                            <TiDelete
+                              color="red"
+                              size={25}
+                              className="absolute -right-2 -top-2"
+                              onClick={() => handleDelete(item.name)}
+                            />
                             <img
                               src={item.preview}
                               className="h-32 w-32 object-cover border-2 border-gray-300 rounded-md shadow-md p-1 mb-3"
@@ -312,86 +262,22 @@ const Draft: React.FC<Props> = (props: Props) => {
             </DragDropContext>
           </div>
 
-          {/* {loading && <p>Laen...</p>}
-          <ul className="flex flex-wrap  gap-1 w-full ml-10 mt-5">
-            {uploadedFiles.map((file) => (
-              <li key={file.public_id}>
-                <Image
-                  className="h-32 object-cover"
-                  cloudName={process.env.NEXT_PUBLIC_CLOUD_NAME}
-                  publicId={file.public_id}
-                  width="125"
-                />
-              </li>
-            ))}
-          </ul> */}
-
-          {/* <input
-            autoFocus
-            onChange={(e) => setPrice(Number(e.target.value))}
-            placeholder="Hind*"
-            type={'number'}
-            min={0}
-            value={price}
-          />
-          <select
-            id="category"
-            name="category"
-            className="border-2 w-full p-2 rounded-md border-gray-300"
-            onChange={(e) => setCategoryId(e.target.value)}
-          >
-            <option
-              value=""
-              disabled
-              selected
-            >
-              Kategooria
-            </option>
-            {props?.categories?.map((category) => (
-              <option value={category.id}>{category.name}</option>
-            ))}
-          </select>
-
-          
-          <textarea
-            cols={50}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Kirjeldus*"
-            rows={8}
-            value={content}
-          />
-
-          
-           */}
-
-          <input
-            disabled={!isFormFilled()}
+          <button
             type="submit"
-            value={'Postita'}
-            className={`bg-[#ececec] ${
-              isFormFilled()
-                ? 'hover:bg-blue-600 cursor-pointer bg-blue-500 text-white opacity-100'
-                : 'opacity-50'
-            } my-5 px-7 py-3 text-gray-white bg-blue-500 shadow-md text-white rounded-md`}
-          />
-          <a
-            className="ml-5 text-red-500"
-            href="#"
-            onClick={() => Router.push('/')}
+            className="px-7 py-3 text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600"
           >
-            või tühista
-          </a>
+            Postita
+          </button>
+
+          <button
+            type="button"
+            className="ml-5 border-2 px-7 py-3 rounded-md hover:bg-gray-200"
+          >
+            Salvesta mustandina
+          </button>
         </form>
       </div>
       <style jsx>{`
-        .page {
-          background: var(--geist-background);
-          padding: 3rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
         input[type='text'],
         input[type='number'],
         textarea {
