@@ -19,7 +19,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     // get drafts
     where: {
       author: { email: session.user.email },
-      published: false,
     },
     include: {
       author: {

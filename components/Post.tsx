@@ -18,13 +18,20 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
                 src={previewImage?.secureUrl}
                 width={150}
                 height={150}
+                className="rounded-l-lg border-l"
               />
             )}
           </div>
           <div className="flex flex-col items-start ml-2 gap-1">
-            <span className="mt-2 bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
-              Aegunud
-            </span>
+            {published ? (
+              <span className="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                Aktiivne
+              </span>
+            ) : (
+              <span className="mt-2 bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
+                Aegunud
+              </span>
+            )}
             <p className="font-bold">{title}</p>
             <p className="text-sm text-gray-500">
               {location || 'Asukoht puudub'}
