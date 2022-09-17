@@ -74,7 +74,7 @@ const Header: React.FC = () => {
       </div>
     );
     right = (
-      <div className="items-center first-letter flex gap-3 text-white text-center ">
+      <div className="items-center  flex gap-3 text-white text-center ">
         <Link href={'/drafts'}>Minu kuulutused</Link>
         <Link href={'/create'}>
           <button>
@@ -94,8 +94,8 @@ const Header: React.FC = () => {
   }
 
   return (
-    <nav className="bg-blue-500 w-full p-6">
-      <div className="max-w-[1400px] mx-auto flex justify-between items-center">
+    <nav className="bg-blue-500 w-full">
+      <div className="max-w-[1400px] h-16 mx-auto flex justify-between items-center">
         {left}
         {right}
       </div>
