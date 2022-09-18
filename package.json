@@ -39,6 +39,7 @@
     "react-icons": "^4.4.0",
     "react-markdown": "8.0.0",
     "react-places-autocomplete": "^7.3.0",
+    "react-slideshow-image": "^4.0.5",
     "recoil": "^0.7.5"
   },
   "devDependencies": {

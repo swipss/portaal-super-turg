@@ -115,12 +115,13 @@ const Draft: React.FC<Props> = (props: Props) => {
               fetch('api/upload/image', {
                 method: 'post',
                 body: JSON.stringify({ data, imageData }),
+              }).then(() => {
+                Router.push('/drafts');
+                setLoading(false);
               });
             });
         });
       });
-    await Router.push('/drafts');
-    setLoading(false);
   };
   return (
     <Layout>

@@ -8,6 +8,8 @@ import { useSession } from 'next-auth/react';
 import { Post } from '../../types';
 import { ImageSlider } from '../../components/PostComponents/ImageSlider';
 import { Messages } from '../../components/PostComponents/Messages';
+import { Slide } from 'react-slideshow-image';
+import 'react-slideshow-image/dist/styles.css';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post: Post = await prisma.post.findUnique({
@@ -54,10 +56,16 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
   const { images, author, published, content, price, comments, id, location } =
     post;
 
+  const [currentImageIndex, setCurrentImageIndex] = useState<
+    number | undefined
+  >();
+
   const { data: session, status } = useSession();
   if (status === 'loading') {
     return <div>Login sisse...</div>;
   }
+
+  const imageURLs = images?.map((image) => image.secureUrl);
 
   const userHasValidSession = Boolean(session);
   const postBelongsToUser = session?.user?.email === author?.email;
@@ -67,14 +75,64 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
     title = `${title} (Draft)`;
   }
 
+  const indicators = (index) => (
+    <div
+      className={`w-[75px] h-[75px] cursor-pointer ml-2 my-1 border border-gray-300 rounded shadow-md p-1  ${
+        index == currentImageIndex &&
+        'transform -translate-y-2 ease-in-out duration-200'
+      }`}
+    >
+      <img
+        src={images?.[index].secureUrl}
+        className={`h-full w-full object-cover object-center `}
+      />
+    </div>
+  );
+
   return (
     <Layout>
       <div>
-        <h2 className="text-center font-bold text-2xl my-4">{title}</h2>
-        <p className="text-center my-4">
-          Postitatud {author?.name || 'Unknown author'} poolt
-        </p>
-        <ImageSlider images={images} />
+        <div className="w-full flex justify-center mt-5">
+          {published ? (
+            <span className=" bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+              Aktiivne
+            </span>
+          ) : (
+            <span className="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
+              Aegunud
+            </span>
+          )}
+        </div>
+        <h2 className="my-2 text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {title}
+        </h2>
+        {images.length && (
+          <div className="slide-container">
+            <Slide
+              indicators={indicators}
+              autoplay={false}
+              canSwipe={true}
+              transitionDuration={250}
+              easing="cubic"
+              onChange={(prevIndex, nextIndex) =>
+                setCurrentImageIndex(nextIndex)
+              }
+            >
+              {imageURLs.map((slideImage, index) => (
+                <div
+                  className="each-slide "
+                  key={index}
+                >
+                  <div
+                    style={{
+                      backgroundImage: `url(${slideImage})`,
+                    }}
+                  ></div>
+                </div>
+              ))}
+            </Slide>
+          </div>
+        )}
         <ReactMarkdown
           children={content}
           className="my-5 mx-2"

@@ -51,10 +51,10 @@ const Drafts: React.FC<Props> = (props) => {
   return (
     <Layout>
       <div className="page">
-        <h1 className="mt-20 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <h1 className="mt-20 text-2xl font-bold tracking-tight text-gray-900 dark:text-white mx-1">
           Minu kuulutused
         </h1>
-        <main className="flex  flex-col">
+        <main className="flex flex-col mx-1">
           {props.drafts.map((post) => (
             <div key={post.id}>
               <Post post={post} />
