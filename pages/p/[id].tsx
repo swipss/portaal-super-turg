@@ -10,6 +10,10 @@ import { ImageSlider } from '../../components/PostComponents/ImageSlider';
 import { Messages } from '../../components/PostComponents/Messages';
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
+import { Rating } from '@mui/material';
+import { TiStar } from 'react-icons/ti';
+import { BsFillPersonFill } from 'react-icons/bs';
+import Link from 'next/link';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post: Post = await prisma.post.findUnique({
@@ -52,9 +56,19 @@ async function deletePost(id: string): Promise<void> {
   await Router.push('/');
 }
 
-const Post: React.FC<{ post: Post }> = ({ post }) => {
-  const { images, author, published, content, price, comments, id, location } =
-    post;
+const Post: React.FC<{ post: any }> = ({ post }) => {
+  const {
+    images,
+    author,
+    published,
+    content,
+    price,
+    comments,
+    id,
+    location,
+    conditionRating,
+    conditionInfo,
+  } = post;
 
   const [currentImageIndex, setCurrentImageIndex] = useState<
     number | undefined
@@ -79,7 +93,7 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
     <div
       className={`w-[75px] h-[75px] cursor-pointer ml-2 my-1 border border-gray-300 rounded shadow-md p-1  ${
         index == currentImageIndex &&
-        'transform -translate-y-2 ease-in-out duration-200'
+        'transform -translate-y-2 ease-in-out duration-200 bg-blue-500'
       }`}
     >
       <img
@@ -103,9 +117,9 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
             </span>
           )}
         </div>
-        <h2 className="my-2 text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <p className="my-2 text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           {title}
-        </h2>
+        </p>
         {images.length && (
           <div className="slide-container">
             <Slide
@@ -135,63 +149,62 @@ const Post: React.FC<{ post: Post }> = ({ post }) => {
         )}
         <ReactMarkdown
           children={content}
-          className="my-5 mx-2"
+          className="mt-5 mx-2 bg-gray-100 rounded p-5  border"
         />
-        <div className="flex justify-center items-center">
-          <select
-            name="currency"
-            id="currency"
-            className="border mr-2"
-          >
-            <option>EUR</option>
-            <option>USD</option>
-            <option>RUB</option>
-          </select>
-          <p className="font-bold text-3xl">{price?.toFixed(2) || '0.00'}€</p>
-        </div>
-        <p className="text-center font-bold my-5">{location}</p>
-        <hr className="mx-3"></hr>
-        <div className="flex justify-between mt-5 m-5 ">
-          <div className="flex flex-col">
-            <span>34,5</span>
-            <span>Prindi</span>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-5 ">
-            <button>Muuda</button>
-            <p>Kuulutus aktiivne 18.02.2018 - 02.03.2018</p>
-          </div>
-          <div className="flex flex-col ">
-            <span>Lisa lemmikuks</span>
-            <span className="text-right">Teata</span>
+        <div className="flex mx-2 mt-5 items-center gap-2">
+          <p className="text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Seisukord
+          </p>
+
+          <div className="flex items-center gap-2 bg-slate-900 py-1 px-1 rounded-lg my-3 shadow-md">
+            <span className="font-bold border py-1 px-2 rounded-lg bg-white">
+              {conditionRating} / 5
+            </span>
+            <Rating
+              value={conditionRating}
+              readOnly
+              icon={
+                <TiStar
+                  size={24}
+                  color="orange"
+                />
+              }
+              emptyIcon={
+                <TiStar
+                  size={24}
+                  color="#666"
+                />
+              }
+            />
           </div>
         </div>
 
-        <div className="flex">
-          <div className="flex bg-gray-400 p-5">
-            <p>Müüja</p>
-          </div>
-          <div className="flex bg-gray-300 p-5">
-            <p>Küsimused</p>
+        <ReactMarkdown
+          children={conditionInfo}
+          className=" mx-2 bg-gray-100 rounded p-5  border"
+        />
+        <div className="flex my-5 gap-2 justify-center text-center text-2xl font-bold items-center tracking-tight">
+          <p className="">Hind</p>
+          <p className="bg-slate-900 text-white py-2 px-3 rounded-lg shadow-md">
+            {' '}
+            {price?.toFixed(2) || '0.00'} €
+          </p>
+        </div>
+        <div className="bg-gray-100 p-5 rounded border w-6/12 mx-auto flex flex-col items-center justify-center ">
+          <p className="font-bold">{location || 'Asukoht puudub'}</p>
+          <div className="bg-white p-2 border rounded flex gap-2 items-center">
+            <BsFillPersonFill size={24} />
+            <Link href={`/user/${author.id}`}>
+              <a>{author.name}</a>
+            </Link>
           </div>
         </div>
+
         <Messages
           comments={comments}
           id={id}
         />
-        <p className="text-right mr-5 text-blue-600 text-xs">
-          Salvesta kuulutuse kõvatõmmis
-        </p>
-        <div className="bg-blue-600 flex items-center justify-center gap-5 p-2">
-          <p className="text-white hover:text-gray-300 cursor-pointer">
-            Reklaam
-          </p>
-          <p className="text-white hover:text-gray-300 cursor-pointer">
-            Tingimused
-          </p>
-          <p className="text-white hover:text-gray-300 cursor-pointer">
-            Kontakt
-          </p>
-        </div>
+
         {!published && userHasValidSession && postBelongsToUser && (
           <button onClick={() => publishPost(id)}>Avalda</button>
         )}
