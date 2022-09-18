@@ -117,9 +117,15 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             </span>
           )}
         </div>
-        <p className="my-2 text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <p className="my-2 text-center text-2xl font-bold tracking-tight text-gray-900">
           {title}
         </p>
+        <div className="flex my-3 gap-2 justify-center text-center text-2xl font-bold items-center tracking-tight">
+          <p className="bg-slate-900 text-white py-2 px-3 rounded-lg shadow-md">
+            {' '}
+            € {price?.toFixed(2) || '0.00'}
+          </p>
+        </div>
         {images.length && (
           <div className="slide-container">
             <Slide
@@ -147,12 +153,15 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             </Slide>
           </div>
         )}
+        <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
+          Müüja kirjeldus
+        </p>
         <ReactMarkdown
           children={content}
-          className="mt-5 mx-2 bg-gray-100 rounded p-5  border"
+          className="mt-2 mx-2 bg-gray-100 rounded p-5  border"
         />
         <div className="flex mx-2 mt-5 items-center gap-2">
-          <p className="text-center text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <p className="text-center text-2xl font-bold tracking-tight text-gray-900 ">
             Seisukord
           </p>
 
@@ -183,21 +192,17 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
           children={conditionInfo}
           className=" mx-2 bg-gray-100 rounded p-5  border"
         />
-        <div className="flex my-5 gap-2 justify-center text-center text-2xl font-bold items-center tracking-tight">
-          <p className="">Hind</p>
-          <p className="bg-slate-900 text-white py-2 px-3 rounded-lg shadow-md">
-            {' '}
-            {price?.toFixed(2) || '0.00'} €
+
+        <div className="bg-gray-100 p-5 rounded border w-6/12 mx-auto flex flex-col items-center justify-center mt-5">
+          <p className="font-bold text-center">
+            {location || 'Asukoht puudub'}
           </p>
-        </div>
-        <div className="bg-gray-100 p-5 rounded border w-6/12 mx-auto flex flex-col items-center justify-center ">
-          <p className="font-bold">{location || 'Asukoht puudub'}</p>
-          <div className="bg-white p-2 border rounded flex gap-2 items-center">
-            <BsFillPersonFill size={24} />
-            <Link href={`/user/${author.id}`}>
+          <Link href={`/user/${author.id}`}>
+            <div className="bg-white p-2 border rounded flex gap-2 items-center shadow-md mt-2 hover:bg-gray-100 cursor-pointer">
+              <BsFillPersonFill size={24} />
               <a>{author.name}</a>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </div>
 
         <Messages
