@@ -101,6 +101,10 @@ const Draft: React.FC<Props> = (props: Props) => {
     })
       .then((res) => res.json())
       .then((data) => {
+        if (!postData?.files?.length) {
+          Router.push('/drafts');
+          setLoading(false);
+        }
         const fd = new FormData();
         postData?.files?.forEach(async (file) => {
           fd.append('file', file);
