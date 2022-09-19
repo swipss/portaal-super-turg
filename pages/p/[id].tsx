@@ -68,7 +68,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
 
   const [currentImageIndex, setCurrentImageIndex] = useState<
     number | undefined
-  >();
+  >(0);
 
   const { data: session, status } = useSession();
   if (status === 'loading') {
@@ -180,6 +180,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
               canSwipe={true}
               transitionDuration={250}
               easing="cubic"
+              defaultIndex={0}
               onChange={(prevIndex, nextIndex) =>
                 setCurrentImageIndex(nextIndex)
               }
