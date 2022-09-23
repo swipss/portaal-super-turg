@@ -16,6 +16,7 @@ import { BsFillPersonFill } from 'react-icons/bs';
 import { AiFillPhone } from 'react-icons/ai';
 import Link from 'next/link';
 import { getTreeData } from '../../lib/getTreeData';
+import moment from 'moment';
 
 const DEFAULT_IMAGE =
   'https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true';
@@ -75,9 +76,20 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
                 />
               </a>
             </Link>
-            <div className="bg-gray-100 px-3 py-2 rounded-2xl shadow-md">
-              <p className="font-bold">{item.author?.name}</p>
-              <p>{item.content}</p>
+            <div></div>
+            <div>
+              <div className="bg-gray-100 px-3 py-2 rounded-2xl shadow-md">
+                <p className="font-bold">{item.author?.name}</p>
+                <p>{item.content}</p>
+              </div>
+              <div className="flex gap-2 mt-1">
+                <button className="text-sm ml-3 font-bold text-gray-400 hover:text-blue-500">
+                  Vasta
+                </button>
+                <p className="text-sm text-gray-400">
+                  {moment(item.createdAt).fromNow(true)}
+                </p>
+              </div>
             </div>
           </div>
           <Tree
@@ -107,13 +119,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   } = post;
 
   const [loading, setLoading] = useState(false);
-  const treeData = getTreeData(post?.comments);
-
-  const latestComment = comments?.reduce((prev, curr) => {
-    return prev.createdAt > curr.creadetAt ? prev : curr;
-  });
-
-  console.log(latestComment, 'latest');
+  const treeData = getTreeData(comments);
 
   const [currentImageIndex, setCurrentImageIndex] = useState<
     number | undefined
