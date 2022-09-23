@@ -41,22 +41,24 @@ model Image {
 
 model Comment {
   id       String  @id @default(cuid())
+  createdAt DateTime  @default(now()) @map("created_at")
   content  String
   author   User?   @relation(fields: [authorId], references: [id])
   authorId String?
-  replies  Reply[]
   post     Post?   @relation(fields: [postId], references: [id])
   postId   String?
+  parent_comment_id String?
+  
 }
 
-model Reply {
-  id        String   @id @default(cuid())
-  content   String
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  String?
-  comment   Comment? @relation(fields: [commentId], references: [id])
-  commentId String?
-}
+// model Reply {
+//   id        String   @id @default(cuid())
+//   content   String
+//   author    User?    @relation(fields: [authorId], references: [id])
+//   authorId  String?
+//   comment   Comment? @relation(fields: [commentId], references: [id])
+//   commentId String?
+// }
 
 model Category {
   id       String  @id @default(cuid())
@@ -110,7 +112,7 @@ model User {
   role          Role      @default(USER)
 
   comments Comment[]
-  replies  Reply[]
+  // replies  Reply[]
   phone    String?
   socials  Social[]
 

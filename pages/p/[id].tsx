@@ -10,11 +10,15 @@ import { ImageSlider } from '../../components/PostComponents/ImageSlider';
 import { Messages } from '../../components/PostComponents/Messages';
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
-import { Rating } from '@mui/material';
+import { imageListItemBarClasses, Rating } from '@mui/material';
 import { TiStar } from 'react-icons/ti';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { AiFillPhone } from 'react-icons/ai';
 import Link from 'next/link';
+import { getTreeData } from '../../lib/getTreeData';
+
+const DEFAULT_IMAGE =
+  'https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const post: Post = await prisma.post.findUnique({
@@ -25,11 +29,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       images: true,
       comments: {
         include: {
-          replies: {
-            include: {
-              author: true,
-            },
-          },
           author: true,
         },
       },
@@ -37,7 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       author: true,
     },
   });
-  console.log(post);
+  // console.log(post);
   return {
     props: { post: JSON.parse(JSON.stringify(post)) },
   };
@@ -49,6 +48,48 @@ async function deletePost(id: string): Promise<void> {
   });
   await Router.push('/');
 }
+
+const Tree = ({ treeData, parentId = null, level = 0 }) => {
+  const items = treeData
+    .filter((item) => item.parent_comment_id === parentId)
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateA < dateB ? 1 : -1;
+    });
+  if (!items.length) return null;
+  console.log(level, items);
+  return (
+    <>
+      {items.map((item) => (
+        <div
+          className={`ml-10`}
+          key={item.id}
+        >
+          <div className="flex gap-2 p-3">
+            <Link href={`user/${item.author?.id}`}>
+              <a>
+                <img
+                  src={item.author?.image && DEFAULT_IMAGE}
+                  className="w-10 h-10 rounded-full shadow-md"
+                />
+              </a>
+            </Link>
+            <div className="bg-gray-100 px-3 py-2 rounded-2xl shadow-md">
+              <p className="font-bold">{item.author?.name}</p>
+              <p>{item.content}</p>
+            </div>
+          </div>
+          <Tree
+            treeData={treeData}
+            parentId={item.id}
+            level={level + 1}
+          />
+        </div>
+      ))}
+    </>
+  );
+};
 
 const Post: React.FC<{ post: any }> = ({ post }) => {
   const {
@@ -62,9 +103,17 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     location,
     conditionRating,
     conditionInfo,
+    createdAt,
   } = post;
 
   const [loading, setLoading] = useState(false);
+  const treeData = getTreeData(post?.comments);
+
+  const latestComment = comments?.reduce((prev, curr) => {
+    return prev.createdAt > curr.creadetAt ? prev : curr;
+  });
+
+  console.log(latestComment, 'latest');
 
   const [currentImageIndex, setCurrentImageIndex] = useState<
     number | undefined
@@ -255,11 +304,26 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             <p>{author?.phone}</p>
           </div>
         </div>
+        {/* {post?.comments?.map((comment) => console.log(comment))} */}
+        {/* {post?.comments?.map((comment) => {
+          <Comment
+            comment={comment}
+            post={post}
+          />;
+        })} */}
+        {/* <Comment
+          comment={post?.comments?.[2]}
+          post={post}
+        /> */}
+        <Tree
+          treeData={treeData}
+          // parentId={latestComment?.parent_comment_id}
+        />
 
-        <Messages
+        {/* <Messages
           comments={comments}
           id={id}
-        />
+        /> */}
 
         {userHasValidSession && postBelongsToUser && (
           <button onClick={() => deletePost(id)}>Kustuta</button>
