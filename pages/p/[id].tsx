@@ -17,6 +17,7 @@ import { AiFillPhone } from 'react-icons/ai';
 import Link from 'next/link';
 import { getTreeData } from '../../lib/getTreeData';
 import moment from 'moment';
+import { AiOutlineArrowRight } from 'react-icons/ai';
 
 const DEFAULT_IMAGE =
   'https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true';
@@ -51,6 +52,7 @@ async function deletePost(id: string): Promise<void> {
 }
 
 const Tree = ({ treeData, parentId = null, level = 0 }) => {
+  const [selectedComment, setSelectedComment] = useState();
   const items = treeData
     .filter((item) => item.parent_comment_id === parentId)
     .sort((a, b) => {
@@ -64,10 +66,10 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
     <>
       {items.map((item) => (
         <div
-          className={`ml-10`}
+          className={`${level !== 0 && 'ml-10'} mx-2`}
           key={item.id}
         >
-          <div className="flex gap-2 p-3">
+          <div className="flex gap-2 p-3 ">
             <Link href={`user/${item.author?.id}`}>
               <a>
                 <img
@@ -76,16 +78,15 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
                 />
               </a>
             </Link>
-            <div></div>
             <div>
-              <div className="bg-gray-100 px-3 py-2 rounded-2xl shadow-md">
+              <div className="bg-gray-100 px-3 py-2 rounded-2xl  ">
                 <p className="font-bold">{item.author?.name}</p>
                 <p>{item.content}</p>
               </div>
               <div className="flex gap-2 mt-1">
                 <button
                   className="text-sm ml-3 font-bold text-gray-400 hover:text-blue-500"
-                  onClick={() => {}}
+                  onClick={() => setSelectedComment(item.id)}
                 >
                   Vasta
                 </button>
@@ -95,6 +96,22 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
               </div>
             </div>
           </div>
+          {selectedComment === item.id && (
+            <div className="relative flex">
+              <div className="absolute border-l-2 h-20 bottom-7  left-[30px] -z-10" />
+              <input
+                type={'text'}
+                placeholder={`Vasta kasutajale ${item.author?.name}`}
+                className=" bg-gray-100 py-2 px-3 rounded-full w-full "
+              />
+              <button className="bg-blue-500 rounded-full w-10 ml-1 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600">
+                <AiOutlineArrowRight
+                  color="white"
+                  size={20}
+                />
+              </button>
+            </div>
+          )}
           <Tree
             treeData={treeData}
             parentId={item.id}
