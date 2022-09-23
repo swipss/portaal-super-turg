@@ -83,7 +83,10 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
                 <p>{item.content}</p>
               </div>
               <div className="flex gap-2 mt-1">
-                <button className="text-sm ml-3 font-bold text-gray-400 hover:text-blue-500">
+                <button
+                  className="text-sm ml-3 font-bold text-gray-400 hover:text-blue-500"
+                  onClick={() => {}}
+                >
                   Vasta
                 </button>
                 <p className="text-sm text-gray-400">

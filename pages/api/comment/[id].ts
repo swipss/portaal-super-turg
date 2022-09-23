@@ -10,23 +10,23 @@ export default async function handle(
   const { comment, commentId } = req.body;
   const session = await getSession({ req });
 
-  if (req.method === 'POST') {
-    console.log('COMMENT', comment, commentId);
-    const post = await prisma.reply.create({
-      data: {
-        content: comment,
-        author: { connect: { email: session?.user?.email } },
-        comment: {
-          connect: {
-            id: commentId,
-          },
-        },
-      },
-    });
-    res.json(post);
-  } else {
-    throw new Error(
-      `The HTTP ${req.method} method is not supported at this route`
-    );
-  }
+  // if (req.method === 'POST') {
+  //   console.log('COMMENT', comment, commentId);
+  //   const post = await prisma.reply.create({
+  //     data: {
+  //       content: comment,
+  //       author: { connect: { email: session?.user?.email } },
+  //       comment: {
+  //         connect: {
+  //           id: commentId,
+  //         },
+  //       },
+  //     },
+  //   });
+  //   res.json(post);
+  // } else {
+  //   throw new Error(
+  //     `The HTTP ${req.method} method is not supported at this route`
+  //   );
+  // }
 }
