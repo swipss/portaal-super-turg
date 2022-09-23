@@ -90,7 +90,7 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
                   Vasta
                 </button>
                 <p className="text-sm text-gray-400">
-                  {moment(item.createdAt).fromNow(true)}
+                  {moment(item.createdAt).fromNow()}
                 </p>
               </div>
             </div>
