@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../../components/Layout';
@@ -6,11 +6,9 @@ import prisma from '../../lib/prisma';
 import Router from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Post } from '../../types';
-import { ImageSlider } from '../../components/PostComponents/ImageSlider';
-import { Messages } from '../../components/PostComponents/Messages';
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css';
-import { imageListItemBarClasses, Rating } from '@mui/material';
+import { Rating } from '@mui/material';
 import { TiStar } from 'react-icons/ti';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { AiFillPhone } from 'react-icons/ai';
@@ -51,8 +49,39 @@ async function deletePost(id: string): Promise<void> {
   await Router.push('/');
 }
 
-const Tree = ({ treeData, parentId = null, level = 0 }) => {
-  const [selectedComment, setSelectedComment] = useState();
+async function postComment(comment) {
+  const result = await fetch('/api/comment', {
+    method: 'POST',
+    body: JSON.stringify(comment),
+  });
+  const response = result.json();
+  return response;
+}
+
+async function publishPost(
+  id: string,
+  setLoading: Dispatch<SetStateAction<boolean>>
+): Promise<void> {
+  setLoading(true);
+  await fetch(`/api/publish/${id}`, {
+    method: 'PUT',
+  });
+  await Router.push('/');
+  setLoading(false);
+}
+
+const Tree = ({
+  treeData,
+  parentId = null,
+  level = 0,
+  comment,
+  setComment,
+  setTreeData,
+  selectedComment,
+  setSelectedComment,
+  handleChange,
+  handleSubmit,
+}) => {
   const items = treeData
     .filter((item) => item.parent_comment_id === parentId)
     .sort((a, b) => {
@@ -61,7 +90,8 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
       return dateA < dateB ? 1 : -1;
     });
   if (!items.length) return null;
-  console.log(level, items);
+  // console.log(level, items);
+
   return (
     <>
       {items.map((item) => (
@@ -97,25 +127,39 @@ const Tree = ({ treeData, parentId = null, level = 0 }) => {
             </div>
           </div>
           {selectedComment === item.id && (
-            <div className="relative flex">
-              <div className="absolute border-l-2 h-20 bottom-7  left-[30px] -z-10" />
-              <input
-                type={'text'}
-                placeholder={`Vasta kasutajale ${item.author?.name}`}
-                className=" bg-gray-100 py-2 px-3 rounded-full w-full "
-              />
-              <button className="bg-blue-500 rounded-full w-10 ml-1 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600">
-                <AiOutlineArrowRight
-                  color="white"
-                  size={20}
+            <form onSubmit={(e) => handleSubmit(comment, e)}>
+              <div className="relative flex">
+                <div className="absolute border-l-2 h-20 bottom-7  left-[30px] -z-10" />
+                <input
+                  type={'text'}
+                  placeholder={`Vasta kasutajale ${item.author?.name}`}
+                  className=" bg-gray-100 py-2 px-3 rounded-full w-full"
+                  onChange={(e) => handleChange(e, setComment, item.id)}
                 />
-              </button>
-            </div>
+                <button
+                  type="submit"
+                  disabled={!comment?.content?.length}
+                  className="bg-blue-500 rounded-full w-11 ml-1 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
+                >
+                  <AiOutlineArrowRight
+                    color="white"
+                    size={20}
+                  />
+                </button>
+              </div>
+            </form>
           )}
           <Tree
             treeData={treeData}
             parentId={item.id}
             level={level + 1}
+            comment={comment}
+            setComment={setComment}
+            setTreeData={setTreeData}
+            selectedComment={selectedComment}
+            setSelectedComment={setSelectedComment}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
           />
         </div>
       ))}
@@ -130,7 +174,6 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     published,
     content,
     price,
-    comments,
     id,
     location,
     conditionRating,
@@ -139,7 +182,12 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   } = post;
 
   const [loading, setLoading] = useState(false);
-  const treeData = getTreeData(comments);
+
+  const [comment, setComment] = useState({});
+  const [selectedComment, setSelectedComment] = useState('');
+
+  const [treeData, setTreeData] = useState(getTreeData(post?.comments));
+  console.log(treeData.length, 'treedata');
 
   const [currentImageIndex, setCurrentImageIndex] = useState<
     number | undefined
@@ -153,6 +201,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   const imageURLs = images?.map((image) => image.secureUrl);
 
   const userHasValidSession = Boolean(session);
+
   const postBelongsToUser = session?.user?.email === author?.email;
 
   let title = post?.title;
@@ -174,14 +223,22 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     </div>
   );
 
-  async function publishPost(id: string): Promise<void> {
-    setLoading(true);
-    await fetch(`/api/publish/${id}`, {
-      method: 'PUT',
+  const handleChange = (e, setComment, parent = null) => {
+    setComment({
+      content: e.target.value,
+      authorId: author?.id,
+      postId: id,
+      parent_comment_id: parent,
     });
-    await Router.push('/');
-    setLoading(false);
-  }
+  };
+
+  const handleSubmit = async (comment, e) => {
+    e.preventDefault();
+    await postComment(comment);
+    setComment({});
+    setSelectedComment('');
+    window.location.reload();
+  };
 
   return (
     <Layout>
@@ -227,7 +284,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
                   ) : (
                     <button
                       type="button"
-                      onClick={() => publishPost(id)}
+                      onClick={() => publishPost(id, setLoading)}
                       className="px-2.5 py-0.5 ml-2  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 "
                     >
                       Aktiveeri
@@ -330,26 +387,37 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             <p>{author?.phone}</p>
           </div>
         </div>
-        {/* {post?.comments?.map((comment) => console.log(comment))} */}
-        {/* {post?.comments?.map((comment) => {
-          <Comment
-            comment={comment}
-            post={post}
-          />;
-        })} */}
-        {/* <Comment
-          comment={post?.comments?.[2]}
-          post={post}
-        /> */}
+
         <Tree
           treeData={treeData}
-          // parentId={latestComment?.parent_comment_id}
+          comment={comment}
+          setComment={setComment}
+          setTreeData={setTreeData}
+          selectedComment={selectedComment}
+          setSelectedComment={setSelectedComment}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
         />
-
-        {/* <Messages
-          comments={comments}
-          id={id}
-        /> */}
+        <form onSubmit={(e) => handleSubmit(comment, e)}>
+          <div className="flex gap-2 mt-2 mx-2">
+            <input
+              type={'text'}
+              placeholder="Postita kommentaar"
+              className=" bg-gray-100 py-2 px-3 rounded-full w-full"
+              onChange={(e) => handleChange(e, setComment)}
+            />
+            <button
+              type="submit"
+              disabled={!comment?.content?.length}
+              className="bg-blue-500 rounded-full w-11 h-10 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
+            >
+              <AiOutlineArrowRight
+                color="white"
+                size={20}
+              />
+            </button>
+          </div>
+        </form>
 
         {userHasValidSession && postBelongsToUser && (
           <button onClick={() => deletePost(id)}>Kustuta</button>
