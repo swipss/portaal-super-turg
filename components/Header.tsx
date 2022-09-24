@@ -81,7 +81,7 @@ const Header: React.FC = () => {
             <a>Uus kuulutus</a>
           </button>
         </Link>
-        <Link href={'/account'}>
+        <Link href={'/account/andmed'}>
           <a>
             <img
               className="h-10 w-10 rounded-full shadow-md"
