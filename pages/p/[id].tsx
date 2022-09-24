@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, isValidElement, SetStateAction, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../../components/Layout';
@@ -81,6 +81,7 @@ const Tree = ({
   setSelectedComment,
   handleChange,
   handleSubmit,
+  isValidComment,
 }) => {
   const items = treeData
     .filter((item) => item.parent_comment_id === parentId)
@@ -99,12 +100,17 @@ const Tree = ({
           className={`${level !== 0 && 'ml-10'} mx-2`}
           key={item.id}
         >
-          <div className="flex gap-2 p-3 ">
+          <div className="flex gap-2 p-3 relative">
+            {level !== 0 && (
+              <div
+                className={`h-32 border-l-2 border-b-2 w-10 rounded-bl-md absolute bottom-[70px] left-[-10px] -z-10`}
+              />
+            )}
             <Link href={`user/${item.author?.id}`}>
               <a>
                 <img
                   src={item.author?.image && DEFAULT_IMAGE}
-                  className="w-10 h-10 rounded-full shadow-md"
+                  className="w-10 h-10 rounded-full shadow-md hover:border-2 hover:border-blue-500"
                 />
               </a>
             </Link>
@@ -138,7 +144,7 @@ const Tree = ({
                 />
                 <button
                   type="submit"
-                  disabled={!comment?.content?.length}
+                  disabled={!isValidComment(comment) && selectedComment}
                   className="bg-blue-500 rounded-full w-11 ml-1 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
                 >
                   <AiOutlineArrowRight
@@ -160,6 +166,7 @@ const Tree = ({
             setSelectedComment={setSelectedComment}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
+            isValidComment={isValidComment}
           />
         </div>
       ))}
@@ -183,8 +190,8 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
 
   const [loading, setLoading] = useState(false);
 
-  const [comment, setComment] = useState({});
-  const [selectedComment, setSelectedComment] = useState('');
+  const [comment, setComment] = useState();
+  const [selectedComment, setSelectedComment] = useState(null);
 
   const [treeData, setTreeData] = useState(getTreeData(post?.comments));
   console.log(treeData.length, 'treedata');
@@ -234,10 +241,15 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
 
   const handleSubmit = async (comment, e) => {
     e.preventDefault();
+    if (!comment) return;
     await postComment(comment);
-    setComment({});
-    setSelectedComment('');
+    setComment(null);
+    setSelectedComment(null);
     window.location.reload();
+  };
+
+  const isValidComment = (comment) => {
+    return comment?.content?.length;
   };
 
   return (
@@ -387,6 +399,9 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             <p>{author?.phone}</p>
           </div>
         </div>
+        <p className="mx-2 mt-5 text-2xl font-bold tracking-tight text-gray-900">
+          Kommentaarid
+        </p>
 
         <Tree
           treeData={treeData}
@@ -397,7 +412,9 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
           setSelectedComment={setSelectedComment}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
+          isValidComment={isValidComment}
         />
+
         <form onSubmit={(e) => handleSubmit(comment, e)}>
           <div className="flex gap-2 mt-2 mx-2">
             <input
@@ -405,10 +422,11 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
               placeholder="Postita kommentaar"
               className=" bg-gray-100 py-2 px-3 rounded-full w-full"
               onChange={(e) => handleChange(e, setComment)}
+              onClick={() => setSelectedComment(null)}
             />
             <button
               type="submit"
-              disabled={!comment?.content?.length}
+              disabled={!isValidComment(comment) || selectedComment}
               className="bg-blue-500 rounded-full w-11 h-10 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
             >
               <AiOutlineArrowRight
