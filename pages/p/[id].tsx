@@ -82,6 +82,7 @@ const Tree = ({
   handleChange,
   handleSubmit,
   isValidComment,
+  author,
 }) => {
   const items = treeData
     .filter((item) => item.parent_comment_id === parentId)
@@ -115,8 +116,15 @@ const Tree = ({
               </a>
             </Link>
             <div>
-              <div className="bg-gray-100 px-3 py-2 rounded-2xl  ">
-                <p className="font-bold">{item.author?.name}</p>
+              <div className="bg-gray-100 px-3 py-2 rounded-2xl">
+                <div className="flex gap-1">
+                  <p className="font-bold">{item.author?.name}</p>
+                  {author?.email === item.author?.email && (
+                    <span className=" bg-blue-100 text-blue-800 text-sm font-medium  px-2.5 py-0 rounded dark:bg-green-200 dark:text-green-900">
+                      Kuulutaja
+                    </span>
+                  )}
+                </div>
                 <p>{item.content}</p>
               </div>
               <div className="flex gap-2 mt-1">
@@ -167,6 +175,7 @@ const Tree = ({
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             isValidComment={isValidComment}
+            author={author}
           />
         </div>
       ))}
@@ -413,6 +422,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
           handleChange={handleChange}
           handleSubmit={handleSubmit}
           isValidComment={isValidComment}
+          author={author}
         />
 
         <form onSubmit={(e) => handleSubmit(comment, e)}>
