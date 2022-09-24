@@ -41,12 +41,10 @@ interface ImageFile extends File {
 const MAX_SIZE_IN_BYTES = 10000000;
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
 
-const Draft: React.FC<Props> = (props: Props) => {
+const Draft: React.FC<any> = ({ props, setModalOpen }) => {
   const [postData, setPostData] = useState<IPostData>();
 
   const [loading, setLoading] = useState<boolean>(false);
-
-  const [disabled, isDisabled] = useState(false);
 
   const handleDrop = (droppedItem) => {
     // Ignore drop outside droppable container
@@ -92,7 +90,7 @@ const Draft: React.FC<Props> = (props: Props) => {
     if (postData?.title && postData?.price) return true;
   };
 
-  const onSubmit = async (e): Promise<void> => {
+  const onSubmit = async (e, setModalOpen): Promise<void> => {
     e.preventDefault();
     setLoading(true);
     await fetch('/api/post', {
@@ -102,7 +100,8 @@ const Draft: React.FC<Props> = (props: Props) => {
       .then((res) => res.json())
       .then((data) => {
         if (!postData?.files?.length) {
-          Router.push('/drafts');
+          Router.push('/account/kuulutused');
+          setModalOpen(false);
           setLoading(false);
         }
         const fd = new FormData();
@@ -120,7 +119,8 @@ const Draft: React.FC<Props> = (props: Props) => {
                 method: 'post',
                 body: JSON.stringify({ data, imageData }),
               }).then(() => {
-                Router.push('/drafts');
+                Router.push('/account/kuulutused');
+                setModalOpen(false);
                 setLoading(false);
               });
             });
@@ -128,17 +128,9 @@ const Draft: React.FC<Props> = (props: Props) => {
       });
   };
   return (
-    <Layout>
-      <div className="max-w-xl mx-auto shadow-md p-6 rounded border h-[75vh] overflow-scroll mt-10">
-        <div className="mb-4">
-          <h1 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white ">
-            Uus kuulutus
-          </h1>
-          <p className="text-sm text-red-500 ">
-            Kohustuslikud väljad on märgitud *-ga
-          </p>
-        </div>
-        <form onSubmit={onSubmit}>
+    <>
+      <div className="max-w-xl mx-auto">
+        <form onSubmit={(e) => onSubmit(e, setModalOpen)}>
           <div>
             <label className="font-bold ">
               Pealkiri <span className="text-red-500">*</span>
@@ -323,7 +315,7 @@ const Draft: React.FC<Props> = (props: Props) => {
           border: 0.125rem solid rgba(0, 0, 0, 0.2);
         }
       `}</style>
-    </Layout>
+    </>
   );
 };
 

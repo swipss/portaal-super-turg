@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Header from '../Header';
 import { Sidebar } from './Sidebar';
+import Head from 'next/head';
 
 const AccountLayout = ({ children }) => {
   return (

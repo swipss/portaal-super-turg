@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { AvatarDropdown } from './PostComponents/AvatarDropdown';
+import Head from 'next/head';
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -74,32 +76,27 @@ const Header: React.FC = () => {
       </div>
     );
     right = (
-      <div className="items-center  flex gap-3 text-white text-center ">
-        <Link href={'/drafts'}>Minu kuulutused</Link>
-        <Link href={'/create'}>
-          <button>
-            <a>Uus kuulutus</a>
-          </button>
-        </Link>
-        <Link href={'/account/andmed'}>
-          <a>
-            <img
-              className="h-10 w-10 rounded-full shadow-md"
-              src="https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true"
-            ></img>
-          </a>
-        </Link>
-      </div>
+      <AvatarDropdown
+        name={session?.user?.name}
+        email={session?.user?.email}
+      />
     );
   }
 
   return (
-    <nav className="bg-blue-500 w-full">
-      <div className="max-w-[1400px] h-16 mx-auto flex justify-between items-center px-2">
-        {left}
-        {right}
-      </div>
-    </nav>
+    <>
+      <Head>
+        <script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
+        ></script>
+      </Head>
+      <nav className="bg-blue-500 w-full">
+        <div className="max-w-[1400px h-16 flex justify-between items-center px-2">
+          {left}
+          <div>{right}</div>
+        </div>
+      </nav>
+    </>
   );
 };
 
