@@ -40,6 +40,7 @@ export async function getStaticProps({ params }) {
   // console.log(post);
   return {
     props: { post: JSON.parse(JSON.stringify(post)) },
+    revalidate: 10,
   };
 }
 
@@ -165,7 +166,7 @@ const Tree = ({
                   placeholder={`${
                     !session
                       ? 'Kommenteerimiseks logi sisse'
-                      : 'Vasta kasutajale ${item.author?.name}'
+                      : `Vasta kasutajale ${item.author?.name}`
                   } `}
                   className=" bg-gray-100 py-2 px-3 rounded-full w-full"
                   onChange={(e) => handleChange(e, setComment, item.id)}
