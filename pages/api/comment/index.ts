@@ -6,14 +6,14 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const data = JSON.parse(req.body);
   const session = await getSession({ req });
-
+  const data = JSON.parse(req.body);
   if (req.method === 'POST') {
+    console.log(data);
     const comment = await prisma.comment.create({
       data: {
         content: data.content,
-        parent_comment_id: data.parent,
+        parent_comment_id: data.parent_comment_id,
         author: { connect: { email: session?.user?.email } },
         post: { connect: { id: data.postId } },
       },

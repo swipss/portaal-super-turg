@@ -48,12 +48,12 @@ export async function getStaticPaths() {
   const posts = await prisma.post.findMany();
 
   return {
-    paths: posts.map((song) => ({
+    paths: posts.map((post) => ({
       params: {
-        id: song.id.toString(),
+        id: post.id.toString(),
       },
     })),
-    fallback: false,
+    fallback: 'blocking',
   };
 }
 
