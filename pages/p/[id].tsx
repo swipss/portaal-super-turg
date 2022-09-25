@@ -211,6 +211,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   >(0);
 
   const { data: session, status } = useSession();
+  console.log(session);
   if (status === 'loading') {
     return <div>Login sisse...</div>;
   }
@@ -243,9 +244,9 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   const handleChange = (e, setComment, parent = null) => {
     setComment({
       content: e.target.value,
-      authorId: author?.id,
       postId: id,
       parent_comment_id: parent,
+      author: session?.user?.email,
     });
   };
 

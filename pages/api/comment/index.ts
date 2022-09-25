@@ -11,9 +11,14 @@ export default async function handle(
 
   if (req.method === 'POST') {
     const comment = await prisma.comment.create({
-      data: data,
+      data: {
+        content: data.content,
+        parent_comment_id: data.parent,
+        author: { connect: { email: session?.user?.email } },
+        post: { connect: { id: data.postId } },
+      },
     });
-    res.json(data);
+    res.json(comment);
   } else {
     throw new Error(
       `The HTTP ${req.method} method is not supported at this route`
