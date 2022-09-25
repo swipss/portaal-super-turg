@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { getTreeData } from '../../lib/getTreeData';
 import moment from 'moment';
 import { AiOutlineArrowRight } from 'react-icons/ai';
+import Image from 'next/image';
 
 const DEFAULT_IMAGE =
   'https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true';
@@ -110,15 +111,15 @@ const Tree = ({
             <Link href={`user/${item.author?.id}`}>
               <a>
                 <img
-                  src={item.author?.image && DEFAULT_IMAGE}
-                  className="w-10 h-10 rounded-full shadow-md hover:border-2 hover:border-blue-500"
+                  src={item?.author?.image}
+                  className="h-10 w-10 rounded-full shadow-md hover:border-2 hover:border-blue-500 object-cover object-center"
                 />
               </a>
             </Link>
             <div>
               <div className="bg-gray-100 px-3 py-2 rounded-2xl">
                 <div className="flex gap-1">
-                  <p className="font-bold">{item.author?.name}</p>
+                  <p className="font-bold">{item?.author?.name}</p>
                   {author?.email === item.author?.email && (
                     <span className=" bg-blue-100 text-blue-800 text-sm font-medium  px-2.5 py-0 rounded dark:bg-green-200 dark:text-green-900">
                       Kuulutaja

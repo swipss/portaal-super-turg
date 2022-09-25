@@ -33,7 +33,7 @@ export const AvatarDropdown = ({ name, email }) => {
         </svg>
       </button>
       {open && (
-        <div className="z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow absolute right-0 mt-2 mr-2">
+        <div className="z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow-lg absolute right-0 mt-2 mr-2">
           <div className="py-3 px-4 text-sm text-gray-900">
             <div className="font-medium ">{name}</div>
             <div className="truncate">{email}</div>

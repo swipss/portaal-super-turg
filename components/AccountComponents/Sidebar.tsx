@@ -1,12 +1,8 @@
 import Link from 'next/link';
-import React from 'react';
 
 export const Sidebar = () => {
   return (
-    <aside
-      className="w-64"
-      aria-label="Sidebar"
-    >
+    <aside className="md:w-64">
       <div className="overflow-y-auto py-4 px-3 bg-gray-50 rounded ">
         <ul className="space-y-2">
           <li>

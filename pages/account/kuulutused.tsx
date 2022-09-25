@@ -64,8 +64,8 @@ const UserPosts: React.FC<Props> = (props) => {
         ))}
       </div>
       {modalOpen && (
-        <div className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-modal md:h-full">
-          <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
+        <div className="overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
+          <div className="relative p-10  w-full max-w-2xl h-full md:h-auto">
             {/* <!-- Modal content --> */}
             <div className="relative bg-white rounded-lg shadow">
               {/* <!-- Modal header --> */}
@@ -101,7 +101,7 @@ const UserPosts: React.FC<Props> = (props) => {
                 </button>
               </div>
               {/* <!-- Modal body --> */}
-              <div className="p-6 space-y-6 h-[75vh] overflow-scroll">
+              <div className="p-6 space-y-6 h-max overflow-scroll">
                 <Draft setModalOpen={setModalOpen} />
               </div>
               {/* <!-- Modal footer --> */}

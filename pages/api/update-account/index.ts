@@ -7,23 +7,30 @@ export default async function handle(
 ) {
   const data = JSON.parse(req.body);
   console.log(data);
-  const updatePhone = await prisma.user.update({
+
+  const updateUserInfo = await prisma.user.update({
     where: {
       id: data.id,
     },
-    data: {
-      phone: String(data.phone),
-    },
+    data: data,
   });
+  // const updatePhone = await prisma.user.update({
+  //   where: {
+  //     id: data.id,
+  //   },
+  //   data: {
+  //     phone: String(data.phone),
+  //   },
+  // });
 
-  const updateManySocials = data.socials.map((social) =>
-    prisma.social.update({
-      where: {
-        id: social.id,
-      },
-      data: social,
-    })
-  );
-  Promise.all(updateManySocials);
-  res.json([updateManySocials, updatePhone]);
+  // const updateManySocials = data.socials.map((social) =>
+  //   prisma.social.update({
+  //     where: {
+  //       id: social.id,
+  //     },
+  //     data: social,
+  //   })
+  // );
+  // Promise.all(updateManySocials);
+  res.json(updateUserInfo);
 }

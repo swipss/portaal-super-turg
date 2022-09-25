@@ -12,9 +12,9 @@ const AccountLayout = ({ children }) => {
   return (
     <React.Fragment>
       <Header />
-      <div className="flex gap-1 justify-center mt-2 mx-2">
+      <div className="flex flex-col-reverse md:flex-row gap-2 justify-center mt-2 mx-2 ">
         <Sidebar />
-        <div className="w-[900px] px-2">{children}</div>
+        <div className="md:w-[900px] px-2">{children}</div>
       </div>
     </React.Fragment>
   );
