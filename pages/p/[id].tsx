@@ -21,7 +21,7 @@ import Image from 'next/image';
 const DEFAULT_IMAGE =
   'https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true';
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export async function getStaticProps({ params }) {
   const post: Post = await prisma.post.findUnique({
     where: {
       id: String(params?.id),
@@ -41,7 +41,20 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   return {
     props: { post: JSON.parse(JSON.stringify(post)) },
   };
-};
+}
+
+export async function getStaticPaths() {
+  const posts = await prisma.post.findMany();
+
+  return {
+    paths: posts.map((song) => ({
+      params: {
+        id: song.id.toString(),
+      },
+    })),
+    fallback: false,
+  };
+}
 
 async function deletePost(id: string): Promise<void> {
   await fetch(`/api/post/${id}`, {

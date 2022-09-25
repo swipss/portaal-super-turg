@@ -1,4 +1,4 @@
-import { GetStaticProps, NextPage } from 'next';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Layout from '../components/Layout';
 import Form from '../components/Form';
 import prisma from '../lib/prisma';
