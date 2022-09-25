@@ -101,7 +101,7 @@ const AccountData: NextPage<any> = (props) => {
                 </div>
               )}
               <img
-                src={account?.image}
+                src={imagePreview || account?.image || DEFAULT_IMAGE}
                 className="h-32 w-32 rounded-full object-cover object-center"
               />
             </div>
