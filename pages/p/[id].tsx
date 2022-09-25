@@ -84,6 +84,7 @@ const Tree = ({
   handleSubmit,
   isValidComment,
   author,
+  session,
 }) => {
   const items = treeData
     .filter((item) => item.parent_comment_id === parentId)
@@ -147,7 +148,12 @@ const Tree = ({
                 <div className="absolute border-l-2 h-20 bottom-7  left-[30px] -z-10" />
                 <input
                   type={'text'}
-                  placeholder={`Vasta kasutajale ${item.author?.name}`}
+                  disabled={!session}
+                  placeholder={`${
+                    !session
+                      ? 'Kommenteerimiseks logi sisse'
+                      : 'Vasta kasutajale ${item.author?.name}'
+                  } `}
                   className=" bg-gray-100 py-2 px-3 rounded-full w-full"
                   onChange={(e) => handleChange(e, setComment, item.id)}
                 />
@@ -177,6 +183,7 @@ const Tree = ({
             handleSubmit={handleSubmit}
             isValidComment={isValidComment}
             author={author}
+            session={session}
           />
         </div>
       ))}
@@ -425,20 +432,24 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
           handleSubmit={handleSubmit}
           isValidComment={isValidComment}
           author={author}
+          session={session}
         />
 
         <form onSubmit={(e) => handleSubmit(comment, e)}>
           <div className="flex gap-2 mt-2 mx-2">
             <input
               type={'text'}
-              placeholder="Postita kommentaar"
+              disabled={!session}
+              placeholder={
+                !session ? 'Kommenteerimiseks logi sisse' : 'Postita kommentaar'
+              }
               className=" bg-gray-100 py-2 px-3 rounded-full w-full"
               onChange={(e) => handleChange(e, setComment)}
               onClick={() => setSelectedComment(null)}
             />
             <button
               type="submit"
-              disabled={!isValidComment(comment) || selectedComment}
+              disabled={!isValidComment(comment) || selectedComment || !session}
               className="bg-blue-500 rounded-full w-11 h-10 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
             >
               <AiOutlineArrowRight
