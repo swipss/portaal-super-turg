@@ -123,7 +123,7 @@ const Tree = ({
                 className={`h-32 border-l-2 border-b-2 w-10 rounded-bl-md absolute bottom-[70px] left-[-10px] -z-10`}
               />
             )}
-            <Link href={`user/${item.author?.id}`}>
+            <Link href={`/user/${item.author?.id}`}>
               <a>
                 <img
                   src={item?.author?.image}

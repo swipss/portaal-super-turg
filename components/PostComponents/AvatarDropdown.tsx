@@ -12,11 +12,11 @@ export const AvatarDropdown = ({ name, email }) => {
         onClick={() => setOpen(!open)}
       >
         <span className="sr-only">Open user menu</span>
-        <img
+        {/* <img
           className="mr-2 w-8 h-8 rounded-full"
           src="https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true"
           alt="user photo"
-        />
+        /> */}
 
         {name}
         <svg

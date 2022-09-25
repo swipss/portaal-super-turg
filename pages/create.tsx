@@ -187,6 +187,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
               placeholder="Hind"
               type={'number'}
               min={1}
+              max={1000000}
             />
           </div>
           <div className="mt-4 ">
