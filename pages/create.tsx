@@ -11,15 +11,6 @@ import { LocationAutocomplete } from '../components/LocationAutocomplete';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { TiDelete } from 'react-icons/ti';
 
-export const getStaticProps: GetStaticProps = async () => {
-  const categories = await prisma.category.findMany();
-  return {
-    props: {
-      categories,
-    },
-  };
-};
-
 export type Props = {
   categories: Category[];
 };
@@ -294,7 +285,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
             <button
               disabled={!isValidForm()}
               type="submit"
-              className={`py-2.5 px-5 mr-2 text-white text-sm font-medium  bg-blue-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 inline-flex items-center ${
+              className={`py-2.5 px-5 mr-2 text-white text-sm font-medium  bg-blue-500 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-blue-700 focus:text-blue-700  inline-flex items-center ${
                 !isValidForm() &&
                 'bg-blue-400 cursor-not-allowed hover:bg-blue-400 hover:text-slate-50 '
               }`}
@@ -312,7 +303,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
           padding: 0.5rem;
           margin: 0.5rem 0;
           border-radius: 0.25rem;
-          border: 0.125rem solid rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(0, 0, 0, 0.2);
         }
       `}</style>
     </>

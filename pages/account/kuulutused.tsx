@@ -29,9 +29,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         select: { secureUrl: true },
       },
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
   return {
-    props: { drafts },
+    props: { drafts: JSON.parse(JSON.stringify(drafts)) },
   };
 };
 
@@ -43,10 +46,10 @@ const UserPosts: React.FC<Props> = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   return (
     <AccountLayout>
-      <div className="border-b">
+      <div className="">
         <button
           onClick={() => setModalOpen(!modalOpen)}
-          className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+          className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
         >
           Lisa kuulutus
         </button>
@@ -59,20 +62,20 @@ const UserPosts: React.FC<Props> = (props) => {
         ))}
       </div>
       {modalOpen && (
-        <div className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bg-gray-100 bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-modal md:h-full">
+        <div className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-modal md:h-full">
           <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
             {/* <!-- Modal content --> */}
-            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div className="relative bg-white rounded-lg shadow">
               {/* <!-- Modal header --> */}
-              <div className="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <div className="flex justify-between items-start p-4 rounded-t border-b ">
+                <h3 className="text-xl font-semibold text-gray-900 ">
                   Uus kuulutus
                 </h3>
 
                 <button
                   onClick={() => setModalOpen(false)}
                   type="button"
-                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
                 >
                   <svg
                     aria-hidden="true"

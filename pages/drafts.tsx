@@ -20,6 +20,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     where: {
       author: { email: session.user.email },
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
     include: {
       author: {
         select: { name: true },
@@ -28,9 +31,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         select: { secureUrl: true },
       },
     },
+    take: 5,
   });
   return {
-    props: { drafts },
+    props: { drafts: JSON.parse(JSON.stringify(drafts)) },
   };
 };
 
