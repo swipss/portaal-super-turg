@@ -1,8 +1,9 @@
 import { GetServerSideProps } from 'next';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import AccountLayout from '../../components/AccountComponents/AccountLayout';
+import Layout from '../../components/Layout';
 import Post from '../../components/Post';
 import prisma from '../../lib/prisma';
 import { Post as PostInterface } from '../../types';
@@ -10,6 +11,7 @@ import Draft from '../create';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getSession({ req });
+
   if (!session) {
     // user is not authenticated
     res.statusCode = 403;

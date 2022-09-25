@@ -106,7 +106,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
           })
             .then((res) => res.json())
             .then((imageData) => {
-              fetch('api/upload/image', {
+              fetch('/api/upload/image', {
                 method: 'post',
                 body: JSON.stringify({ data, imageData }),
               }).then(() => {

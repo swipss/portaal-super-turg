@@ -4,10 +4,15 @@ import { getSession, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React from 'react';
 import AccountLayout from '../../components/AccountComponents/AccountLayout';
+import Layout from '../../components/Layout';
 import prisma from '../../lib/prisma';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getSession({ req });
+  if (!session) {
+    res.statusCode = 403;
+    return { props: { account: {} } };
+  }
   const account = await prisma.user.findUnique({
     where: {
       email: session?.user?.email,
@@ -19,20 +24,23 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 
+const DEFAULT_IMAGE =
+  'https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true';
+
 const AccountData: NextPage<any> = ({ account }) => {
   console.log(account);
 
   const today = moment(new Date());
   const createdAt = account?.createdAt;
-  // const { data: session } = useSession();
+  const { data: session } = useSession();
 
   return (
     <AccountLayout>
       <div className="p-2">
         <div className="flex flex-col gap-2">
           <img
-            src="https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true"
-            className="h-32 w-32 rounded"
+            src={DEFAULT_IMAGE}
+            className="h-32 w-32 rounded-full"
           />
           <p className="font-medium text-sm text-gray-900">{account?.name}</p>
           <em className="font-medium text-sm text-gray-900">
