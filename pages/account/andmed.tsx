@@ -33,7 +33,6 @@ const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLI
 const AccountData: NextPage<any> = (props) => {
   const [account, setAccount] = useState(props?.account);
   const { data: session } = useSession();
-  console.log(account);
 
   const today = moment(new Date());
   const createdAt = account?.createdAt;
@@ -56,24 +55,27 @@ const AccountData: NextPage<any> = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-      formData.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
+    console.log(imageFile);
 
-      await fetch(CLOUDINARY_URL, {
-        method: 'POST',
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => setAccount({ ...account, image: data.secure_url }));
-    }
     await fetch('/api/update-account', {
       method: 'POST',
       body: JSON.stringify(account),
-    })
-      .then((res) => res.json())
-      .then((data) => console.log(data));
+    }).then(() => {
+      const formData = new FormData();
+      formData.append('file', imageFile);
+      formData.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
+      fetch(CLOUDINARY_URL, {
+        method: 'post',
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          fetch('/api/upload/image', {
+            method: 'put',
+            body: JSON.stringify({ account, data }),
+          });
+        });
+    });
 
     console.log(account, 'account');
 

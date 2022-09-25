@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getSession } from 'next-auth/react';
 import prisma from '../../../lib/prisma';
 
 export default async function handle(
@@ -8,12 +9,15 @@ export default async function handle(
   const data = JSON.parse(req.body);
   console.log(data);
 
-  const updateUserInfo = await prisma.user.update({
-    where: {
-      id: data.id,
-    },
-    data: data,
-  });
+  if (req.method === 'POST') {
+    const updateUserInfo = await prisma.user.update({
+      where: {
+        id: data.id,
+      },
+      data: data,
+    });
+    res.json(updateUserInfo);
+  }
   // const updatePhone = await prisma.user.update({
   //   where: {
   //     id: data.id,
@@ -32,5 +36,4 @@ export default async function handle(
   //   })
   // );
   // Promise.all(updateManySocials);
-  res.json(updateUserInfo);
 }
