@@ -17,20 +17,24 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
     // }
   });
+  const categories = await prisma.category.findMany();
   return {
     props: {
       posts: JSON.parse(JSON.stringify(posts)),
+      categories,
     },
     revalidate: 10,
   };
 };
 
-const Home: NextPage<{ posts: PostInterface[] }> = ({ posts }) => {
-  console.log(posts);
+const Home: NextPage<{ posts: PostInterface[]; categories: any }> = ({
+  posts,
+  categories,
+}) => {
   return (
     <Layout>
       <main>
-        <Form />
+        <Form categories={categories} />
         <div>
           {posts?.map((post) => (
             <div key={post.id}>
