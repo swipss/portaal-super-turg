@@ -1,5 +1,7 @@
 import Router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
+import { BsFilterLeft } from 'react-icons/bs';
+import { AiOutlineArrowRight } from 'react-icons/ai';
 
 const menuItems = [
   {
@@ -153,6 +155,7 @@ const Dropdown = ({ submenus, dropdown, depthLevel, setCategory }) => {
 
 const Form: React.FC = () => {
   const [category, setCategory] = useState('');
+  const [dropdown, setDropdown] = useState(false);
   console.log(category);
 
   const handleSubmit = async (e) => {
@@ -166,9 +169,9 @@ const Form: React.FC = () => {
     <form
       onSubmit={handleSubmit}
       method="get"
-      className="my-5 "
+      className="my-5 flex flex-col gap-3 max-w-[500px] mx-auto relative "
     >
-      <ul className="flex relative my-3 gap-1 ">
+      {/* <ul className="flex relative my-3 gap-1 ">
         {menuItems.map((menu, index) => {
           const depthLevel = 0;
           return (
@@ -180,41 +183,69 @@ const Form: React.FC = () => {
             />
           );
         })}
-      </ul>
-      <input
-        type="text"
-        id="title"
-        placeholder="Märksõna"
-        name="title"
-        className="border p-2 rounded-md "
-      />
-      <input
-        type="text"
-        id="location"
-        placeholder="Asukoht"
-        name="location"
-        className="border mx-2 p-2 rounded-md "
-      />
-      <input
-        type={'number'}
-        id="minPrice"
-        placeholder="Min hind"
-        name="minPrice"
-        className="border mx-2 p-2 rounded-md "
-      />
-      <input
-        type={'number'}
-        id="maxPrice"
-        placeholder="Max hind"
-        name="maxPrice"
-        className="border mx-2 p-2 rounded-md "
-      />
-      <button
-        type="submit"
-        className="px-6 bg-blue-500 text-white rounded-md py-2 mx-2 hover:bg-blue-600 focus:bg-blue-600"
+      </ul> */}
+      <div className="border px-4 py-2   rounded-full shadow-md flex gap-2 mx-2">
+        <button
+          type="button"
+          onClick={() => setDropdown(!dropdown)}
+        >
+          <BsFilterLeft
+            size={24}
+            color="darkgrey"
+          />
+        </button>
+        <input
+          type="text"
+          id="title"
+          placeholder="Märksõna"
+          className="w-full rounded-full p-2"
+          name="title"
+          min={5}
+        />
+        <button
+          type="submit"
+          className="bg-blue-500  rounded-full w-12 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
+        >
+          <AiOutlineArrowRight
+            color="white"
+            size={20}
+          />
+        </button>
+      </div>
+
+      <div
+        className={`${
+          !dropdown && 'hidden'
+        } w-[490px] mx-auto  flex gap-5 flex-col border  p-4 shadow-md  rounded-xl absolute bg-white top-16 left-0 right-0 z-10`}
       >
-        Otsi
-      </button>
+        <input
+          type="text"
+          id="location"
+          placeholder="Asukoht"
+          name="location"
+          className="border  p-2 rounded-lg "
+        />
+        <input
+          type={'number'}
+          id="minPrice"
+          placeholder="Min hind"
+          name="minPrice"
+          className="border  p-2 rounded-lg "
+        />
+        <input
+          type={'number'}
+          id="maxPrice"
+          placeholder="Max hind"
+          name="maxPrice"
+          className="border  p-2 rounded-lg "
+        />
+        {/* <button
+          type="submit"
+          className="px-6 bg-blue-500 text-white rounded-md py-2 mx-2 hover:bg-blue-600 focus:bg-blue-600"
+        >
+          Otsi
+        </button> */}
+      </div>
     </form>
   );
 };

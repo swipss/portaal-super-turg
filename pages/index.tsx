@@ -13,6 +13,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
     include: {
       images: true,
     },
+    // orderBy: {
+
+    // }
   });
   return {
     props: {
@@ -27,7 +30,7 @@ const Home: NextPage<{ posts: PostInterface[] }> = ({ posts }) => {
   return (
     <Layout>
       <main>
-        {/* <Form /> */}
+        <Form />
         <div>
           {posts?.map((post) => (
             <div key={post.id}>

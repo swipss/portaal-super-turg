@@ -7,6 +7,7 @@ import { Post as PostInterface } from '../../types';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { title, location, minPrice, maxPrice, category } = query;
+  console.log(query);
   const posts = await prisma.post.findMany({
     where: {
       published: true,
@@ -22,13 +23,13 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         gte: Number(minPrice),
         lte: Number(maxPrice) || 10000000000000,
       },
-      categories: {
-        some: {
-          name: {
-            contains: String(category),
-          },
-        },
-      },
+      // categories: {
+      //   some: {
+      //     name: {
+      //       contains: String(category),
+      //     },
+      //   },
+      // },
     },
     include: {
       author: {
@@ -44,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   return {
     props: {
-      posts,
+      posts: JSON.parse(JSON.stringify(posts)),
     },
   };
 };

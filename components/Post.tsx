@@ -12,13 +12,13 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     <Link href={`/p/${id}`}>
       <a className="flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 ">
         <div className="flex items-center">
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 flex-shrink-0">
             {previewImage?.secureUrl ? (
               <Image
                 src={previewImage?.secureUrl}
                 width={150}
                 height={150}
-                className="rounded-l-lg border-l "
+                className="rounded-l-lg border-l s  "
                 objectFit="cover"
                 objectPosition="center"
               />
