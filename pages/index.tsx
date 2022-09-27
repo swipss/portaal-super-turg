@@ -34,7 +34,9 @@ const Home: NextPage<{ posts: PostInterface[]; categories: any }> = ({
   return (
     <Layout>
       <main>
-        <Form categories={categories} />
+        <div className="rounded-full sticky top-20  z-50">
+          <Form categories={categories} />
+        </div>
         <div>
           {posts?.map((post) => (
             <div key={post.id}>

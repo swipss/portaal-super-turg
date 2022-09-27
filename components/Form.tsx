@@ -172,7 +172,7 @@ const Form: React.FC<any> = ({ categories }) => {
     <form
       onSubmit={handleSubmit}
       method="get"
-      className="my-5 flex flex-col gap-3 max-w-[500px] mx-auto relative "
+      className="my-5 flex flex-col gap-3 max-w-[500px] mx-auto bg-white rounded-full "
     >
       {/* <ul className="flex relative my-3 gap-1 ">
         {menuItems.map((menu, index) => {
@@ -188,7 +188,7 @@ const Form: React.FC<any> = ({ categories }) => {
         })}
       </ul> */}
 
-      <div className="border px-4 py-2   rounded-full shadow-md flex gap-2 mx-2 ">
+      <div className="border px-4 py-2 rounded-full shadow-md flex gap-2  ">
         <button
           type="button"
           onClick={() => setDropdown(!dropdown)}
@@ -208,7 +208,7 @@ const Form: React.FC<any> = ({ categories }) => {
         />
         <button
           type="submit"
-          className="bg-blue-500  rounded-full w-12 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
+          className="bg-blue-500  rounded-full w-14 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
         >
           <AiOutlineArrowRight
             color="white"
