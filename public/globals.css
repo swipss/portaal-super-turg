@@ -37,8 +37,43 @@ body {
 }
 
 .slide-container {
-  width: 70%;
+  max-width: 1000px;
   margin: auto;
+}
+
+.slide-container-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  z-index: 100;
+  background-color: black;
+  overflow: hidden;
+  margin: auto;
+  padding: 4px;
+}
+
+.each-slide-fullscreen > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100vh;
+  width: 100%;
+  z-index: 100;
+}
+
+.slide-container-fullscreen .indicators {
+  z-index: 100;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h3 {
@@ -53,6 +88,7 @@ h3 {
   background-repeat: no-repeat;
   background-position: center;
   height: 300px;
+  width: 100%;
 }
 
 .each-slide span {
@@ -60,6 +96,7 @@ h3 {
   font-size: 20px;
   background: #efefef;
   text-align: center;
+  background-color: red;
 }
 
 .each-fade {

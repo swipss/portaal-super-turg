@@ -231,6 +231,8 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     number | undefined
   >(0);
 
+  const [fullScreen, setFullScreen] = useState(false);
+
   const { data: session, status } = useSession();
   console.log(session);
   if (status === 'loading') {
@@ -250,10 +252,10 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
 
   const indicators = (index) => (
     <div
-      className={`w-[75px] h-[75px] cursor-pointer ml-2 my-1 border border-gray-300 rounded shadow-md p-1  ${
+      className={`bg-white w-[75px] h-[75px] cursor-pointer ml-2 my-1 border border-gray-300 rounded shadow-md p-1 ${
         index == currentImageIndex &&
         'transform -translate-y-2 ease-in-out duration-200 bg-blue-500'
-      }`}
+      } `}
     >
       <img
         src={images?.[index].secureUrl}
@@ -349,7 +351,11 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
           </p>
         </div>
         {images.length ? (
-          <div className="slide-container">
+          <div
+            className={`${
+              fullScreen ? 'slide-container-fullscreen' : 'slide-container'
+            } `}
+          >
             <Slide
               indicators={indicators}
               autoplay={false}
@@ -363,9 +369,33 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             >
               {imageURLs.map((slideImage, index) => (
                 <div
-                  className="each-slide "
+                  onClick={() => setFullScreen(!fullScreen)}
+                  className={`${
+                    fullScreen ? 'each-slide-fullscreen' : 'each-slide'
+                  }`}
                   key={index}
                 >
+                  {fullScreen && (
+                    <button
+                      onClick={() => setFullScreen(false)}
+                      type="button"
+                      className="text-gray-400 float-right bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
+                    >
+                      <svg
+                        aria-hidden="true"
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </button>
+                  )}
                   <div
                     style={{
                       backgroundImage: `url(${slideImage})`,

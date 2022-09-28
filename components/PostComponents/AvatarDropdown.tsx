@@ -43,7 +43,7 @@ export const AvatarDropdown = ({ name, email }) => {
             aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton"
           >
             <li>
-              <Link href="/account/andmed">
+              <Link href="/account/kuulutused">
                 <a
                   href="#"
                   className="block py-2 px-4 hover:bg-gray-100 e"
