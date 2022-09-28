@@ -44,8 +44,46 @@ type Props = {
   drafts: PostInterface[];
 };
 
-const UserPosts: React.FC<Props> = (props) => {
+const UserPosts: React.FC<any> = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [publishedPosts, setPublishedPosts] = useState(
+    props?.drafts?.filter((post) => post.published === true)
+  );
+  const [unpublishedPosts, setUnpublishedPosts] = useState(
+    props?.drafts?.filter((post) => post.published !== true)
+  ).sort((a, b) => b.expiredOn - a.expiredOn);
+
+  const [sortByPrice, setSortByPrice] = useState('descending');
+  const [sortByPublishedDate, setSortByPublishedDate] = useState('descending');
+
+  const sortPostsByPrice = (arr, setPostType) => {
+    const copyArray = [...arr];
+
+    copyArray.sort((a, b) => {
+      return sortByPrice === 'descending'
+        ? a.price - b.price
+        : b.price - a.price;
+    });
+
+    setPostType(copyArray);
+    setSortByPrice(sortByPrice === 'ascending' ? 'descending' : 'ascending');
+  };
+
+  const sortPostsByPublishedDate = (arr, setPostType) => {
+    const copyArray = [...arr];
+    copyArray.sort((a, b) => {
+      const dateA = new Date(a.publisedOn).getTime();
+      const dateB = new Date(b.publishedOn).getTime();
+      return dateA < dateB ? 1 : -1;
+    });
+    console.log(copyArray);
+
+    setPostType(copyArray);
+    setSortByPublishedDate(
+      sortByPublishedDate === 'ascending' ? 'descending' : 'ascending'
+    );
+  };
+
   return (
     <AccountLayout>
       <div className="flex justify-end">
@@ -56,16 +94,75 @@ const UserPosts: React.FC<Props> = (props) => {
           Lisa kuulutus
         </button>
       </div>
-      <div className=" ">
-        {props?.drafts?.map((post) => (
-          <div key={post.id}>
-            <Post post={post} />
+      <div>
+        <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
+          Aktiivseid kuulutusi: {publishedPosts.length}
+        </p>
+        <div className="flex justify-between items-center mt-5 mb-1 ">
+          <div className="flex w-full items-center justify-between mr-1">
+            <div className="flex items-center w-full justify-end">
+              <button
+                onClick={() =>
+                  sortPostsByPrice(publishedPosts, setPublishedPosts)
+                }
+                className="border px-2 py-0.5 rounded bg-gray-50"
+              >
+                Sorteeri hinna järgi
+              </button>
+              <button
+                onClick={() =>
+                  sortPostsByPublishedDate(publishedPosts, setPublishedPosts)
+                }
+                className="border px-2 py-0.5 rounded bg-gray-50 ml-2"
+              >
+                Olek
+              </button>
+            </div>
           </div>
-        ))}
+        </div>
+
+        <div className="h-[400px] overflow-scroll">
+          {publishedPosts?.map((post) => (
+            <div key={post.id}>
+              <Post post={post} />
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between mt-10 mb-1">
+          <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
+            Mitteaktiivseid kuulutusi: {unpublishedPosts.length}
+          </p>
+          <div className="flex w-full items-end justify-end mr-1">
+            <button
+              onClick={() =>
+                sortPostsByPrice(unpublishedPosts, setUnpublishedPosts)
+              }
+              className="border px-2 py-0.5 rounded bg-gray-50"
+            >
+              Sorteeri hinna järgi
+            </button>
+            <button
+              onClick={() =>
+                sortPostsByPublishedDate(unpublishedPosts, setUnpublishedPosts)
+              }
+              className="border px-2 py-0.5 rounded bg-gray-50 ml-2"
+            >
+              Olek
+            </button>
+          </div>
+        </div>
+        <div className="h-[400px]  overflow-scroll">
+          {unpublishedPosts?.map((post) => (
+            <div key={post.id}>
+              <Post post={post} />
+            </div>
+          ))}
+        </div>
       </div>
       {modalOpen && (
         <div className="overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
-          <div className="relative p-10  w-full max-w-2xl h-full md:h-auto">
+          <div className="relative p-4  w-full max-w-2xl h-full md:h-auto">
             {/* <!-- Modal content --> */}
             <div className="relative bg-white rounded-lg shadow">
               {/* <!-- Modal header --> */}

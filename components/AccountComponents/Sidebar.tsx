@@ -266,7 +266,7 @@ export const Sidebar = () => {
       <div className="text-center">
         {!open && (
           <button
-            className="text-white absolute m-2 shadow-md z-10 left-0 top-0 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm  p-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="text-white fixed top-16 m-2 shadow-md z-10 left-0  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm  p-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             type="button"
             onClick={() => setOpen(true)}
           >
@@ -278,7 +278,7 @@ export const Sidebar = () => {
         )}
       </div>
       {open && (
-        <div className="z-10">
+        <div className="z-10 ">
           <div className="w-full h-full bg-black bg-opacity-50 absolute inset-0" />
           <div
             ref={drawerRef}

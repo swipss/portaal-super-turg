@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import Router from 'next/router';
 import Image from 'next/image';
 import { Post } from '../types';
 import Link from 'next/link';
+
+async function publishPost(id: string): Promise<void> {
+  await fetch(`/api/publish/${id}`, {
+    method: 'PUT',
+  });
+  await Router.push('/');
+}
 
 const Post: React.FC<{ post: any }> = ({ post }) => {
   const { id, images, title, location, price, published } = post;
   const previewImage = images?.[0];
   return (
     <Link href={`/p/${id}`}>
-      <a className="flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 ">
+      <a
+        className={`flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 ${
+          !published && 'bg-gray-200 hover:bg-gray-300'
+        }`}
+      >
         <div className="flex items-center">
           <div className="flex items-center gap-5 flex-shrink-0">
             {previewImage?.secureUrl ? (
@@ -41,17 +52,35 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
                 Aktiivne
               </span>
             ) : (
-              <span className="mt-2 bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
-                Aegunud
-              </span>
+              <div className="flex items-center">
+                <span className=" bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
+                  Aegunud
+                </span>
+                <button
+                  onClick={() => publishPost(id)}
+                  type="button"
+                  className="px-2.5 py-0.5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 "
+                >
+                  Aktiveeri
+                </button>
+              </div>
             )}
-            <p className="font-bold">{title}</p>
+            <div className="flex gap-2 z-10">
+              <input
+                type={'checkbox'}
+                onChange={(e) => {}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              />
+              <p className="font-bold">{title}</p>
+            </div>
             <p className="text-sm text-gray-500">
               {location || 'Asukoht puudub'}
             </p>
           </div>
         </div>
-        <div className="flex items-center">
+        <div className="flex flex-col justify-center items-center">
           <p className="font-bold mr-2">{price?.toFixed(2)} EUR</p>
         </div>
       </a>

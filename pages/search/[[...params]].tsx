@@ -4,6 +4,7 @@ import Layout from '../../components/Layout';
 import Post from '../../components/Post';
 import prisma from '../../lib/prisma';
 import { Post as PostInterface } from '../../types';
+import Form from '../../components/Form';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { title, location, minPrice, maxPrice, category } = query;
@@ -35,6 +36,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       author: {
         select: { name: true },
       },
+
       images: {
         select: {
           secureUrl: true,
@@ -42,19 +44,27 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       },
     },
   });
+  const categories = await prisma.category.findMany();
 
   return {
     props: {
       posts: JSON.parse(JSON.stringify(posts)),
+      categories,
     },
   };
 };
 
-const Feed: NextPage<{ posts: PostInterface[] }> = ({ posts }) => {
+const Feed: NextPage<{ posts: PostInterface[]; categories: any }> = ({
+  posts,
+  categories,
+}) => {
   return (
     <Layout>
+      <div className="rounded-full sticky top-20  z-40">
+        <Form categories={categories} />
+      </div>
       {posts?.length === 0 && (
-        <p className="text-center">
+        <p className="text-center bg-red-200 w-max mx-auto p-3 text-red-500 rounded shadow">
           Valitud parameetritele ei vasta ükski postitus.
         </p>
       )}

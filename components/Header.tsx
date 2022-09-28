@@ -93,7 +93,7 @@ const Header: React.FC = () => {
       <nav className="bg-blue-500 w-full sticky top-0 z-50">
         <div className="max-w-[1400px] h-16 flex mx-auto justify-between items-center px-2">
           {left}
-          <div>{right}</div>
+          <div className="relative">{right}</div>
         </div>
       </nav>
     </>

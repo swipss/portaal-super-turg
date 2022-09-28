@@ -13,7 +13,9 @@ model Post {
   content    String?
   conditionRating  Int?
   conditionInfo String?
-  published  Boolean?    @default(false)
+  published  Boolean?    @default(true)
+  publishedOn DateTime?
+  expiredOn DateTime?
   authorId   String?
   price      Int?
   location   String?
