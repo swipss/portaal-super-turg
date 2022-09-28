@@ -7,7 +7,6 @@ import Link from 'next/link';
 const Post: React.FC<{ post: any }> = ({ post }) => {
   const { id, images, title, location, price, published } = post;
   const previewImage = images?.[0];
-  console.log(previewImage?.secureUrl);
   return (
     <Link href={`/p/${id}`}>
       <a className="flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 ">

@@ -44,7 +44,6 @@ export async function getStaticPaths() {
 const User = ({ user }) => {
   const { data: session } = useSession();
   const profileBelongsToSessionUser = session?.user?.email === user?.email;
-  console.log(profileBelongsToSessionUser);
   return (
     <Layout>
       <div className="max-w-[700px] mx-auto p-6 ">

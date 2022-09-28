@@ -101,8 +101,6 @@ const Categories = ({ categoriesData, parentId = null, level = 0 }) => {
   // console.log(selectedCategory, 'here');
 
   const handleCategoryClick = (item) => {
-    console.log(item.name);
-
     if (selectedCategory === item.id && open) {
       setOpen(false);
     } else {
@@ -159,7 +157,6 @@ const Form: React.FC<any> = ({ categories }) => {
   const [categoriesData, setCategoriesData] = useState(
     getTreeDataCategories(categories)
   );
-  console.log(categoriesData, 'categories tree data');
 
   const handleSubmit = async (e) => {
     e.preventDefault();

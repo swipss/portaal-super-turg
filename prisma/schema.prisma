@@ -112,6 +112,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   role          Role      @default(USER)
+  locations Location[]
 
   comments Comment[]
   // replies  Reply[]
@@ -119,6 +120,19 @@ model User {
   socials  Social[]
 
   @@map("users")
+}
+
+model Location {
+  id  String @id @default(cuid())
+  county String?
+  municipality String?
+  district String?
+  specification String?
+  link String?
+  userId String?
+  user User? @relation(fields: [userId], references: [id])
+
+
 }
 
 model Social {

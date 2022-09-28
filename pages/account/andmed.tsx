@@ -19,6 +19,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     where: {
       email: session?.user?.email,
     },
+    include: {
+      locations: true,
+    },
   });
 
   return {
@@ -33,6 +36,8 @@ const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLI
 const AccountData: NextPage<any> = (props) => {
   const [account, setAccount] = useState(props?.account);
   const { data: session } = useSession();
+
+  // console.log(account, 'account');
 
   const today = moment(new Date());
   const createdAt = account?.createdAt;
@@ -76,10 +81,6 @@ const AccountData: NextPage<any> = (props) => {
           });
         });
     });
-
-    console.log(account, 'account');
-
-    console.log('submitted');
   };
 
   return (
@@ -185,56 +186,123 @@ const AccountData: NextPage<any> = (props) => {
           />
         </div>
         <p className="font-bold mt-4 border-t pt-2">Asukoht</p>
-        <label className="block text-sm my-2 font-medium text-gray-900 ">
-          Piirkond/maakond
-        </label>
-        <div className="relative ">
-          <input
-            disabled
-            type="text"
-            className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
-            placeholder={'Tartumaa'}
-          />
-        </div>
-        <div className="flex gap-1">
-          <div className="w-full">
-            <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
-              Asula
+        {account?.locations?.map((item, i) => (
+          <>
+            <label className="block text-sm my-2 font-medium text-gray-900 ">
+              Piirkond/maakond
             </label>
             <div className="relative ">
               <input
-                disabled
+                disabled={!isEditing}
                 type="text"
                 className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
-                placeholder={'Tartu vald'}
+                placeholder={item.county}
+                value={item.county}
+                onChange={(e) =>
+                  setAccount({
+                    ...account,
+                    locations: account.locations.map((el) =>
+                      el.id === item.id ? { ...el, county: e.target.value } : el
+                    ),
+                  })
+                }
               />
             </div>
-          </div>
-          <div className="w-full">
+            <div className="flex gap-1">
+              <div className="w-full">
+                <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+                  Asula
+                </label>
+                <div className="relative ">
+                  <input
+                    disabled={!isEditing}
+                    type="text"
+                    className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
+                    placeholder={item.municipality}
+                    value={item.municipality}
+                    onChange={(e) =>
+                      setAccount({
+                        ...account,
+                        locations: account.locations.map((el) =>
+                          el.id === item.id
+                            ? { ...el, municipality: e.target.value }
+                            : el
+                        ),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="w-full">
+                <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+                  Linnaosa
+                </label>
+                <div className="relative ">
+                  <input
+                    disabled={!isEditing}
+                    type="text"
+                    className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
+                    placeholder={item.district}
+                    value={item.district}
+                    onChange={(e) =>
+                      setAccount({
+                        ...account,
+                        locations: account.locations.map((el) =>
+                          el.id === item.id
+                            ? { ...el, district: e.target.value }
+                            : el
+                        ),
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
             <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
-              Linnaosa
+              Täpsusta asukohta
             </label>
             <div className="relative ">
               <input
-                disabled
+                disabled={!isEditing}
                 type="text"
                 className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
-                placeholder={'Tartu vald'}
+                placeholder={item.specification}
+                value={item.specification}
+                onChange={(e) =>
+                  setAccount({
+                    ...account,
+                    locations: account.locations.map((el) =>
+                      el.id === item.id
+                        ? { ...el, specification: e.target.value }
+                        : el
+                    ),
+                  })
+                }
               />
             </div>
-          </div>
-        </div>
-        <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
-          Täpsusta asukohta
-        </label>
-        <div className="relative ">
-          <input
-            disabled
-            type="text"
-            className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
-            placeholder={'Tartu vald'}
-          />
-        </div>
+            <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+              Asukoha link
+            </label>
+            <div className="relative ">
+              <input
+                disabled={!isEditing}
+                type="text"
+                className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  "
+                placeholder={item.link}
+                value={item.link}
+                onChange={(e) =>
+                  setAccount({
+                    ...account,
+                    locations: account.locations.map((el) =>
+                      el.id === item.id ? { ...el, link: e.target.value } : el
+                    ),
+                  })
+                }
+              />
+            </div>
+          </>
+        ))}
+
         <p className="font-bold mt-4  border-t pt-2">Keeled</p>
         <label className="block text-sm my-2 font-medium text-gray-900 ">
           Emakeel

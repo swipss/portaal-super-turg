@@ -34,7 +34,7 @@ const Home: NextPage<{ posts: PostInterface[]; categories: any }> = ({
   return (
     <Layout>
       <main>
-        <div className="rounded-full sticky top-20  z-50">
+        <div className="rounded-full sticky top-20  z-40">
           <Form categories={categories} />
         </div>
         <div>

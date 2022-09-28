@@ -7,15 +7,21 @@ export default async function handle(
   res: NextApiResponse
 ) {
   const data = JSON.parse(req.body);
-  console.log(data);
+  const locationData = data.locations;
 
   if (req.method === 'POST') {
+    console.log(data, 'DATA');
     const updateUserInfo = await prisma.user.update({
       where: {
         id: data.id,
       },
-      data: data,
+      data: {
+        name: data.name,
+        image: data.image,
+        phone: data.phone,
+      },
     });
+
     res.json(updateUserInfo);
   }
   // const updatePhone = await prisma.user.update({

@@ -48,7 +48,7 @@ const UserPosts: React.FC<Props> = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   return (
     <AccountLayout>
-      <div className="">
+      <div className="flex justify-end">
         <button
           onClick={() => setModalOpen(!modalOpen)}
           className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
@@ -56,7 +56,7 @@ const UserPosts: React.FC<Props> = (props) => {
           Lisa kuulutus
         </button>
       </div>
-      <div className="h-[475px] overflow-scroll ">
+      <div className=" ">
         {props?.drafts?.map((post) => (
           <div key={post.id}>
             <Post post={post} />
