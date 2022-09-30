@@ -69,7 +69,11 @@ const Feed: NextPage<{ posts: PostInterface[]; categories: any }> = ({
         </p>
       )}
       {posts?.map((post) => (
-        <Post post={post} />
+        <Post
+          post={post}
+          handleSelectPost={{}}
+          selectedPosts={{}}
+        />
       ))}
     </Layout>
   );
