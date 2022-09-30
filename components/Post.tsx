@@ -12,15 +12,17 @@ async function publishPost(id: string): Promise<void> {
   await Router.push('/');
 }
 
-const Post: React.FC<{ post: any }> = ({ post }) => {
+const Post: React.FC<{
+  post: any;
+  handleSelectPost: any;
+  selectedPosts: any;
+}> = ({ post, handleSelectPost, selectedPosts }) => {
   const { id, images, title, location, price, published, author } = post;
   const previewImage = images?.[0];
-  console.log(author);
   const { data: session } = useSession();
   const postBelongsToUser = session?.user?.email === author?.email;
   const router = useRouter();
   const isPostOnHomepage = router.pathname === '/';
-  console.log(isPostOnHomepage);
 
   return (
     <Link href={`/p/${id}`}>
@@ -78,7 +80,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
                 (!isPostOnHomepage && (
                   <input
                     type={'checkbox'}
-                    onChange={(e) => {}}
+                    onChange={(e) => handleSelectPost(post)}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}

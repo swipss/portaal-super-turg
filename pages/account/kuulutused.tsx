@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { getSession, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import Router from 'next/router';
 import React, { useRef, useState } from 'react';
 import AccountLayout from '../../components/AccountComponents/AccountLayout';
 import Layout from '../../components/Layout';
@@ -72,6 +73,9 @@ const UserPosts: React.FC<any> = (props) => {
     useState('descending');
   const [selectedSortUnpublished, setSelectedSortUnpublished] = useState('');
 
+  const [selectedPublishedPosts, setSelectedPublishedPosts] = useState([]);
+  const [selectedUnpublishedPosts, setSelectedUnpublishedPosts] = useState([]);
+
   const sortPublishedPostsByPrice = () => {
     const copyArray = [...publishedPosts];
 
@@ -95,10 +99,10 @@ const UserPosts: React.FC<any> = (props) => {
       const dateA = new Date(a.publisedOn).getTime();
       const dateB = new Date(b.publishedOn).getTime();
       return sortByPublishedDatePublished === 'descending'
-        ? dateA < dateB
+        ? dateA > dateB
           ? 1
           : -1
-        : dateA < dateB
+        : dateB > dateA
         ? -1
         : 1;
     });
@@ -150,6 +154,39 @@ const UserPosts: React.FC<any> = (props) => {
     setSelectedSortUnpublished('date');
   };
 
+  const handleSelectPublishedPost = (post) => {
+    let newArray = [...selectedPublishedPosts, post];
+    if (selectedPublishedPosts.includes(post)) {
+      newArray = newArray.filter((item) => item.id !== post.id);
+    }
+    setSelectedPublishedPosts(newArray);
+  };
+  const handleSelectUnpublishedPost = (post) => {
+    let newArray = [...selectedUnpublishedPosts, post];
+    if (selectedUnpublishedPosts.includes(post)) {
+      newArray = newArray.filter((item) => item.id !== post.id);
+    }
+    setSelectedUnpublishedPosts(newArray);
+  };
+
+  // const handleSelectAllPublishedPosts = () => {
+  //   if (selectedPublishedPosts.length) {
+  //     setSelectedPublishedPosts([]);
+  //   } else {
+  //     setSelectedPublishedPosts(sortedPublishedPosts);
+  //   }
+  // };
+
+  const deactivateMultiplePublishedPosts = async (arr) => {
+    if (!arr.length) return;
+    await fetch('/api/activate-multiple/published', {
+      method: 'PUT',
+      body: JSON.stringify(arr),
+    }).then((res) => window.location.reload());
+  };
+  console.log(selectedPublishedPosts, 'published');
+  console.log(selectedUnpublishedPosts, 'unpublished');
+
   return (
     <AccountLayout>
       <div className="flex justify-end">
@@ -161,11 +198,10 @@ const UserPosts: React.FC<any> = (props) => {
         </button>
       </div>
       <div>
-        <div className="flex items-center justify-between mt-10 mb-1">
+        <div className="flex items-center justify-between mb-1">
           <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
             Aktiivseid kuulutusi: {publishedPosts.length}
           </p>
-          <hr></hr>
           <div className="flex w-full items-end justify-end mr-1">
             <button
               onClick={() => sortPublishedPostsByPrice()}
@@ -186,20 +222,43 @@ const UserPosts: React.FC<any> = (props) => {
             </button>
           </div>
         </div>
+        {/* <button
+          onClick={() => handleSelectAllPublishedPosts()}
+          className={` border px-2 py-0.5 rounded bg-gray-50`}
+        >
+          Vali kõik
+        </button> */}
 
-        <div className="h-[400px] overflow-scroll">
-          {sortedPublishedPosts?.map((post) => (
-            <div key={post.id}>
-              <Post post={post} />
-            </div>
-          ))}
+        <div className="h-[400px] overflow-scroll ">
+          {publishedPosts.length ? (
+            sortedPublishedPosts?.map((post) => (
+              <div key={post.id}>
+                <Post
+                  post={post}
+                  handleSelectPost={handleSelectPublishedPost}
+                  selectedPosts={selectedPublishedPosts}
+                />
+              </div>
+            ))
+          ) : (
+            <p>Aktiivsed postitused puuduvad</p>
+          )}
         </div>
+        {selectedPublishedPosts.length ? (
+          <button
+            onClick={() =>
+              deactivateMultiplePublishedPosts(selectedPublishedPosts)
+            }
+            className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+          >
+            Deaktiveeri ({selectedPublishedPosts.length})
+          </button>
+        ) : null}
 
         <div className="flex items-center justify-between mt-10 mb-1">
           <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
             Mitteaktiivseid kuulutusi: {unpublishedPosts.length}
           </p>
-          <hr></hr>
           <div className="flex w-full items-end justify-end mr-1">
             <button
               onClick={() => sortUnpublishedPostsByPrice()}
@@ -220,13 +279,31 @@ const UserPosts: React.FC<any> = (props) => {
           </div>
         </div>
         <div className="h-[400px]  overflow-scroll">
-          {sortedUnpublihsedPosts?.map((post) => (
-            <div key={post.id}>
-              <Post post={post} />
-            </div>
-          ))}
+          {unpublishedPosts.length ? (
+            sortedUnpublihsedPosts?.map((post) => (
+              <div key={post.id}>
+                <Post
+                  post={post}
+                  handleSelectPost={handleSelectUnpublishedPost}
+                  selectedPosts={selectedUnpublishedPosts}
+                />
+              </div>
+            ))
+          ) : (
+            <p>Mitteaktiivsed postitused puuduvad</p>
+          )}
         </div>
       </div>
+      {selectedUnpublishedPosts.length ? (
+        <button
+          onClick={() =>
+            deactivateMultiplePublishedPosts(selectedUnpublishedPosts)
+          }
+          className="mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+        >
+          Aktiveeri ({selectedUnpublishedPosts.length})
+        </button>
+      ) : null}
       {modalOpen && (
         <div className="overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
           <div className="relative p-4  w-full max-w-2xl h-full md:h-auto">
