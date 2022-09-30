@@ -14,9 +14,9 @@ async function publishPost(id: string): Promise<void> {
 
 const Post: React.FC<{
   post: any;
-  handleSelectPost: any;
-  selectedPosts: any;
-}> = ({ post, handleSelectPost, selectedPosts }) => {
+  handleSelectPost: any | null;
+  selectedPosts: any | null;
+}> = ({ post, handleSelectPost = null, selectedPosts = null }) => {
   const { id, images, title, location, price, published, author } = post;
   const previewImage = images?.[0];
   const { data: session } = useSession();

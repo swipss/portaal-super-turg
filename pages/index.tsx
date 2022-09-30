@@ -41,7 +41,11 @@ const Home: NextPage<{ posts: PostInterface[]; categories: any }> = ({
         <div>
           {posts?.map((post) => (
             <div key={post.id}>
-              <Post post={post} />
+              <Post
+                post={post}
+                handleSelectPost={{}}
+                selectedPosts={{}}
+              />
             </div>
           ))}
         </div>
