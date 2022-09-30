@@ -12,6 +12,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     },
     include: {
       images: true,
+      author: true,
     },
     // orderBy: {
 

@@ -1,8 +1,9 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import Image from 'next/image';
 import { Post } from '../types';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 async function publishPost(id: string): Promise<void> {
   await fetch(`/api/publish/${id}`, {
@@ -12,8 +13,15 @@ async function publishPost(id: string): Promise<void> {
 }
 
 const Post: React.FC<{ post: any }> = ({ post }) => {
-  const { id, images, title, location, price, published } = post;
+  const { id, images, title, location, price, published, author } = post;
   const previewImage = images?.[0];
+  console.log(author);
+  const { data: session } = useSession();
+  const postBelongsToUser = session?.user?.email === author?.email;
+  const router = useRouter();
+  const isPostOnHomepage = router.pathname === '/';
+  console.log(isPostOnHomepage);
+
   return (
     <Link href={`/p/${id}`}>
       <a
@@ -65,14 +73,17 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
                 </button>
               </div>
             )}
-            <div className="flex gap-2 z-10">
-              <input
-                type={'checkbox'}
-                onChange={(e) => {}}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
+            <div className="flex gap-2">
+              {postBelongsToUser ||
+                (!isPostOnHomepage && (
+                  <input
+                    type={'checkbox'}
+                    onChange={(e) => {}}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                ))}
               <p className="font-bold">{title}</p>
             </div>
             <p className="text-sm text-gray-500">

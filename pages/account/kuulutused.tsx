@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { getSession, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import AccountLayout from '../../components/AccountComponents/AccountLayout';
 import Layout from '../../components/Layout';
 import Post from '../../components/Post';
@@ -53,35 +53,101 @@ const UserPosts: React.FC<any> = (props) => {
     props?.drafts?.filter((post) => post.published !== true)
   ).sort((a, b) => b.expiredOn - a.expiredOn);
 
-  const [sortByPrice, setSortByPrice] = useState('descending');
-  const [sortByPublishedDate, setSortByPublishedDate] = useState('descending');
+  const [sortedPublishedPosts, setSortedPublishedPosts] =
+    useState(publishedPosts);
+  const [sortedUnpublihsedPosts, setSortedUnpublishedPosts] =
+    useState(unpublishedPosts);
 
-  const sortPostsByPrice = (arr, setPostType) => {
-    const copyArray = [...arr];
+  // Change order based on last value for published posts
+  const [sortByPricePublished, setSortByPricePublished] =
+    useState('descending');
+  const [sortByPublishedDatePublished, setSortByPublishedDatePublished] =
+    useState('descending');
+  const [selectedSortPublished, setSelectedSortPublished] = useState('');
+
+  // Change order based on last value for unpublished posts
+  const [sortByPriceUnpublished, setSortByPriceUnpublished] =
+    useState('descending');
+  const [sortByPublishedDateUnpublished, setSortByPublishedDateUnpublished] =
+    useState('descending');
+  const [selectedSortUnpublished, setSelectedSortUnpublished] = useState('');
+
+  const sortPublishedPostsByPrice = () => {
+    const copyArray = [...publishedPosts];
 
     copyArray.sort((a, b) => {
-      return sortByPrice === 'descending'
+      return sortByPricePublished === 'descending'
         ? a.price - b.price
         : b.price - a.price;
     });
 
-    setPostType(copyArray);
-    setSortByPrice(sortByPrice === 'ascending' ? 'descending' : 'ascending');
+    setSortedPublishedPosts(copyArray);
+    setSortByPricePublished(
+      sortByPricePublished === 'ascending' ? 'descending' : 'ascending'
+    );
+    setSelectedSortPublished('price');
   };
 
-  const sortPostsByPublishedDate = (arr, setPostType) => {
-    const copyArray = [...arr];
+  const sortPublishedPostsByDate = () => {
+    const copyArray = [...publishedPosts];
+
     copyArray.sort((a, b) => {
       const dateA = new Date(a.publisedOn).getTime();
       const dateB = new Date(b.publishedOn).getTime();
-      return dateA < dateB ? 1 : -1;
+      return sortByPublishedDatePublished === 'descending'
+        ? dateA < dateB
+          ? 1
+          : -1
+        : dateA < dateB
+        ? -1
+        : 1;
     });
-    console.log(copyArray);
 
-    setPostType(copyArray);
-    setSortByPublishedDate(
-      sortByPublishedDate === 'ascending' ? 'descending' : 'ascending'
+    setSortedPublishedPosts(copyArray);
+    setSortByPublishedDatePublished(
+      sortByPublishedDatePublished === 'ascending' ? 'descending' : 'ascending'
     );
+    setSelectedSortPublished('date');
+  };
+
+  const sortUnpublishedPostsByPrice = () => {
+    const copyArray = [...unpublishedPosts];
+
+    copyArray.sort((a, b) => {
+      return sortByPriceUnpublished === 'descending'
+        ? a.price - b.price
+        : b.price - a.price;
+    });
+
+    setSortedUnpublishedPosts(copyArray);
+    setSortByPriceUnpublished(
+      sortByPriceUnpublished === 'ascending' ? 'descending' : 'ascending'
+    );
+    setSelectedSortUnpublished('price');
+  };
+
+  const sortUnpublishedPostsByDate = () => {
+    const copyArray = [...unpublishedPosts];
+
+    copyArray.sort((a, b) => {
+      const dateA = new Date(a.publisedOn).getTime();
+      const dateB = new Date(b.publishedOn).getTime();
+      return sortByPublishedDateUnpublished === 'descending' // set to expired on date
+        ? dateA < dateB
+          ? 1
+          : -1
+        : dateA < dateB
+        ? -1
+        : 1;
+    });
+
+    setSortedUnpublishedPosts(copyArray);
+    setSortByPublishedDateUnpublished(
+      sortByPublishedDateUnpublished === 'ascending'
+        ? 'descending'
+        : 'ascending'
+    );
+    setSelectedSortUnpublished('date');
   };
 
   return (
@@ -95,34 +161,34 @@ const UserPosts: React.FC<any> = (props) => {
         </button>
       </div>
       <div>
-        <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
-          Aktiivseid kuulutusi: {publishedPosts.length}
-        </p>
-        <div className="flex justify-between items-center mt-5 mb-1 ">
-          <div className="flex w-full items-center justify-between mr-1">
-            <div className="flex items-center w-full justify-end">
-              <button
-                onClick={() =>
-                  sortPostsByPrice(publishedPosts, setPublishedPosts)
-                }
-                className="border px-2 py-0.5 rounded bg-gray-50"
-              >
-                Sorteeri hinna järgi
-              </button>
-              <button
-                onClick={() =>
-                  sortPostsByPublishedDate(publishedPosts, setPublishedPosts)
-                }
-                className="border px-2 py-0.5 rounded bg-gray-50 ml-2"
-              >
-                Olek
-              </button>
-            </div>
+        <div className="flex items-center justify-between mt-10 mb-1">
+          <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
+            Aktiivseid kuulutusi: {publishedPosts.length}
+          </p>
+          <hr></hr>
+          <div className="flex w-full items-end justify-end mr-1">
+            <button
+              onClick={() => sortPublishedPostsByPrice()}
+              className={`${
+                selectedSortPublished === 'price' && 'bg-blue-600 text-white'
+              } border px-2 py-0.5 rounded bg-gray-50`}
+            >
+              Hind
+            </button>
+            <button
+              onClick={() => sortPublishedPostsByDate()}
+              className={`${
+                selectedSortPublished === 'date' && 'bg-blue-600 text-white'
+              }
+               border px-2 py-0.5 rounded bg-gray-50`}
+            >
+              Olek
+            </button>
           </div>
         </div>
 
         <div className="h-[400px] overflow-scroll">
-          {publishedPosts?.map((post) => (
+          {sortedPublishedPosts?.map((post) => (
             <div key={post.id}>
               <Post post={post} />
             </div>
@@ -133,27 +199,28 @@ const UserPosts: React.FC<any> = (props) => {
           <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
             Mitteaktiivseid kuulutusi: {unpublishedPosts.length}
           </p>
+          <hr></hr>
           <div className="flex w-full items-end justify-end mr-1">
             <button
-              onClick={() =>
-                sortPostsByPrice(unpublishedPosts, setUnpublishedPosts)
-              }
-              className="border px-2 py-0.5 rounded bg-gray-50"
+              onClick={() => sortUnpublishedPostsByPrice()}
+              className={`${
+                selectedSortUnpublished === 'price' && 'bg-blue-600 text-white'
+              } border px-2 py-0.5 rounded bg-gray-50`}
             >
-              Sorteeri hinna järgi
+              Hind
             </button>
             <button
-              onClick={() =>
-                sortPostsByPublishedDate(unpublishedPosts, setUnpublishedPosts)
-              }
-              className="border px-2 py-0.5 rounded bg-gray-50 ml-2"
+              onClick={() => sortUnpublishedPostsByDate()}
+              className={`${
+                selectedSortUnpublished === 'date' && 'bg-blue-600 text-white'
+              } border px-2 py-0.5 rounded bg-gray-50 ml-2`}
             >
               Olek
             </button>
           </div>
         </div>
         <div className="h-[400px]  overflow-scroll">
-          {unpublishedPosts?.map((post) => (
+          {sortedUnpublihsedPosts?.map((post) => (
             <div key={post.id}>
               <Post post={post} />
             </div>
