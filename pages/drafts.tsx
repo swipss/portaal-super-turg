@@ -61,7 +61,11 @@ const Drafts: React.FC<Props> = (props) => {
         <main className="flex flex-col mx-1">
           {props.drafts.map((post) => (
             <div key={post.id}>
-              <Post post={post} />
+              <Post
+                post={post}
+                handleSelectPost={{}}
+                selectedPosts={{}}
+              />
             </div>
           ))}
         </main>
