@@ -83,23 +83,27 @@ const Post: React.FC<{
             )}
           </div>
           <div className="flex flex-col items-start ml-2 gap-1">
-            {published ? (
-              <span className="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
-                Aktiivne kuni {activeUntil.format('DD.MM')}
-              </span>
-            ) : (
-              <div className="flex items-center">
-                <span className=" bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
-                  Aegus {expired.format('DD.MM')}
-                </span>
-                <button
-                  onClick={() => publishPost(id)}
-                  type="button"
-                  className="px-2.5 py-0.5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 "
-                >
-                  Aktiveeri
-                </button>
-              </div>
+            {!isPostOnHomepage && (
+              <>
+                {published ? (
+                  <span className="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                    Aktiivne kuni {activeUntil.format('DD.MM')}
+                  </span>
+                ) : (
+                  <div className="flex items-center">
+                    <span className=" bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
+                      Aegus {expired.format('DD.MM')}
+                    </span>
+                    <button
+                      onClick={() => publishPost(id)}
+                      type="button"
+                      className="px-2.5 py-0.5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 "
+                    >
+                      Aktiveeri
+                    </button>
+                  </div>
+                )}
+              </>
             )}
             <div className="flex gap-2 items-center">
               {postBelongsToUser ||
