@@ -13,7 +13,7 @@ export default async function handle(req, res) {
       },
     },
     data: {
-      published: false,
+      published: true,
     },
   });
 

@@ -131,11 +131,19 @@ const UserPosts: React.FC<any> = (props) => {
   //   }
   // };
 
-  const deactivateMultiplePublishedPosts = async (arr) => {
-    if (!arr.length) return;
+  const deactivateMultiplePublishedPosts = async () => {
+    if (!selectedPublishedPosts.length) return;
     await fetch('/api/activate-multiple/published', {
       method: 'PUT',
-      body: JSON.stringify(arr),
+      body: JSON.stringify(selectedPublishedPosts),
+    }).then((res) => window.location.reload());
+  };
+
+  const activateMultiplePublishedPosts = async () => {
+    if (!selectedUnpublishedPosts.length) return;
+    await fetch('/api/activate-multiple/unpublished', {
+      method: 'PUT',
+      body: JSON.stringify(selectedUnpublishedPosts),
     }).then((res) => window.location.reload());
   };
   console.log(selectedPublishedPosts, 'published');
@@ -212,9 +220,7 @@ const UserPosts: React.FC<any> = (props) => {
         </button>
         {selectedPublishedPosts.length ? (
           <button
-            onClick={() =>
-              deactivateMultiplePublishedPosts(selectedPublishedPosts)
-            }
+            onClick={() => deactivateMultiplePublishedPosts()}
             className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
           >
             Deaktiveeri ({selectedPublishedPosts.length})
@@ -260,9 +266,7 @@ const UserPosts: React.FC<any> = (props) => {
       </button>
       {selectedUnpublishedPosts.length ? (
         <button
-          onClick={() =>
-            deactivateMultiplePublishedPosts(selectedUnpublishedPosts)
-          }
+          onClick={() => activateMultiplePublishedPosts()}
           className="mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
         >
           Aktiveeri ({selectedUnpublishedPosts.length})
