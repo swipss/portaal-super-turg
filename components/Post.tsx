@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Post } from '../types';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import moment from 'moment';
 
 async function publishPost(id: string): Promise<void> {
   await fetch(`/api/publish/${id}`, {
@@ -17,12 +18,37 @@ const Post: React.FC<{
   handleSelectPost: any | null;
   selectedPosts: any | null;
 }> = ({ post, handleSelectPost = null, selectedPosts = null }) => {
-  const { id, images, title, location, price, published, author } = post;
+  const {
+    id,
+    images,
+    title,
+    location,
+    price,
+    published,
+    author,
+    publishedOn,
+    expiredOn,
+  } = post;
   const previewImage = images?.[0];
   const { data: session } = useSession();
   const postBelongsToUser = session?.user?.email === author?.email;
   const router = useRouter();
   const isPostOnHomepage = router.pathname === '/';
+
+  const activeUntil = moment(publishedOn).add(1, 'M');
+  const todayDate = moment();
+  const expired = moment();
+
+  const deactivePost = async () => {
+    await fetch('/api/activate-multiple/published', {
+      method: 'put',
+      body: JSON.stringify([post]),
+    });
+  };
+
+  if (todayDate > activeUntil && published && publishedOn) {
+    deactivePost();
+  }
 
   return (
     <Link href={`/p/${id}`}>
@@ -59,12 +85,12 @@ const Post: React.FC<{
           <div className="flex flex-col items-start ml-2 gap-1">
             {published ? (
               <span className="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
-                Aktiivne
+                Aktiivne kuni {activeUntil.format('DD.MM')}
               </span>
             ) : (
               <div className="flex items-center">
                 <span className=" bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
-                  Aegunud
+                  Aegus {expired.format('DD.MM')}
                 </span>
                 <button
                   onClick={() => publishPost(id)}

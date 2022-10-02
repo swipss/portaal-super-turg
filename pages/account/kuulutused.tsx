@@ -48,11 +48,23 @@ type Props = {
 const UserPosts: React.FC<any> = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [publishedPosts, setPublishedPosts] = useState(
-    props?.drafts?.filter((post) => post.published === true)
+    props?.drafts
+      ?.filter((post) => post.published === true)
+      .sort((a, b) => {
+        const dateA = new Date(a.publishedOn).getTime();
+        const dateB = new Date(b.publishedOn).getTime();
+        return dateB > dateA ? 1 : -1;
+      })
   );
   const [unpublishedPosts, setUnpublishedPosts] = useState(
-    props?.drafts?.filter((post) => post.published !== true)
-  ).sort((a, b) => b.expiredOn - a.expiredOn);
+    props?.drafts
+      ?.filter((post) => post.published !== true)
+      .sort((a, b) => {
+        const dateA = new Date(a.expiredOn).getTime();
+        const dateB = new Date(b.expiredOn).getTime();
+        return dateB > dateA ? 1 : -1;
+      })
+  );
 
   const [sortedPublishedPosts, setSortedPublishedPosts] =
     useState(publishedPosts);
@@ -243,7 +255,7 @@ const UserPosts: React.FC<any> = (props) => {
           </div>
         </div>
         <div className="h-[400px]  overflow-scroll">
-          {unpublishedPosts.length ? (
+          {sortedUnpublihsedPosts.length ? (
             sortedUnpublihsedPosts?.map((post) => (
               <div key={post.id}>
                 <Post

@@ -25,6 +25,7 @@ export default async function handle(
       conditionInfo: conditionInfo,
       price: price,
       location: location,
+      publishedOn: new Date(),
       author: { connect: { email: session?.user?.email } },
     },
   });

@@ -14,6 +14,7 @@ export default async function handle(req, res) {
     },
     data: {
       published: true,
+      publishedOn: new Date(),
     },
   });
 
