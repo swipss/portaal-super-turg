@@ -92,28 +92,6 @@ const UserPosts: React.FC<any> = (props) => {
     setSelectedSortPublished('price');
   };
 
-  const sortPublishedPostsByDate = () => {
-    const copyArray = [...publishedPosts];
-
-    copyArray.sort((a, b) => {
-      const dateA = new Date(a.publisedOn).getTime();
-      const dateB = new Date(b.publishedOn).getTime();
-      return sortByPublishedDatePublished === 'descending'
-        ? dateA > dateB
-          ? 1
-          : -1
-        : dateB > dateA
-        ? -1
-        : 1;
-    });
-
-    setSortedPublishedPosts(copyArray);
-    setSortByPublishedDatePublished(
-      sortByPublishedDatePublished === 'ascending' ? 'descending' : 'ascending'
-    );
-    setSelectedSortPublished('date');
-  };
-
   const sortUnpublishedPostsByPrice = () => {
     const copyArray = [...unpublishedPosts];
 
@@ -128,30 +106,6 @@ const UserPosts: React.FC<any> = (props) => {
       sortByPriceUnpublished === 'ascending' ? 'descending' : 'ascending'
     );
     setSelectedSortUnpublished('price');
-  };
-
-  const sortUnpublishedPostsByDate = () => {
-    const copyArray = [...unpublishedPosts];
-
-    copyArray.sort((a, b) => {
-      const dateA = new Date(a.publisedOn).getTime();
-      const dateB = new Date(b.publishedOn).getTime();
-      return sortByPublishedDateUnpublished === 'descending' // set to expired on date
-        ? dateA < dateB
-          ? 1
-          : -1
-        : dateA < dateB
-        ? -1
-        : 1;
-    });
-
-    setSortedUnpublishedPosts(copyArray);
-    setSortByPublishedDateUnpublished(
-      sortByPublishedDateUnpublished === 'ascending'
-        ? 'descending'
-        : 'ascending'
-    );
-    setSelectedSortUnpublished('date');
   };
 
   const handleSelectPublishedPost = (post) => {
@@ -182,10 +136,25 @@ const UserPosts: React.FC<any> = (props) => {
     await fetch('/api/activate-multiple/published', {
       method: 'PUT',
       body: JSON.stringify(arr),
-    }).then((res) => window.location.reload());
+    }).then((res) => Router.push('/'));
   };
   console.log(selectedPublishedPosts, 'published');
   console.log(selectedUnpublishedPosts, 'unpublished');
+
+  const handleSelectAllPublishedPosts = () => {
+    if (!selectedPublishedPosts.length) {
+      setSelectedPublishedPosts(publishedPosts);
+    } else {
+      setSelectedPublishedPosts([]);
+    }
+  };
+  const handleSelectAllUnpublishedPosts = () => {
+    if (!selectedPublishedPosts.length) {
+      setSelectedUnpublishedPosts(unpublishedPosts);
+    } else {
+      setSelectedUnpublishedPosts([]);
+    }
+  };
 
   return (
     <AccountLayout>
@@ -211,15 +180,6 @@ const UserPosts: React.FC<any> = (props) => {
             >
               Hind
             </button>
-            <button
-              onClick={() => sortPublishedPostsByDate()}
-              className={`${
-                selectedSortPublished === 'date' && 'bg-blue-600 text-white'
-              }
-               border px-2 py-0.5 rounded bg-gray-50`}
-            >
-              Olek
-            </button>
           </div>
         </div>
         {/* <button
@@ -244,6 +204,12 @@ const UserPosts: React.FC<any> = (props) => {
             <p>Aktiivsed postitused puuduvad</p>
           )}
         </div>
+        <button
+          onClick={() => handleSelectAllPublishedPosts()}
+          className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+        >
+          Vali kõik
+        </button>
         {selectedPublishedPosts.length ? (
           <button
             onClick={() =>
@@ -268,14 +234,6 @@ const UserPosts: React.FC<any> = (props) => {
             >
               Hind
             </button>
-            <button
-              onClick={() => sortUnpublishedPostsByDate()}
-              className={`${
-                selectedSortUnpublished === 'date' && 'bg-blue-600 text-white'
-              } border px-2 py-0.5 rounded bg-gray-50 ml-2`}
-            >
-              Olek
-            </button>
           </div>
         </div>
         <div className="h-[400px]  overflow-scroll">
@@ -294,6 +252,12 @@ const UserPosts: React.FC<any> = (props) => {
           )}
         </div>
       </div>
+      <button
+        onClick={() => handleSelectAllUnpublishedPosts()}
+        className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+      >
+        Vali kõik
+      </button>
       {selectedUnpublishedPosts.length ? (
         <button
           onClick={() =>

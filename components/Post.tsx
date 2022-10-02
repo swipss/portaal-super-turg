@@ -75,11 +75,18 @@ const Post: React.FC<{
                 </button>
               </div>
             )}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               {postBelongsToUser ||
                 (!isPostOnHomepage && (
                   <input
                     type={'checkbox'}
+                    checked={selectedPosts.some((item) => {
+                      if (item.id === post.id) {
+                        return true;
+                      }
+                      return false;
+                    })}
+                    className=" border w-4 h-4 rounded checked:bg-blue-500"
                     onChange={(e) => handleSelectPost(post)}
                     onClick={(e) => {
                       e.stopPropagation();
