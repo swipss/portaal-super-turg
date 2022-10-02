@@ -136,7 +136,7 @@ const UserPosts: React.FC<any> = (props) => {
     await fetch('/api/activate-multiple/published', {
       method: 'PUT',
       body: JSON.stringify(arr),
-    }).then((res) => Router.push('/'));
+    }).then((res) => window.location.reload());
   };
   console.log(selectedPublishedPosts, 'published');
   console.log(selectedUnpublishedPosts, 'unpublished');
