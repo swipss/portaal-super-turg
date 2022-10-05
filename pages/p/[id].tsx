@@ -392,7 +392,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
           className=" mx-2 bg-gray-100 rounded p-5  border"
         />
 
-        <div className="bg-gray-100 p-5 rounded border w-6/12 mx-auto flex flex-col items-center justify-center mt-5">
+        <div className="bg-gray-100 p-5 rounded border  mx-2 flex flex-col items-center justify-center mt-5">
           <p className="font-bold text-center">
             {location || 'Asukoht puudub'}
           </p>

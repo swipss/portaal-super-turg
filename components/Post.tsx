@@ -37,7 +37,6 @@ const Post: React.FC<{
 
   const activeUntil = moment(publishedOn).add(1, 'M');
   const todayDate = moment();
-  const expired = moment();
 
   const deactivePost = async () => {
     await fetch('/api/activate-multiple/published', {
@@ -92,7 +91,7 @@ const Post: React.FC<{
                 ) : (
                   <div className="flex items-center">
                     <span className=" bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
-                      Aegus {expired.format('DD.MM')}
+                      Aegus {moment(expiredOn).format('DD.MM')}
                     </span>
                     <button
                       onClick={() => publishPost(id)}
