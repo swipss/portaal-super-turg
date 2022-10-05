@@ -4,6 +4,7 @@ import Form from '../components/Form';
 import prisma from '../lib/prisma';
 import Post from '../components/Post';
 import { Post as PostInterface } from '../types';
+import { getSession } from 'next-auth/react';
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const posts: PostInterface[] = await prisma.post.findMany({
@@ -14,6 +15,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       images: true,
       author: true,
     },
+
     // orderBy: {
 
     // }
@@ -28,10 +30,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 };
 
-const Home: NextPage<{ posts: PostInterface[]; categories: any }> = ({
-  posts,
-  categories,
-}) => {
+const Home: NextPage<{
+  posts: PostInterface[];
+  categories: any;
+}> = ({ posts, categories }) => {
   return (
     <Layout>
       <main>

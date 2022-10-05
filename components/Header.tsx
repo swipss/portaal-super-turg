@@ -3,9 +3,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { AvatarDropdown } from './PostComponents/AvatarDropdown';
+import useSWR from 'swr';
 import Head from 'next/head';
+import { IoIosPaper } from 'react-icons/io';
+
+async function fetchUserPosts() {
+  const response = await fetch('/api/userPosts');
+  const data = await response.json();
+  return data;
+}
 
 const Header: React.FC = () => {
+  const { data: userPosts, error } = useSWR('/api/userPosts', fetchUserPosts);
+
   const router = useRouter();
   const isActive: (pathname: string) => boolean = (pathname) =>
     router.pathname === pathname;
@@ -76,10 +86,24 @@ const Header: React.FC = () => {
       </div>
     );
     right = (
-      <AvatarDropdown
-        name={session?.user?.name}
-        email={session?.user?.email}
-      />
+      <div className="flex gap-2">
+        <Link href={'/account/kuulutused'}>
+          <a
+            href="#"
+            className="text-green-100 flex items-center p-2 text-base font-normal hover:bg-blue-600 rounded"
+          >
+            <IoIosPaper
+              size={20}
+              color={'white'}
+            />
+            <span className="ml-1">{userPosts?.length}</span>
+          </a>
+        </Link>
+        <AvatarDropdown
+          name={session?.user?.name}
+          email={session?.user?.email}
+        />
+      </div>
     );
   }
 
