@@ -16,6 +16,7 @@ model Post {
   published  Boolean?    @default(true)
   publishedOn DateTime?
   expiredOn DateTime?
+  reservedUntil DateTime?
   authorId   String?
   price      Int?
   location   String?

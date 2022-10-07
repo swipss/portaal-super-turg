@@ -57,13 +57,6 @@ export async function getStaticPaths() {
   };
 }
 
-async function deletePost(id: string): Promise<void> {
-  await fetch(`/api/post/${id}`, {
-    method: 'DELETE',
-  });
-  await Router.push('/');
-}
-
 async function postComment(comment) {
   const result = await fetch('/api/comment', {
     method: 'POST',
@@ -449,10 +442,6 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             </button>
           </div>
         </form>
-
-        {userHasValidSession && postBelongsToUser && (
-          <button onClick={() => deletePost(id)}>Kustuta</button>
-        )}
       </div>
       <style jsx>{`
         .page {

@@ -90,13 +90,13 @@ const Header: React.FC = () => {
         <Link href={'/account/kuulutused'}>
           <a
             href="#"
-            className="text-green-100 flex items-center p-2 text-base font-normal hover:bg-blue-600 rounded"
+            className="text-green-100  flex items-center p-2 text-base font-normal hover:bg-blue-600 rounded"
           >
             <IoIosPaper
               size={20}
               color={'white'}
             />
-            <span className="ml-1">{userPosts?.length}</span>
+            <span className="ml-1">{userPosts?.length || '0'}</span>
           </a>
         </Link>
         <AvatarDropdown
@@ -113,6 +113,7 @@ const Header: React.FC = () => {
         <script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
         ></script>
+        <script src="https://unpkg.com/flowbite@1.5.3/dist/datepicker.js"></script>
       </Head>
       <nav className="bg-blue-500 w-full sticky top-0 z-50">
         <div className="max-w-[1400px] h-16 flex mx-auto justify-between items-center px-2">

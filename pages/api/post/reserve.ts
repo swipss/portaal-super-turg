@@ -9,21 +9,14 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const postId: string = String(req.query.id);
-  const comment: string = req.body;
-  const session: Session = await getSession({ req });
+  const data = JSON.parse(req.body);
+  console.log(data);
 
-  if (req.method === 'POST') {
-    console.log('COMMENT', comment);
-    const post = await prisma.comment.create({
+  if (req.method === 'PUT') {
+    const post = await prisma.post.update({
+      where: { id: data.postId },
       data: {
-        content: comment,
-        author: { connect: { email: session?.user?.email } },
-        post: {
-          connect: {
-            id: postId,
-          },
-        },
+        reservedUntil: data.reservedUntil,
       },
     });
     res.json(post);

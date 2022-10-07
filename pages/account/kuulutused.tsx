@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Router from 'next/router';
 import React, { useRef, useState } from 'react';
 import AccountLayout from '../../components/AccountComponents/AccountLayout';
+import { ConfirmationModal } from '../../components/AccountComponents/ConfirmationModal';
 import Layout from '../../components/Layout';
 import Post from '../../components/Post';
 import prisma from '../../lib/prisma';
@@ -87,6 +88,8 @@ const UserPosts: React.FC<any> = (props) => {
 
   const [selectedPublishedPosts, setSelectedPublishedPosts] = useState([]);
   const [selectedUnpublishedPosts, setSelectedUnpublishedPosts] = useState([]);
+
+  const [confirmationModal, setConfirmationModal] = useState(false);
 
   const sortPublishedPostsByPrice = () => {
     const copyArray = [...publishedPosts];
@@ -208,7 +211,6 @@ const UserPosts: React.FC<any> = (props) => {
         >
           Vali kõik
         </button> */}
-
         <div className="h-[400px] overflow-scroll ">
           {publishedPosts.length ? (
             sortedPublishedPosts?.map((post) => (
@@ -232,7 +234,7 @@ const UserPosts: React.FC<any> = (props) => {
         </button>
         {selectedPublishedPosts.length ? (
           <button
-            onClick={() => deactivateMultiplePublishedPosts()}
+            onClick={() => setConfirmationModal(true)}
             className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
           >
             Deaktiveeri ({selectedPublishedPosts.length})
@@ -270,6 +272,15 @@ const UserPosts: React.FC<any> = (props) => {
           )}
         </div>
       </div>
+      {confirmationModal && (
+        <ConfirmationModal
+          setConfirmationModal={setConfirmationModal}
+          onConfirm={deactivateMultiplePublishedPosts}
+          confirmationText="Kas oled kindel, et soovid valitud kuulutused deaktiveerida?"
+          confirmationButtonText={'Jah, deaktiveeri'}
+        />
+      )}
+
       <button
         onClick={() => handleSelectAllUnpublishedPosts()}
         className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
@@ -284,6 +295,7 @@ const UserPosts: React.FC<any> = (props) => {
           Aktiveeri ({selectedUnpublishedPosts.length})
         </button>
       ) : null}
+
       {modalOpen && (
         <div className="overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
           <div className="relative p-4  w-full max-w-2xl h-full md:h-auto">
