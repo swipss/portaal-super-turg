@@ -1,9 +1,20 @@
+import moment from 'moment';
 import React, { useState } from 'react';
 
 export const PostDropdown = ({ postId }) => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState('');
+
+  const min_date = moment().format('YYYY-MM-DD');
+  console.log(min_date, date);
+
   async function addReservation(): Promise<void> {
+    if (date <= min_date) {
+      alert(
+        'Broneeringu kuupäev ei saa olla väiksem või võrdne kui tänane päev'
+      );
+      return;
+    }
     await fetch(`/api/post/reserve`, {
       method: 'PUT',
       body: JSON.stringify({ postId: postId, reservedUntil: new Date(date) }),
@@ -50,7 +61,8 @@ export const PostDropdown = ({ postId }) => {
           <p>Broneeritud kuni</p>
           <input
             type={'date'}
-            className="border rounded-lg p-2 text-sm"
+            min={min_date}
+            className="border rounded-lg p-2 text-sm appearance-none"
             onClick={(e) => {
               e.preventDefault();
             }}
@@ -59,7 +71,10 @@ export const PostDropdown = ({ postId }) => {
           <button
             type="button"
             className="button"
-            onClick={() => addReservation()}
+            onClick={(e) => {
+              e.preventDefault();
+              addReservation();
+            }}
           >
             Lisa märge
           </button>

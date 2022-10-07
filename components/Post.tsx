@@ -22,6 +22,20 @@ async function deletePost(id: string): Promise<void> {
   }).then(() => window.location.reload());
 }
 
+async function deleteReservation(id: string): Promise<void> {
+  await fetch(`/api/post/removeReservation`, {
+    method: 'PUT',
+    body: JSON.stringify({ postId: id }),
+  }).then(() => window.location.reload());
+}
+
+async function deactivatePost(id: string): Promise<void> {
+  await fetch(`/api/post/deactivate`, {
+    method: 'PUT',
+    body: JSON.stringify({ postId: id }),
+  }).then(() => window.location.reload());
+}
+
 const Post: React.FC<{
   post: any;
   handleSelectPost: any | null;
@@ -49,6 +63,9 @@ const Post: React.FC<{
   const todayDate = moment();
 
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  const [deactivateConfirmation, setDeactivateConfirmation] = useState(false);
+  const [removeReservationConfirmation, setRemoveReservationConfirmation] =
+    useState(false);
 
   const deactivePost = async () => {
     await fetch('/api/activate-multiple/published', {
@@ -95,12 +112,33 @@ const Post: React.FC<{
               )}
             </div>
             <div className="flex flex-col items-start ml-2 gap-1">
-              {!isPostOnHomepage && (
+              {router.pathname == '/account/kuulutused' && (
                 <>
                   {published ? (
-                    <span className="bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                    <div className="flex  items-center  gap-1 bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
                       Aktiivne kuni {activeUntil.format('DD.MM')}
-                    </span>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setDeactivateConfirmation(true);
+                        }}
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          ></path>
+                        </svg>
+                      </button>
+                    </div>
                   ) : (
                     <div>
                       <button
@@ -143,7 +181,7 @@ const Post: React.FC<{
               <div className="flex flex-col items-start">
                 <div className="flex items-center gap-2">
                   {postBelongsToUser ||
-                    (!isPostOnHomepage && (
+                    (router.pathname == '/account/kuulutused' && (
                       <input
                         type={'checkbox'}
                         checked={selectedPosts.some((item) => {
@@ -161,19 +199,40 @@ const Post: React.FC<{
                     ))}
                   <p className="font-bold w-40 truncate">{title}</p>
                 </div>
-                {reservedUntil && (
-                  <p
-                    className='
-                bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                <p className="text-sm text-gray-500 w-40 md:w-full truncate mb-1">
+                  {location || 'Asukoht puudub'}
+                </p>
+                {reservedUntil && published && (
+                  <div
+                    className=' flex items-center gap-1
+                bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
                 '
                   >
-                    Broneeritud kuni {moment(reservedUntil).format('DD.MM.YY')}
-                  </p>
+                    Broneeritud kuni {moment(reservedUntil).format('DD.MM')}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setRemoveReservationConfirmation(true);
+                      }}
+                    >
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
                 )}
               </div>
-              {/* <p className="text-sm text-gray-500 w-40 truncate">
-                {location || 'Asukoht puudub'}
-              </p> */}
             </div>
           </div>
           <div className="flex  justify-center items-center ">
@@ -187,6 +246,23 @@ const Post: React.FC<{
           </div>
         </a>
       </Link>
+
+      {removeReservationConfirmation && (
+        <ConfirmationModal
+          setConfirmationModal={setRemoveReservationConfirmation}
+          onConfirm={() => deleteReservation(id)}
+          confirmationText="Kas oled kindel, et soovid valitud kuulutuse broneeringu eemaldada?"
+          confirmationButtonText={'Jah, eemalda'}
+        />
+      )}
+      {deactivateConfirmation && (
+        <ConfirmationModal
+          setConfirmationModal={setDeactivateConfirmation}
+          onConfirm={() => deactivatePost(id)}
+          confirmationText="Kas oled kindel, et soovid valitud kuulutuse deaktiveerida?"
+          confirmationButtonText={'Jah, deaktiveeri'}
+        />
+      )}
       {deleteConfirmation && (
         <ConfirmationModal
           setConfirmationModal={setDeleteConfirmation}

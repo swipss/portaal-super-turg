@@ -90,7 +90,7 @@ const Header: React.FC = () => {
         <Link href={'/account/kuulutused'}>
           <a
             href="#"
-            className="text-green-100  flex items-center p-2 text-base font-normal hover:bg-blue-600 rounded"
+            className="text-white  flex items-center p-2 text-base font-normal hover:bg-blue-600 rounded"
           >
             <IoIosPaper
               size={20}
