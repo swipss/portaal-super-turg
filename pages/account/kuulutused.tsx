@@ -334,7 +334,7 @@ const UserPosts: React.FC<any> = (props) => {
                 </button>
               </div>
               {/* <!-- Modal body --> */}
-              <div className="p-6 space-y-6 h-max overflow-scroll">
+              <div className="p-6 space-y-6 h-[80vh] overflow-scroll">
                 <Draft setModalOpen={setModalOpen} />
               </div>
               {/* <!-- Modal footer --> */}

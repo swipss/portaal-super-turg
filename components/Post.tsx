@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import moment from 'moment';
 import { ConfirmationModal } from './AccountComponents/ConfirmationModal';
 import { PostDropdown } from './PostComponents/PostDropdown';
+import { EditingModal } from './PostComponents/EditingModal';
 
 async function publishPost(id: string): Promise<void> {
   await fetch(`/api/publish/${id}`, {
@@ -66,6 +67,7 @@ const Post: React.FC<{
   const [deactivateConfirmation, setDeactivateConfirmation] = useState(false);
   const [removeReservationConfirmation, setRemoveReservationConfirmation] =
     useState(false);
+  const [editing, setEditing] = useState(false);
 
   const deactivePost = async () => {
     await fetch('/api/activate-multiple/published', {
@@ -82,7 +84,7 @@ const Post: React.FC<{
     <>
       <Link href={`/p/${id}`}>
         <a
-          className={`flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 ${
+          className={`relative flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 ${
             !published && 'bg-gray-200 hover:bg-gray-300'
           }`}
         >
@@ -209,43 +211,76 @@ const Post: React.FC<{
                 '
                   >
                     Broneeritud kuni {moment(reservedUntil).format('DD.MM')}
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setRemoveReservationConfirmation(true);
-                      }}
-                    >
-                      <svg
-                        className="w-3 h-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
+                    {router.pathname === '/account/kuulutused' && (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setRemoveReservationConfirmation(true);
+                        }}
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                      </svg>
-                    </button>
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          ></path>
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
             </div>
           </div>
           <div className="flex  justify-center items-center ">
-            <p className="font-bold mr-1">{price || 0}€</p>
-            {postBelongsToUser ||
-              (!isPostOnHomepage && published && (
-                <div className="relative mr-1">
-                  <PostDropdown postId={id} />
-                </div>
-              ))}
+            <div className="flex">
+              <p className="font-bold mr-1">{price || 0}€</p>
+              {postBelongsToUser ||
+                (!isPostOnHomepage && published && (
+                  <div className="relative mr-1">
+                    <PostDropdown postId={id} />
+                  </div>
+                ))}
+            </div>
+            {router.pathname === '/account/kuulutused' && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  setEditing(true);
+                }}
+              >
+                <svg
+                  className="absolute z-10 top-2 right-2 w-6 h-6 rounded hover:bg-gray-200"
+                  fill="none"
+                  stroke="grey"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  ></path>
+                </svg>
+              </button>
+            )}
           </div>
         </a>
       </Link>
+      {editing && (
+        <EditingModal
+          post={post}
+          setEditing={setEditing}
+        />
+      )}
 
       {removeReservationConfirmation && (
         <ConfirmationModal
