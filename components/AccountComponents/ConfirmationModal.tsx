@@ -7,9 +7,9 @@ export const ConfirmationModal = ({
   confirmationButtonText,
 }) => {
   return (
-    <div className=" overflow-y-auto overflow-x-hidden fixed  top-32 z-50 md:inset-0 md:top-32 h-full flex items-center justify-center md:h-full w-full shadow-lg">
+    <div className=" overflow-y-auto overflow-x-hidden fixed  top-32 z-50 md:inset-0 md:top-32 h-full flex items-center justify-center md:h-full w-full ">
       <div className="relative p-4 w-full max-w-md h-full ">
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <div className="relative bg-gray-50 rounded-lg shadow-2xl dark:bg-gray-700">
           <button
             type="button"
             onClick={() => setConfirmationModal(false)}

@@ -10,6 +10,7 @@ import { Category } from '../types';
 import { LocationAutocomplete } from '../components/LocationAutocomplete';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { TiDelete } from 'react-icons/ti';
+import { ListManager } from 'react-beautiful-dnd-grid';
 
 export type Props = {
   categories: Category[];
@@ -29,6 +30,13 @@ interface ImageFile extends File {
   preview: string;
 }
 
+const ListElement = (props) => (
+  <img
+    src={props.secureURL}
+    className="w-10 h-10"
+  />
+);
+
 const MAX_SIZE_IN_BYTES = 10000000;
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
 
@@ -36,6 +44,8 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
   const [postData, setPostData] = useState<IPostData>();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [list, setList] = useState([]);
+  console.log(JSON.stringify(list), 'LIST');
 
   const handleDrop = (droppedItem) => {
     // Ignore drop outside droppable container
@@ -47,6 +57,23 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
     updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
     // Update State
     setPostData({ ...postData, files: updatedList });
+    // setItemList(updatedList);
+  };
+  const handleDropList = (src, dest) => {
+    // Ignore drop outside droppable container
+    const updatedList = [...list];
+    const postDataUpdatedList = [...postData?.files];
+    // Remove dragged item
+    const [reorderedItem] = updatedList.splice(src, 1);
+    const [postDataReorderedItem] = postDataUpdatedList.splice(src, 1);
+
+    // Add dropped item
+    updatedList.splice(dest, 0, reorderedItem);
+    postDataUpdatedList.splice(dest, 0, reorderedItem);
+    // Update State
+    setList(updatedList);
+    setPostData({ ...postData, files: postDataUpdatedList });
+
     // setItemList(updatedList);
   };
 
@@ -68,14 +95,18 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
         ...postData,
         files: [...(postData?.files || []), ...newFiles],
       });
+      setList([...list, ...newFiles]);
       if (rejectedFiles.length > 0) {
         alert('Failid ületavad mahupiiri 10MB või on sobimatus formaadis.');
       }
     },
   });
-  const handleDelete = (name) => {
-    const newFiles = postData?.files?.filter((file) => file.name !== name);
+  const handleDelete = (preview) => {
+    const newFiles = postData?.files?.filter(
+      (file) => file.preview !== preview
+    );
     setPostData({ ...postData, files: newFiles });
+    setList(newFiles);
   };
   const isValidForm = () => {
     if (postData?.title && postData?.price) return true;
@@ -118,6 +149,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
         });
       });
   };
+
   return (
     <>
       <div className="max-w-xl mx-auto">
@@ -211,16 +243,43 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
               </p>
             </div>
           </div>
+          {list.length ? (
+            <div className="grid items-center justify-center mt-2">
+              <ListManager
+                items={JSON.parse(JSON.stringify(list))}
+                direction="horizontal"
+                maxItems={4}
+                render={(item) => (
+                  <div
+                    className="relative"
+                    z-10
+                  >
+                    <img
+                      src={item.preview}
+                      className="w-32 p-1 bg-white m-1 h-32 object-cover object-center rounded shadow-md border"
+                    />
+                    <TiDelete
+                      color="red"
+                      size={25}
+                      className="z-10 absolute -right-2 -top-2 hover:bg-red-200 rounded-full"
+                      onClick={() => handleDelete(item.preview)}
+                    />
+                  </div>
+                )}
+                onDragEnd={(src, dest) => handleDropList(src, dest)}
+              />
+            </div>
+          ) : null}
 
-          <div className="overflow-scroll">
+          {/* <div className="">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable
                 droppableId="list-container"
-                direction="horizontal"
+                direction="grid"
               >
                 {(provided) => (
                   <div
-                    className="flex gap-2 mt-4 items-center justify-center w-max"
+                    className="flex flex-wrap  gap-2 mt-"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
@@ -256,7 +315,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
                 )}
               </Droppable>
             </DragDropContext>
-          </div>
+          </div> */}
           {loading ? (
             <button
               disabled

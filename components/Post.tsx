@@ -8,12 +8,12 @@ import moment from 'moment';
 import { ConfirmationModal } from './AccountComponents/ConfirmationModal';
 import { PostDropdown } from './PostComponents/PostDropdown';
 import { EditingModal } from './PostComponents/EditingModal';
+import { TiDelete } from 'react-icons/ti';
 
 async function publishPost(id: string): Promise<void> {
   await fetch(`/api/publish/${id}`, {
     method: 'PUT',
-  });
-  await Router.push('/');
+  }).then(() => window.location.reload());
 }
 
 async function deletePost(id: string): Promise<void> {
@@ -57,6 +57,7 @@ const Post: React.FC<{
   const previewImage = images?.[0];
   const { data: session } = useSession();
   const postBelongsToUser = session?.user?.email === author?.email;
+  console.log(postBelongsToUser, session?.user?.email, author?.email);
   const router = useRouter();
   const isPostOnHomepage = router.pathname === '/';
 
@@ -143,33 +144,15 @@ const Post: React.FC<{
                     </div>
                   ) : (
                     <div>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          deletePost(id);
-                        }}
-                      >
-                        <svg
-                          className=" w-5 h-5"
-                          fill="none"
-                          stroke="red"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          ></path>
-                        </svg>
-                      </button>
                       <div className="flex  items-center gap-1 mt-2">
                         <span className=" bg-red-100 text-red-800 text-xs font-semibold  px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
                           Aegus {moment(expiredOn).format('DD.MM')}
                         </span>
                         <button
-                          onClick={() => publishPost(id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            publishPost(id);
+                          }}
                           type="button"
                           className="px-2.5 py-0.5 text-sm  font-medium text-gray-900 focus:outline-none bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 "
                         >
@@ -182,8 +165,8 @@ const Post: React.FC<{
               )}
               <div className="flex flex-col items-start">
                 <div className="flex items-center gap-2">
-                  {postBelongsToUser ||
-                    (router.pathname == '/account/kuulutused' && (
+                  {postBelongsToUser &&
+                    router.pathname == '/account/kuulutused' && (
                       <input
                         type={'checkbox'}
                         checked={selectedPosts.some((item) => {
@@ -198,7 +181,7 @@ const Post: React.FC<{
                           e.stopPropagation();
                         }}
                       />
-                    ))}
+                    )}
                   <p className="font-bold w-40 truncate">{title}</p>
                 </div>
                 <p className="text-sm text-gray-500 w-40 md:w-full truncate mb-1">
@@ -241,37 +224,32 @@ const Post: React.FC<{
           </div>
           <div className="flex  justify-center items-center ">
             <div className="flex">
-              <p className="font-bold mr-1">{price || 0}€</p>
-              {postBelongsToUser ||
-                (!isPostOnHomepage && published && (
+              <p className="font-bold mr-1">{price?.toFixed(2) || 0}€</p>
+
+              {postBelongsToUser &&
+                published &&
+                router.pathname === '/account/kuulutused' && (
                   <div className="relative mr-1">
-                    <PostDropdown postId={id} />
+                    <PostDropdown
+                      postId={id}
+                      setEditing={setEditing}
+                    />
                   </div>
-                ))}
+                )}
+              {!published &&
+                postBelongsToUser &&
+                router.pathname === '/account/kuulutused' && (
+                  <TiDelete
+                    color="red"
+                    size={25}
+                    className=" hover:bg-red-200 rounded-md"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDeleteConfirmation(true);
+                    }}
+                  />
+                )}
             </div>
-            {router.pathname === '/account/kuulutused' && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  setEditing(true);
-                }}
-              >
-                <svg
-                  className="absolute z-10 top-2 right-2 w-6 h-6 rounded hover:bg-gray-200"
-                  fill="none"
-                  stroke="grey"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  ></path>
-                </svg>
-              </button>
-            )}
           </div>
         </a>
       </Link>

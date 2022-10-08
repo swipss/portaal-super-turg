@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     },
     include: {
       author: {
-        select: { name: true },
+        select: { name: true, email: true },
       },
       images: {
         select: { secureUrl: true },
@@ -172,7 +172,7 @@ const UserPosts: React.FC<any> = (props) => {
     }
   };
   const handleSelectAllUnpublishedPosts = () => {
-    if (!selectedPublishedPosts.length) {
+    if (!selectedUnpublishedPosts.length) {
       setSelectedUnpublishedPosts(unpublishedPosts);
     } else {
       setSelectedUnpublishedPosts([]);
@@ -190,8 +190,8 @@ const UserPosts: React.FC<any> = (props) => {
         </button>
       </div>
       <div>
-        <div className="flex items-center justify-between mb-1">
-          <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
+        <div className="mb-1">
+          <p className="mx-2 text-2xl font-bold tracking-tight text-gray-900">
             Aktiivseid kuulutusi: {publishedPosts.length}
           </p>
           <div className="flex w-full items-end justify-end mr-1">
@@ -211,7 +211,7 @@ const UserPosts: React.FC<any> = (props) => {
         >
           Vali kõik
         </button> */}
-        <div className="h-[400px] overflow-scroll ">
+        <div>
           {publishedPosts.length ? (
             sortedPublishedPosts?.map((post) => (
               <div key={post.id}>
@@ -228,7 +228,9 @@ const UserPosts: React.FC<any> = (props) => {
         </div>
         <button
           onClick={() => handleSelectAllPublishedPosts()}
-          className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+          className={`${
+            !publishedPosts.length && 'hidden'
+          } mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 `}
         >
           Vali kõik
         </button>
@@ -241,7 +243,7 @@ const UserPosts: React.FC<any> = (props) => {
           </button>
         ) : null}
 
-        <div className="flex items-center justify-between mt-10 mb-1">
+        <div className="mt-10 mb-1">
           <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
             Mitteaktiivseid kuulutusi: {unpublishedPosts.length}
           </p>
@@ -256,7 +258,7 @@ const UserPosts: React.FC<any> = (props) => {
             </button>
           </div>
         </div>
-        <div className="h-[400px]  overflow-scroll">
+        <div>
           {sortedUnpublihsedPosts.length ? (
             sortedUnpublihsedPosts?.map((post) => (
               <div key={post.id}>

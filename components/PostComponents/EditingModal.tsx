@@ -1,8 +1,31 @@
 import React, { useState } from 'react';
+import { LocationAutocomplete } from '../LocationAutocomplete';
 
 export const EditingModal = ({ post, setEditing }) => {
   const [editedPost, setEditedPost] = useState(post);
-  console.log(editedPost, 'edited');
+
+  const areChangesValid = () => {
+    if (
+      editedPost.conditionRating < 6 &&
+      editedPost.conditionRating > 0 &&
+      editedPost.price > 0 &&
+      editedPost.price < 10000000
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const updatePost = async () => {
+    if (!areChangesValid()) {
+      console.log('invalid', areChangesValid());
+      return;
+    }
+    await fetch('/api/post/update', {
+      method: 'PUT',
+      body: JSON.stringify(editedPost),
+    }).then(() => window.location.reload());
+  };
   return (
     <div className="overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
       <div className="relative p-4  w-full max-w-2xl h-full md:h-auto">
@@ -38,7 +61,7 @@ export const EditingModal = ({ post, setEditing }) => {
             </button>
           </div>
           {/* <!-- Modal body --> */}
-          <div className="p-6 space-y-6 h-[80vh] overflow-scroll">
+          <div className="p-6 space-y-6 overflow-scroll">
             <div>
               <label className="text-sm font-medium">Pealkiri</label>
               <input
@@ -97,7 +120,32 @@ export const EditingModal = ({ post, setEditing }) => {
                 }
               />
             </div>
-            <button className="button">Salvesta</button>
+            <div>
+              <label className="text-sm font-medium">Hind</label>
+              <input
+                type="number"
+                className="border rounded p-2 w-full"
+                value={editedPost.price}
+                onChange={(e) =>
+                  setEditedPost({
+                    ...editedPost,
+                    price: e.target.value,
+                  })
+                }
+                max={10000000}
+                min={1}
+              />
+            </div>
+            <LocationAutocomplete
+              postData={editedPost}
+              setPostData={setEditedPost}
+            />
+            <button
+              className="button"
+              onClick={() => updatePost()}
+            >
+              Salvesta
+            </button>
           </div>
           {/* <!-- Modal footer --> */}
           {/* <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">

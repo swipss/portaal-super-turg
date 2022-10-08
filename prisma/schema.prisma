@@ -18,7 +18,7 @@ model Post {
   expiredOn DateTime?
   reservedUntil DateTime?
   authorId   String?
-  price      Int?
+  price      Float?
   location   String?
   images     Image[]
   author     User?      @relation(fields: [authorId], references: [id])

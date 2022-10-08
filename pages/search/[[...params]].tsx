@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     },
     include: {
       author: {
-        select: { name: true },
+        select: { name: true, email: true },
       },
 
       images: {

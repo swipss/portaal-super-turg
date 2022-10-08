@@ -231,7 +231,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   if (status === 'loading') {
     return <div>Login sisse...</div>;
   }
-
+  console.log(images);
   const imageURLs = images?.map((image) => image.secureUrl);
 
   const userHasValidSession = Boolean(session);
@@ -288,7 +288,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
         <div className="flex my-3 gap-2 justify-center text-center text-2xl font-bold items-center tracking-tight">
           <p className="bg-slate-900 text-white py-2 px-3 rounded-lg shadow-md">
             {' '}
-            € {price?.toFixed(2) || '0.00'}
+            € {price.toFixed(2) || '0.00'}
           </p>
         </div>
         {images.length ? (

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { useState } from 'react';
 
-export const PostDropdown = ({ postId }) => {
+export const PostDropdown = ({ postId, setEditing }) => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState('');
 
@@ -77,6 +77,20 @@ export const PostDropdown = ({ postId }) => {
             }}
           >
             Lisa märge
+          </button>
+        </div>
+        <div
+          className="p-3  flex gap-2 items-center justify-center  text-gray-700 dark:text-gray-200"
+          aria-labelledby="dropdownMenuIconHorizontalButton"
+        >
+          <button
+            className="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setEditing(true);
+            }}
+          >
+            Muuda postitust
           </button>
         </div>
       </div>
