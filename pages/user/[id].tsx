@@ -55,7 +55,7 @@ const User = ({ user }) => {
           <div className="flex flex-col items-center justify-center md:items-start">
             <p className="font-bold text-2xl">{user?.name}</p>
             <p className="font-medium text-sm">
-              Liitus {moment(user?.createrAt).format('DD/MM/YY')}
+              Liitus {moment(user?.createdAt).format('DD/MM/YY')}
             </p>
             {!profileBelongsToSessionUser && (
               <div className="flex gap-2 items-center">
