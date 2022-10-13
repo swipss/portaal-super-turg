@@ -85,7 +85,7 @@ const Post: React.FC<{
     <>
       <Link href={`/p/${id}`}>
         <a
-          className={`relative flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 ${
+          className={`relative flex mt-2 justify-between bg-white rounded-lg border hover:bg-gray-100 max-w-[900px] mx-auto ${
             !published && 'bg-gray-200 hover:bg-gray-300'
           }`}
         >

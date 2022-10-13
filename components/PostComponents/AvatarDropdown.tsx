@@ -55,9 +55,12 @@ export const AvatarDropdown = ({ user }) => {
               <Link href="/account/kuulutused">
                 <a
                   href="#"
-                  className="block py-2 px-4 hover:bg-gray-100 e"
+                  className="py-2 px-4 hover:bg-gray-100 flex gap-2"
                 >
                   Kuulutused
+                  <p className="w-5 h-5 font-medium text-xs flex items-center justify-center text-blue-600 bg-blue-200 rounded-full">
+                    {user?.posts?.length}
+                  </p>
                 </a>
               </Link>
             </li>

@@ -298,9 +298,9 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             </p>
           </div>
         )}
-        <p className="my-2 text-center text-2xl font-bold tracking-tight text-gray-900">
-          {title}
-        </p>
+        <div className="text-center flex items-center justify-center  my-2 text-xl font-bold tracking-tight text-gray-900 mx-auto max-w-[600px]">
+          <p>{title}</p>
+        </div>
         <div className="flex my-3 gap-2 justify-center text-center text-2xl font-bold items-center tracking-tight">
           <p className="bg-slate-900 text-white py-2 px-3 rounded-lg shadow-md">
             {' '}

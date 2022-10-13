@@ -187,6 +187,11 @@ const UserPosts: React.FC<any> = (props) => {
           </button>
         ) : null}
 
+        <div className="mt-2 mb-1">
+          <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
+            Mitteaktiivseid kuulutusi: {unpublishedPosts.length}
+          </p>
+        </div>
         <div>
           {sortedUnpublihsedPosts.length ? (
             sortedUnpublihsedPosts?.map((post) => (
