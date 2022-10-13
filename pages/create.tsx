@@ -1,14 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import Layout from '../components/Layout';
+import React, { useState } from 'react';
 import Router from 'next/router';
-import { Image } from 'cloudinary-react';
 import { useDropzone } from 'react-dropzone';
-import PlacesAutocomplete from 'react-places-autocomplete';
-import { GetStaticProps } from 'next';
-import prisma from '../lib/prisma';
 import { Category } from '../types';
 import { LocationAutocomplete } from '../components/LocationAutocomplete';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { TiDelete } from 'react-icons/ti';
 import { ListManager } from 'react-beautiful-dnd-grid';
 
@@ -47,18 +41,6 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
   const [list, setList] = useState([]);
   console.log(JSON.stringify(list), 'LIST');
 
-  const handleDrop = (droppedItem) => {
-    // Ignore drop outside droppable container
-    if (!droppedItem.destination) return;
-    const updatedList = [...postData?.files];
-    // Remove dragged item
-    const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
-    // Add dropped item
-    updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
-    // Update State
-    setPostData({ ...postData, files: updatedList });
-    // setItemList(updatedList);
-  };
   const handleDropList = (src, dest) => {
     // Ignore drop outside droppable container
     const updatedList = [...list];

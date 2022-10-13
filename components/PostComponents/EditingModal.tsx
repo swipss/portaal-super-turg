@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { ListManager } from 'react-beautiful-dnd-grid';
+import { TiDelete } from 'react-icons/ti';
 import { LocationAutocomplete } from '../LocationAutocomplete';
 
 export const EditingModal = ({ post, setEditing }) => {
   const [editedPost, setEditedPost] = useState(post);
-
+  const [list, setList] = useState(post?.images);
+  console.log(post?.images);
   const areChangesValid = () => {
     if (
       editedPost.conditionRating < 6 &&
@@ -26,8 +29,26 @@ export const EditingModal = ({ post, setEditing }) => {
       body: JSON.stringify(editedPost),
     }).then(() => window.location.reload());
   };
+
+  const handleDropList = (src, dest) => {
+    // Ignore drop outside droppable container
+    const updatedList = [...list];
+    // const postDataUpdatedList = [...postData?.files];
+    // Remove dragged item
+    const [reorderedItem] = updatedList.splice(src, 1);
+    // const [postDataReorderedItem] = postDataUpdatedList.splice(src, 1);
+
+    // Add dropped item
+    updatedList.splice(dest, 0, reorderedItem);
+    // postDataUpdatedList.splice(dest, 0, reorderedItem);
+    // Update State
+    setList(updatedList);
+    // setPostData({ ...postData, files: postDataUpdatedList });
+
+    // setItemList(updatedList);
+  };
   return (
-    <div className="overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
+    <div className="py-10 overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
       <div className="relative p-4  w-full max-w-2xl h-full md:h-auto">
         {/* <!-- Modal content --> */}
         <div className="relative bg-white rounded-lg shadow">
@@ -140,6 +161,33 @@ export const EditingModal = ({ post, setEditing }) => {
               postData={editedPost}
               setPostData={setEditedPost}
             />
+            {list.length ? (
+              <div className="grid items-center justify-center mt-2">
+                <ListManager
+                  items={JSON.parse(JSON.stringify(list))}
+                  direction="horizontal"
+                  maxItems={4}
+                  render={(item) => (
+                    <div
+                      className="relative"
+                      z-10
+                    >
+                      <img
+                        src={item.secureUrl}
+                        className="w-32 p-1 bg-white m-1 h-32 object-cover object-center rounded shadow-md border"
+                      />
+                      <TiDelete
+                        color="red"
+                        size={25}
+                        className="z-10 absolute -right-2 -top-2 hover:bg-red-200 rounded-full"
+                        onClick={() => {}}
+                      />
+                    </div>
+                  )}
+                  onDragEnd={(src, dest) => handleDropList(src, dest)}
+                />
+              </div>
+            ) : null}
             <button
               className="button"
               onClick={() => updatePost()}
@@ -147,21 +195,6 @@ export const EditingModal = ({ post, setEditing }) => {
               Salvesta
             </button>
           </div>
-          {/* <!-- Modal footer --> */}
-          {/* <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                <button
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  I accept
-                </button>
-                <button
-                  type="button"
-                  className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                >
-                  Decline
-                </button>
-              </div> */}
         </div>
       </div>
     </div>

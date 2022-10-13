@@ -103,15 +103,6 @@ const Header: React.FC = () => {
           </a>
         </Link>
         <AvatarDropdown user={user} />
-        <div className="flex items-center">
-          <button onClick={() => signOut()}>
-            <TiDelete
-              color="red"
-              size={25}
-              className=" hover:bg-red-200 rounded-full"
-            />
-          </button>
-        </div>
       </div>
     );
   }

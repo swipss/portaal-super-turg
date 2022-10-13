@@ -54,6 +54,7 @@ const Post: React.FC<{
     expiredOn,
     reservedUntil,
   } = post;
+
   const previewImage = images?.[0];
   const { data: session } = useSession();
   const postBelongsToUser = session?.user?.email === author?.email;
