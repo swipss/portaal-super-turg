@@ -15,10 +15,12 @@ export default async function handle(
     res.statusCode = 403;
   }
 
-  const userPosts = await prisma.post.findMany({
+  const userPosts = await prisma.user.findUnique({
     where: {
-      author: { email: session.user.email },
-      published: true,
+      email: session?.user?.email,
+    },
+    include: {
+      posts: true,
     },
   });
   res.json(userPosts);

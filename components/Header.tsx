@@ -14,13 +14,15 @@ async function fetchUserPosts() {
 }
 
 const Header: React.FC = () => {
-  const { data: userPosts, error } = useSWR('/api/userPosts', fetchUserPosts);
-
+  const { data: session, status } = useSession();
+  const { data: user, error } = useSWR('/api/userPosts', fetchUserPosts);
+  const publishedPostsLength = user?.posts?.filter(
+    (post) => post.published === true
+  );
+  console.log(user);
   const router = useRouter();
   const isActive: (pathname: string) => boolean = (pathname) =>
     router.pathname === pathname;
-
-  const { data: session, status } = useSession();
 
   let left = (
     <div className="">
@@ -96,13 +98,10 @@ const Header: React.FC = () => {
               size={20}
               color={'white'}
             />
-            <span className="ml-1">{userPosts?.length || '0'}</span>
+            <span className="ml-1">{publishedPostsLength.length ?? '0'}</span>
           </a>
         </Link>
-        <AvatarDropdown
-          name={session?.user?.name}
-          email={session?.user?.email}
-        />
+        <AvatarDropdown user={user} />
       </div>
     );
   }

@@ -2,10 +2,18 @@ import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
-export const AvatarDropdown = ({ name, email }) => {
+export const AvatarDropdown = ({ user }) => {
   const [open, setOpen] = useState(false);
   return (
     <>
+      <Link href="/account/andmed">
+        <a>
+          <img
+            src={user?.image}
+            className="w-9 h-9 rounded-full "
+          />
+        </a>
+      </Link>
       <button
         className="flex items-center text-sm font-medium text-white rounded-full md:mr-2"
         type="button"
@@ -17,8 +25,7 @@ export const AvatarDropdown = ({ name, email }) => {
           src="https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true"
           alt="user photo"
         /> */}
-
-        {name}
+        {user?.name}
         <svg
           className="w-4 h-4 mx-1.5"
           fill="currentColor"
@@ -35,8 +42,8 @@ export const AvatarDropdown = ({ name, email }) => {
       {open && (
         <div className="z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow-lg absolute right-0 mt-10 mr-2">
           <div className="py-3 px-4 text-sm text-gray-900">
-            <div className="font-medium ">{name}</div>
-            <div className="truncate">{email}</div>
+            <div className="font-medium ">{user?.name}</div>
+            <div className="truncate">{user?.email}</div>
           </div>
           <ul
             className="py-1 text-sm text-gray-700 "
@@ -44,6 +51,86 @@ export const AvatarDropdown = ({ name, email }) => {
           >
             <li>
               <Link href="/account/kuulutused">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Kuulutused
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="#">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Raha ja arved
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="#">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Küsimused
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="#">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Suhtlus
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="#">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Teated
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="#">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Märksõnaga otsing
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="#">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Lemmikud
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="#">
+                <a
+                  href="#"
+                  className="block py-2 px-4 hover:bg-gray-100 e"
+                >
+                  Vaatasin
+                </a>
+              </Link>
+            </li>
+            <li>
+              <Link href="/account/andmed">
                 <a
                   href="#"
                   className="block py-2 px-4 hover:bg-gray-100 e"
