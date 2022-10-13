@@ -4,6 +4,8 @@ import { BsFilterLeft } from 'react-icons/bs';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import { getTreeDataCategories } from '../lib/getTreeDataCategories';
 import { AiFillCaretDown, AiFillCaretRight } from 'react-icons/ai';
+import { LocationAutocomplete } from './LocationAutocomplete';
+import PlacesAutocomplete from 'react-places-autocomplete';
 
 // const MenuItems = ({ items, depthLevel, setCategory }) => {
 //   const [dropdown, setDropdown] = useState(false);
@@ -158,10 +160,16 @@ const Form: React.FC<any> = ({ categories }) => {
     getTreeDataCategories(categories)
   );
 
+  const [location, setLocation] = useState('');
+
+  const handleAddressSelect = async (value: string): Promise<void> => {
+    setLocation(value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     Router.push(
-      `/search?title=${e.target.title.value}&location=${e.target.location.value}&minPrice=${e.target.minPrice.value}&maxPrice=${e.target.maxPrice.value}&category=${category}`
+      `/search?title=${e.target.title.value}&location=${location}&minPrice=${e.target.minPrice.value}&maxPrice=${e.target.maxPrice.value}&category=${category}`
     );
   };
 
@@ -219,6 +227,46 @@ const Form: React.FC<any> = ({ categories }) => {
           !dropdown && 'hidden'
         } max-w-[490px] mx-auto absolute  flex gap-5 flex-col border  p-4 shadow-md  rounded-xl  bg-white top-16 left-0 right-0 z-10`}
       >
+        <PlacesAutocomplete
+          value={location}
+          onChange={(value: string) => setLocation(value)}
+          onSelect={handleAddressSelect}
+        >
+          {({
+            getInputProps,
+            suggestions,
+            getSuggestionItemProps,
+            loading,
+          }) => (
+            <div>
+              <input
+                {...getInputProps({
+                  placeholder: 'Otsi asukohta...',
+                })}
+                className="w-full border border-gray-200 p-2 rounded-lg"
+              />
+
+              <div>
+                {loading ? <div>...otsin</div> : null}
+
+                {suggestions.map((suggestion) => {
+                  const style = {
+                    backgroundColor: suggestion.active ? '#ccc' : '#fff',
+                  };
+
+                  return (
+                    <div
+                      {...getSuggestionItemProps(suggestion, { style })}
+                      key={suggestion.key}
+                    >
+                      {suggestion.description}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </PlacesAutocomplete>
         <input
           type="text"
           id="location"

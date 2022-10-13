@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { useState } from 'react';
 
-export const PostDropdown = ({ postId, setEditing }) => {
+export const PostDropdown = ({ postId, setEditing, published }) => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState('');
 
@@ -54,31 +54,35 @@ export const PostDropdown = ({ postId, setEditing }) => {
           !open && 'hidden'
         } absolute w-max right-0  z-10 bg-white rounded divide-y divide-gray-100 shadow-md dark:bg-gray-700 dark:divide-gray-600`}
       >
-        <div
-          className="p-3  flex gap-2 items-center justify-center  text-gray-700 dark:text-gray-200"
-          aria-labelledby="dropdownMenuIconHorizontalButton"
-        >
-          <p>Broneeritud kuni</p>
-          <input
-            type={'date'}
-            min={min_date}
-            className="border rounded-lg p-2 text-sm appearance-none"
-            onClick={(e) => {
-              e.preventDefault();
-            }}
-            onChange={(e) => setDate(e.target.value)}
-          />
-          <button
-            type="button"
-            className="button"
-            onClick={(e) => {
-              e.preventDefault();
-              addReservation();
-            }}
+        {published && (
+          <div
+            className="p-3  flex gap-2 items-center justify-center  text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownMenuIconHorizontalButton"
           >
-            Lisa märge
-          </button>
-        </div>
+            <>
+              <p>Broneeritud kuni</p>
+              <input
+                type={'date'}
+                min={min_date}
+                className="border rounded-lg p-2 text-sm appearance-none"
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+                onChange={(e) => setDate(e.target.value)}
+              />
+              <button
+                type="button"
+                className="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  addReservation();
+                }}
+              >
+                Lisa märge
+              </button>
+            </>
+          </div>
+        )}
         <div
           className="p-3  flex gap-2 items-center justify-center  text-gray-700 dark:text-gray-200"
           aria-labelledby="dropdownMenuIconHorizontalButton"

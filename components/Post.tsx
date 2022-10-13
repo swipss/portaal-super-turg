@@ -226,16 +226,15 @@ const Post: React.FC<{
             <div className="flex">
               <p className="font-bold mr-1">{price?.toFixed(2) || 0}€</p>
 
-              {postBelongsToUser &&
-                published &&
-                router.pathname === '/account/kuulutused' && (
-                  <div className="relative mr-1">
-                    <PostDropdown
-                      postId={id}
-                      setEditing={setEditing}
-                    />
-                  </div>
-                )}
+              {postBelongsToUser && router.pathname === '/account/kuulutused' && (
+                <div className="relative mr-1">
+                  <PostDropdown
+                    postId={id}
+                    setEditing={setEditing}
+                    published={published}
+                  />
+                </div>
+              )}
               {!published &&
                 postBelongsToUser &&
                 router.pathname === '/account/kuulutused' && (

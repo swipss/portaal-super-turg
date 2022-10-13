@@ -1,6 +1,7 @@
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { TiDelete } from 'react-icons/ti';
 
 export const AvatarDropdown = ({ user }) => {
   const [open, setOpen] = useState(false);
@@ -15,7 +16,7 @@ export const AvatarDropdown = ({ user }) => {
         </a>
       </Link>
       <button
-        className="flex items-center text-sm font-medium text-white rounded-full md:mr-2"
+        className="flex items-center text-sm font-medium text-white rounded-full "
         type="button"
         onClick={() => setOpen(!open)}
       >
@@ -39,6 +40,7 @@ export const AvatarDropdown = ({ user }) => {
           ></path>
         </svg>
       </button>
+
       {open && (
         <div className="z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow-lg absolute right-0 mt-10 mr-2">
           <div className="py-3 px-4 text-sm text-gray-900">
@@ -140,14 +142,6 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
           </ul>
-          <div className="py-1 ">
-            <div
-              onClick={() => signOut()}
-              className="block py-2 px-4 text-sm text-red-500 hover:bg-gray-100 cursor-pointer"
-            >
-              Logi välja
-            </div>
-          </div>
         </div>
       )}
     </>

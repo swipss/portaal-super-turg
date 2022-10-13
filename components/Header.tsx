@@ -1,11 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { AvatarDropdown } from './PostComponents/AvatarDropdown';
 import useSWR from 'swr';
 import Head from 'next/head';
 import { IoIosPaper } from 'react-icons/io';
+import { TiDelete } from 'react-icons/ti';
 
 async function fetchUserPosts() {
   const response = await fetch('/api/userPosts');
@@ -88,7 +89,7 @@ const Header: React.FC = () => {
       </div>
     );
     right = (
-      <div className="flex gap-2">
+      <div className="flex gap-1">
         <Link href={'/account/kuulutused'}>
           <a
             href="#"
@@ -98,10 +99,19 @@ const Header: React.FC = () => {
               size={20}
               color={'white'}
             />
-            <span className="ml-1">{publishedPostsLength.length ?? '0'}</span>
+            <span className="ml-1">{publishedPostsLength?.length ?? '0'}</span>
           </a>
         </Link>
         <AvatarDropdown user={user} />
+        <div className="flex items-center">
+          <button onClick={() => signOut()}>
+            <TiDelete
+              color="red"
+              size={25}
+              className=" hover:bg-red-200 rounded-full"
+            />
+          </button>
+        </div>
       </div>
     );
   }
