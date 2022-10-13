@@ -72,56 +72,10 @@ const UserPosts: React.FC<any> = (props) => {
   const [sortedUnpublihsedPosts, setSortedUnpublishedPosts] =
     useState(unpublishedPosts);
 
-  // Change order based on last value for published posts
-  const [sortByPricePublished, setSortByPricePublished] =
-    useState('descending');
-  const [sortByPublishedDatePublished, setSortByPublishedDatePublished] =
-    useState('descending');
-  const [selectedSortPublished, setSelectedSortPublished] = useState('');
-
-  // Change order based on last value for unpublished posts
-  const [sortByPriceUnpublished, setSortByPriceUnpublished] =
-    useState('descending');
-  const [sortByPublishedDateUnpublished, setSortByPublishedDateUnpublished] =
-    useState('descending');
-  const [selectedSortUnpublished, setSelectedSortUnpublished] = useState('');
-
   const [selectedPublishedPosts, setSelectedPublishedPosts] = useState([]);
   const [selectedUnpublishedPosts, setSelectedUnpublishedPosts] = useState([]);
 
   const [confirmationModal, setConfirmationModal] = useState(false);
-
-  const sortPublishedPostsByPrice = () => {
-    const copyArray = [...publishedPosts];
-
-    copyArray.sort((a, b) => {
-      return sortByPricePublished === 'descending'
-        ? a.price - b.price
-        : b.price - a.price;
-    });
-
-    setSortedPublishedPosts(copyArray);
-    setSortByPricePublished(
-      sortByPricePublished === 'ascending' ? 'descending' : 'ascending'
-    );
-    setSelectedSortPublished('price');
-  };
-
-  const sortUnpublishedPostsByPrice = () => {
-    const copyArray = [...unpublishedPosts];
-
-    copyArray.sort((a, b) => {
-      return sortByPriceUnpublished === 'descending'
-        ? a.price - b.price
-        : b.price - a.price;
-    });
-
-    setSortedUnpublishedPosts(copyArray);
-    setSortByPriceUnpublished(
-      sortByPriceUnpublished === 'ascending' ? 'descending' : 'ascending'
-    );
-    setSelectedSortUnpublished('price');
-  };
 
   const handleSelectPublishedPost = (post) => {
     let newArray = [...selectedPublishedPosts, post];
@@ -194,16 +148,6 @@ const UserPosts: React.FC<any> = (props) => {
           <p className="mx-2 text-2xl font-bold tracking-tight text-gray-900">
             Aktiivseid kuulutusi: {publishedPosts.length}
           </p>
-          <div className="flex w-full items-end justify-end mr-1">
-            <button
-              onClick={() => sortPublishedPostsByPrice()}
-              className={`${
-                selectedSortPublished === 'price' && 'bg-blue-600 text-white'
-              } border px-2 py-0.5 rounded bg-gray-50`}
-            >
-              Hind
-            </button>
-          </div>
         </div>
         {/* <button
           onClick={() => handleSelectAllPublishedPosts()}
@@ -243,21 +187,6 @@ const UserPosts: React.FC<any> = (props) => {
           </button>
         ) : null}
 
-        <div className="mt-10 mb-1">
-          <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
-            Mitteaktiivseid kuulutusi: {unpublishedPosts.length}
-          </p>
-          <div className="flex w-full items-end justify-end mr-1">
-            <button
-              onClick={() => sortUnpublishedPostsByPrice()}
-              className={`${
-                selectedSortUnpublished === 'price' && 'bg-blue-600 text-white'
-              } border px-2 py-0.5 rounded bg-gray-50`}
-            >
-              Hind
-            </button>
-          </div>
-        </div>
         <div>
           {sortedUnpublihsedPosts.length ? (
             sortedUnpublihsedPosts?.map((post) => (

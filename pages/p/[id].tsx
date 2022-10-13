@@ -210,6 +210,8 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     conditionRating,
     conditionInfo,
     createdAt,
+    reservedUntil,
+    expiredOn,
   } = post;
 
   const [loading, setLoading] = useState(false);
@@ -282,6 +284,20 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   return (
     <Layout>
       <div>
+        {reservedUntil && (
+          <div className="flex items-center justify-center mt-1">
+            <p className="bg-red-200 text-red-600 px-2 py-1 rounded-md animate-pulse">
+              Broneeritud kuni {moment(reservedUntil).format('DD.MM') ?? ''}
+            </p>
+          </div>
+        )}
+        {!published && (
+          <div className="flex items-center justify-center mt-1">
+            <p className="bg-red-200 text-red-600 px-2 py-1 rounded-md animate-pulse">
+              Aegus {moment(expiredOn).format('DD.MM') ?? ''}
+            </p>
+          </div>
+        )}
         <p className="my-2 text-center text-2xl font-bold tracking-tight text-gray-900">
           {title}
         </p>
