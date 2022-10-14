@@ -101,7 +101,6 @@ const Tree = ({
       return dateA < dateB ? 1 : -1;
     });
   if (!items.length) return null;
-  console.log(items, 'items');
 
   return (
     <>
@@ -163,6 +162,7 @@ const Tree = ({
                   } `}
                   className=" bg-gray-100 py-2 px-3 rounded-full w-full"
                   onChange={(e) => handleChange(e, setComment, item.id)}
+                  value={comment?.content}
                 />
                 <button
                   type="submit"
@@ -216,11 +216,11 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
 
   const [loading, setLoading] = useState(false);
 
-  const [comment, setComment] = useState();
+  const [comment, setComment] = useState(null);
   const [selectedComment, setSelectedComment] = useState(null);
 
-  const [treeData, setTreeData] = useState(getTreeData(post?.comments));
-  console.log(treeData.length, 'treedata');
+  const [comments, setComments] = useState(post?.comments);
+  const [treeData, setTreeData] = useState(getTreeData(comments));
 
   const [currentImageIndex, setCurrentImageIndex] = useState<
     number | undefined
@@ -229,11 +229,9 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
   const [fullScreen, setFullScreen] = useState(false);
 
   const { data: session, status } = useSession();
-  console.log(session);
   if (status === 'loading') {
     return <div>Login sisse...</div>;
   }
-  console.log(images);
   const imageURLs = images?.map((image) => image.secureUrl);
 
   const userHasValidSession = Boolean(session);
@@ -267,14 +265,14 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
       author: session?.user?.email,
     });
   };
-
   const handleSubmit = async (comment, e) => {
     e.preventDefault();
     if (!comment) return;
-    await postComment(comment);
+    const result = await postComment(comment);
+    console.log(result, 'result');
+    const newComments = getTreeData([...treeData, result]);
+    setTreeData(newComments);
     setComment(null);
-    setSelectedComment(null);
-    window.location.reload();
   };
 
   const isValidComment = (comment) => {
@@ -442,9 +440,10 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
               placeholder={
                 !session ? 'Kommenteerimiseks logi sisse' : 'Postita kommentaar'
               }
-              className=" bg-gray-100 py-2 px-3 rounded-full w-full"
+              className=" bg-gray-100 py-2  px-3 rounded-full w-full"
               onChange={(e) => handleChange(e, setComment)}
               onClick={() => setSelectedComment(null)}
+              value={comment?.content}
             />
             <button
               type="submit"

@@ -17,6 +17,9 @@ export default async function handle(
         author: { connect: { email: session?.user?.email } },
         post: { connect: { id: data.postId } },
       },
+      include: {
+        author: true,
+      },
     });
     res.json(comment);
   } else {
