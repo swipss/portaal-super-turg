@@ -162,7 +162,6 @@ const Tree = ({
                   } `}
                   className=" bg-gray-100 py-2 px-3 rounded-full w-full"
                   onChange={(e) => handleChange(e, setComment, item.id)}
-                  value={comment?.content}
                 />
                 <button
                   type="submit"
@@ -273,6 +272,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     const newComments = getTreeData([...treeData, result]);
     setTreeData(newComments);
     setComment(null);
+    setSelectedComment(null);
   };
 
   const isValidComment = (comment) => {
@@ -443,7 +443,6 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
               className=" bg-gray-100 py-2  px-3 rounded-full w-full"
               onChange={(e) => handleChange(e, setComment)}
               onClick={() => setSelectedComment(null)}
-              value={comment?.content}
             />
             <button
               type="submit"
