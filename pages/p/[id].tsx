@@ -103,28 +103,28 @@ const Tree = ({
   if (!items.length) return null;
 
   return (
-    <>
+    <div>
       {items.map((item) => (
         <div
           className={`${level !== 0 && 'ml-10'} mx-2`}
           key={item.id}
         >
-          <div className="flex gap-2 p-3 relative">
+          <div className="flex gap-2 p-3 relative ">
             {level !== 0 && (
               <div
                 className={`h-32 border-l-2 border-b-2 w-10 rounded-bl-md absolute bottom-[70px] left-[-10px] -z-10`}
               />
             )}
             <Link href={`/user/${item.author?.id}`}>
-              <a>
+              <a className="flex flex-shrink-0">
                 <img
                   src={item?.author?.image}
-                  className="h-10 w-10 rounded-full shadow-md hover:border-2 hover:border-blue-500 object-cover object-center"
+                  className="h-10 w-10 rounded-full  shadow-md hover:border-2 hover:border-blue-500 object-cover object-center"
                 />
               </a>
             </Link>
-            <div>
-              <div className="bg-gray-100 px-3 py-2 rounded-2xl">
+            <div className="overflow-auto">
+              <div className="bg-gray-100 px-3 py-2 rounded-2xl ">
                 <div className="flex gap-1">
                   <p className="font-bold">{item?.author?.name}</p>
                   {author?.email === item.author?.email && (
@@ -133,7 +133,7 @@ const Tree = ({
                     </span>
                   )}
                 </div>
-                <p>{item.content}</p>
+                <p className="break-words">{item.content}</p>
               </div>
               <div className="flex gap-2 mt-1">
                 <button
@@ -143,7 +143,8 @@ const Tree = ({
                   Vasta
                 </button>
                 <p className="text-sm text-gray-400">
-                  {moment(item.createdAt).fromNow()}
+                  {moment(item.createdAt).format('DD.MM h:mm')} (
+                  {moment(item.createdAt).fromNow()})
                 </p>
               </div>
             </div>
@@ -193,7 +194,7 @@ const Tree = ({
           />
         </div>
       ))}
-    </>
+    </div>
   );
 };
 
@@ -284,14 +285,16 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
       <div>
         {reservedUntil && (
           <div className="flex items-center justify-center mt-1">
-            <p className="bg-red-200 text-lg font-medium text-red-600 px-2 py-1 rounded-md animate-pulse">
-              Broneeritud kuni {moment(reservedUntil).format('DD.MM') ?? ''}
+            <p className="bg-red-200 text-lg  font-medium text-white px-2 py-1 rounded-md animate-pulse">
+              BRONEERITUD KUNI {moment(reservedUntil).format('DD.MM') ?? ''}
             </p>
           </div>
         )}
         {!published && (
           <div className="flex items-center justify-center mt-1">
-            <p className="bg-red-200 text-lg font-medium text-red-600 px-2 py-1 rounded-md animate-pulse">
+            <p className="bg-black text-lg text-center font-medium text-white px-2 py-1 rounded-md animate-pulse">
+              MITTEAKTIIVNE KUULUTUS!
+              <br />
               Aegus {moment(expiredOn).format('DD.MM') ?? ''}
             </p>
           </div>
@@ -405,7 +408,11 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
           </p>
           <Link href={`/user/${author?.id}`}>
             <div className="bg-white p-2 border rounded flex gap-2 items-center shadow-md mt-2 hover:bg-gray-100 cursor-pointer">
-              <BsFillPersonFill size={24} />
+              <img
+                src={author?.image}
+                className="w-10 h-10 rounded-full object-cover object-center"
+              />
+
               <a>{author?.name}</a>
             </div>
           </Link>
@@ -414,10 +421,9 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             <p>{author?.phone}</p>
           </div>
         </div>
-        <p className="mx-2 mt-5 text-2xl font-bold tracking-tight text-gray-900">
+        <p className="ml-2 mt-5 text-2xl font-bold tracking-tight text-gray-900">
           Kommentaarid
         </p>
-
         <Tree
           treeData={treeData}
           comment={comment}

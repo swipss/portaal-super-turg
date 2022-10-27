@@ -10,12 +10,6 @@ import { PostDropdown } from './PostComponents/PostDropdown';
 import { EditingModal } from './PostComponents/EditingModal';
 import { TiDelete } from 'react-icons/ti';
 
-async function publishPost(id: string): Promise<void> {
-  await fetch(`/api/publish/${id}`, {
-    method: 'PUT',
-  }).then(() => window.location.reload());
-}
-
 async function deletePost(id: string): Promise<void> {
   await fetch(`/api/post/delete`, {
     method: 'DELETE',
@@ -146,19 +140,9 @@ const Post: React.FC<{
                   ) : (
                     <div>
                       <div className="flex  items-center gap-1 mt-2">
-                        <span className=" bg-red-100 text-red-800 text-xs font-semibold  px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
+                        <span className=" bg-black text-white text-xs font-semibold  px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-900">
                           Aegus {moment(expiredOn).format('DD.MM')}
                         </span>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            publishPost(id);
-                          }}
-                          type="button"
-                          className="px-2.5 py-0.5 text-sm  font-medium text-gray-900 focus:outline-none bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 "
-                        >
-                          Aktiveeri
-                        </button>
                       </div>
                     </div>
                   )}
@@ -230,9 +214,8 @@ const Post: React.FC<{
               {postBelongsToUser && router.pathname === '/account/kuulutused' && (
                 <div className="relative mr-1">
                   <PostDropdown
-                    postId={id}
+                    post={post}
                     setEditing={setEditing}
-                    published={published}
                   />
                 </div>
               )}

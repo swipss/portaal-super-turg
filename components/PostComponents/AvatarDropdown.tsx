@@ -2,9 +2,11 @@ import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { TiDelete } from 'react-icons/ti';
+import { ConfirmationModal } from '../AccountComponents/ConfirmationModal';
 
 export const AvatarDropdown = ({ user }) => {
   const [open, setOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const publishedPostsLength = user?.posts?.filter(
     (post) => post.published === true
   );
@@ -142,7 +144,7 @@ export const AvatarDropdown = ({ user }) => {
             </li>
             <li>
               <button
-                onClick={() => signOut()}
+                onClick={() => setIsConfirmationModalOpen(true)}
                 className="block w-full text-left border-t text-red-500 py-2 px-4 hover:bg-gray-100  transition-all duration-100"
               >
                 Logi välja
@@ -151,6 +153,14 @@ export const AvatarDropdown = ({ user }) => {
           </ul>
         </div>
       )}
+      {isConfirmationModalOpen ? (
+        <ConfirmationModal
+          setConfirmationModal={setIsConfirmationModalOpen}
+          onConfirm={() => signOut()}
+          confirmationText={'Kas oled kindel, et soovid välja logida?'}
+          confirmationButtonText={'Logi välja'}
+        />
+      ) : null}
     </>
   );
 };
