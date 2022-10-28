@@ -77,23 +77,16 @@ export const PostDropdown = ({ post, setEditing }) => {
             className="p-3  flex gap-2 items-center justify-center  text-gray-700 dark:text-gray-200"
             aria-labelledby="dropdownMenuIconHorizontalButton"
           >
-            <div className="flex gap-1">
-              <p>
-                Broneeritud kuni{' '}
-                <span
-                  className="cursor-pointer font-bold underline"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsReservationModalOpen(true);
-                  }}
-                >
-                  {post?.reservedUntil
-                    ? moment(post?.reservedUntil).format('DD.MM')
-                    : 'lisa märge'}
-                </span>
-              </p>
-
-              {/* <button
+            <button
+              className="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsReservationModalOpen(true);
+              }}
+            >
+              Broneeri
+            </button>
+            {/* <button
                 type="button"
                 className="button"
                 onClick={(e) => {
@@ -103,7 +96,6 @@ export const PostDropdown = ({ post, setEditing }) => {
               >
                 Lisa märge
               </button> */}
-            </div>
           </div>
         )}
 
@@ -135,7 +127,10 @@ export const PostDropdown = ({ post, setEditing }) => {
         </div>
       </div>
       {isReservationModalOpen ? (
-        <div className=" overflow-y-auto overflow-x-hidden fixed inset-0 top-32 z-50  md:top-32 h-full flex items-center justify-center md:h-full  ">
+        <div
+          onClick={(e) => e.preventDefault()}
+          className=" overflow-y-auto overflow-x-hidden fixed inset-0 top-32 z-50  md:top-32 h-full flex items-center justify-center md:h-full  "
+        >
           <div className="relative p-4 w-full max-w-md h-full ">
             <div className="relative bg-gray-50 rounded-lg shadow-2xl dark:bg-gray-700">
               <button

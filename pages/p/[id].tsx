@@ -284,18 +284,17 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     <Layout>
       <div>
         {reservedUntil && (
-          <div className="flex items-center justify-center mt-1">
-            <p className="bg-red-200 text-lg  font-medium text-white px-2 py-1 rounded-md animate-pulse">
+          <div className="mt-1">
+            <p className="bg-red-200 text-lg tracking-wider text-center  font-medium text-white px-2 py-1 rounded-md animate-pulse">
               BRONEERITUD KUNI {moment(reservedUntil).format('DD.MM') ?? ''}
             </p>
           </div>
         )}
         {!published && (
-          <div className="flex items-center justify-center mt-1">
-            <p className="bg-black text-lg text-center font-medium text-white px-2 py-1 rounded-md animate-pulse">
-              MITTEAKTIIVNE KUULUTUS!
-              <br />
-              Aegus {moment(expiredOn).format('DD.MM') ?? ''}
+          <div className="mt-1">
+            <p className="bg-black text-lg tracking-wider text-center font-medium text-white px-2 py-1 rounded-md animate-pulse">
+              MITTEAKTIIVNE KUULUTUS! Aegus{' '}
+              {moment(expiredOn).format('DD.MM') ?? ''}
             </p>
           </div>
         )}

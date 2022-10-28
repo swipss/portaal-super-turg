@@ -174,11 +174,11 @@ const Post: React.FC<{
                 </p>
                 {reservedUntil && published && (
                   <div
-                    className=' flex items-center gap-1
-                bg-red-100 text-red-800 text-xs font-semibold mr-2 px-2 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                    className='tracking-wider animate-pulse flex  items-center gap-1
+                bg-red-300 text-white text-xs font-semibold mr-2 px-2 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
                 '
                   >
-                    Broneeritud kuni {moment(reservedUntil).format('DD.MM')}
+                    BRONEERITUD KUNI {moment(reservedUntil).format('DD.MM')}
                     {router.pathname === '/account/kuulutused' && (
                       <button
                         onClick={(e) => {
