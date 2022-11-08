@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Layout from '../components/Layout';
-import Form from '../components/Form';
+import Search from '../components/Search';
 import prisma from '../lib/prisma';
 import Post from '../components/Post';
 import { Post as PostInterface } from '../types';
@@ -38,7 +38,7 @@ const Home: NextPage<{
     <Layout>
       <main>
         <div className="rounded-full sticky top-20  z-40">
-          <Form categories={categories} />
+          <Search categories={categories} />
         </div>
         <div>
           {posts?.map((post) => (

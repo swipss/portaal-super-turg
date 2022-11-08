@@ -174,8 +174,8 @@ const Post: React.FC<{
                 </p>
                 {reservedUntil && published && (
                   <div
-                    className='tracking-wider animate-pulse flex  items-center gap-1
-                bg-red-300 text-white text-xs font-semibold mr-2 px-2 py-0.5 rounded dark:bg-green-200 dark:text-green-900">
+                    className='tracking-wider flex  items-center gap-1
+                bg-red-400 text-white text-xs font-semibold mr-2 px-2 py-0.5 rounded ">
                 '
                   >
                     BRONEERITUD KUNI {moment(reservedUntil).format('DD.MM')}

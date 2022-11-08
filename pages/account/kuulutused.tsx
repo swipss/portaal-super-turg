@@ -1,15 +1,12 @@
 import { GetServerSideProps } from 'next';
 import { getSession, useSession } from 'next-auth/react';
-import Link from 'next/link';
-import Router from 'next/router';
 import React, { useRef, useState } from 'react';
 import AccountLayout from '../../components/AccountComponents/AccountLayout';
 import { ConfirmationModal } from '../../components/AccountComponents/ConfirmationModal';
-import Layout from '../../components/Layout';
 import Post from '../../components/Post';
 import prisma from '../../lib/prisma';
 import { Post as PostInterface } from '../../types';
-import Draft from '../create';
+import CreatePostModal from '../create';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getSession({ req });
@@ -271,7 +268,7 @@ const UserPosts: React.FC<any> = (props) => {
               </div>
               {/* <!-- Modal body --> */}
               <div className="p-6 space-y-6 h-[80vh] overflow-scroll">
-                <Draft setModalOpen={setModalOpen} />
+                <CreatePostModal setModalOpen={setModalOpen} />
               </div>
               {/* <!-- Modal footer --> */}
               {/* <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">

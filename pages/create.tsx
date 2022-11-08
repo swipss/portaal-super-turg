@@ -34,27 +34,29 @@ const ListElement = (props) => (
 const MAX_SIZE_IN_BYTES = 10000000;
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
 
-const Draft: React.FC<any> = ({ props, setModalOpen }) => {
+const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
   const [postData, setPostData] = useState<IPostData>();
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [list, setList] = useState([]);
-  console.log(JSON.stringify(list), 'LIST');
 
   const handleDropList = (src, dest) => {
     // Ignore drop outside droppable container
     const updatedList = [...list];
-    const postDataUpdatedList = [...postData?.files];
+    // const postDataUpdatedList = [...postData?.files];
     // Remove dragged item
     const [reorderedItem] = updatedList.splice(src, 1);
-    const [postDataReorderedItem] = postDataUpdatedList.splice(src, 1);
 
     // Add dropped item
     updatedList.splice(dest, 0, reorderedItem);
-    postDataUpdatedList.splice(dest, 0, reorderedItem);
+    // postDataUpdatedList.splice(dest, 0, reorderedItem);
     // Update State
-    setList(updatedList);
-    setPostData({ ...postData, files: postDataUpdatedList });
+    const updatedListWithOrderedIndexes = updatedList.map((item) => {
+      return { ...item, orderIndex: updatedList.indexOf(item) };
+    });
+    setList(updatedListWithOrderedIndexes);
+
+    setPostData({ ...postData, files: updatedListWithOrderedIndexes });
 
     // setItemList(updatedList);
   };
@@ -68,9 +70,10 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
     onDrop: (acceptedFiles, rejectedFiles) => {
       // TODO: check for duplicates
 
-      const newFiles: ImageFile[] = acceptedFiles.map((file) =>
+      const newFiles: ImageFile[] = acceptedFiles.map((file, index) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
+          orderIndex: index,
         })
       );
       setPostData({
@@ -119,6 +122,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
           })
             .then((res) => res.json())
             .then((imageData) => {
+              console.log(imageData, 'DATA');
               fetch('/api/upload/image', {
                 method: 'post',
                 body: JSON.stringify({ data, imageData }),
@@ -221,7 +225,7 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
             >
               <input {...getInputProps()} />
               <p className="text-center text-lg text-gray-500">
-                Lohista pildid või vajuta üleslaadimiseks (limit 10MB)
+                Lohista pildid või vajuta üleslaadimiseks (limiit 10MB)
               </p>
             </div>
           </div>
@@ -352,4 +356,4 @@ const Draft: React.FC<any> = ({ props, setModalOpen }) => {
   );
 };
 
-export default Draft;
+export default CreatePostModal;

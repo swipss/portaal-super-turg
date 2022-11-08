@@ -285,7 +285,7 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
       <div>
         {reservedUntil && (
           <div className="mt-1">
-            <p className="bg-red-200 text-lg tracking-wider text-center  font-medium text-white px-2 py-1 rounded-md animate-pulse">
+            <p className="bg-red-400 text-lg tracking-wider text-center  font-medium text-white px-2 py-1 rounded-md animate-pulse">
               BRONEERITUD KUNI {moment(reservedUntil).format('DD.MM') ?? ''}
             </p>
           </div>

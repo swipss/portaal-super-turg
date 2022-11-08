@@ -7,93 +7,12 @@ import { AiFillCaretDown, AiFillCaretRight } from 'react-icons/ai';
 import { LocationAutocomplete } from './LocationAutocomplete';
 import PlacesAutocomplete from 'react-places-autocomplete';
 
-// const MenuItems = ({ items, depthLevel, setCategory }) => {
-//   const [dropdown, setDropdown] = useState(false);
-//   let ref: any = useRef();
-//   useEffect(() => {
-//     const handler = (event) => {
-//       if (dropdown && ref.current && !ref.current.contains(event.target)) {
-//         setDropdown(false);
-//       }
-//     };
-//     document.addEventListener('mousedown', handler);
-//     document.addEventListener('touchstart', handler);
-//     return () => {
-//       // Cleanup the event listener
-//       document.removeEventListener('mousedown', handler);
-//       document.removeEventListener('touchstart', handler);
-//     };
-//   }, [dropdown]);
-
-//   return (
-//     <li
-//       className={`border ${
-//         dropdown ? 'bg-blue-500 text-white' : 'bg-white text-black'
-//       } p-3 rounded-md  `}
-//       ref={ref}
-//     >
-//       {items.submenu ? (
-//         <>
-//           <button
-//             type="button"
-//             aria-haspopup="menu"
-//             aria-expanded={dropdown ? 'true' : 'false'}
-//             onClick={() => {
-//               setDropdown((prev) => !prev);
-//               setCategory(items.title);
-//             }}
-//           >
-//             {items.title} {depthLevel > 0 ? <span>&raquo;</span> : <span />}
-//           </button>
-
-//           <Dropdown
-//             submenus={items.submenu}
-//             dropdown={dropdown}
-//             depthLevel={depthLevel}
-//             setCategory={setCategory}
-//           />
-//         </>
-//       ) : (
-//         <button
-//           type="button"
-//           aria-haspopup="menu"
-//           aria-expanded={dropdown ? 'true' : 'false'}
-//           onClick={() => {
-//             setDropdown((prev) => !prev);
-//             setCategory(items.title);
-//           }}
-//         >
-//           {items.title}{' '}
-//         </button>
-//       )}
-//     </li>
-//   );
-// };
-
-// const Dropdown = ({ submenus, dropdown, depthLevel, setCategory }) => {
-//   depthLevel = depthLevel + 1;
-
-//   return (
-//     <ul
-//       className={`${
-//         dropdown
-//           ? 'flex absolute left-0 mt-6 z-10 gap-1 bg-white p-3 w-full shadow-md border-y'
-//           : 'hidden'
-//       }`}
-//     >
-//       {submenus.map((submenu, index) => (
-//         <MenuItems
-//           items={submenu}
-//           key={index}
-//           depthLevel={depthLevel}
-//           setCategory={setCategory}
-//         />
-//       ))}
-//     </ul>
-//   );
-// };
-
-const Categories = ({ categoriesData, parentId = null, level = 0 }) => {
+const Categories = ({
+  categoriesData,
+  parentId = null,
+  level = 0,
+  setCategory,
+}) => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [open, setOpen] = useState(false);
   const items = categoriesData.filter((item) => item.parentId === parentId);
@@ -103,6 +22,7 @@ const Categories = ({ categoriesData, parentId = null, level = 0 }) => {
   // console.log(selectedCategory, 'here');
 
   const handleCategoryClick = (item) => {
+    setCategory(item.name.toLowerCase());
     if (selectedCategory === item.id && open) {
       setOpen(false);
     } else {
@@ -114,7 +34,7 @@ const Categories = ({ categoriesData, parentId = null, level = 0 }) => {
   if (!items.length) return null;
 
   return (
-    <div className={`${level > 0 && 'absolute left-0'} flex gap-2`}>
+    <div className={`${level > 0 && ''} flex gap-2 overflow-x-scroll`}>
       {items?.map((item) => (
         <div className="flex flex-col gap-2  ">
           <button
@@ -143,6 +63,7 @@ const Categories = ({ categoriesData, parentId = null, level = 0 }) => {
                 categoriesData={categoriesData}
                 parentId={item.id}
                 level={level + 1}
+                setCategory={setCategory}
               />
             </div>
           )}
@@ -152,9 +73,10 @@ const Categories = ({ categoriesData, parentId = null, level = 0 }) => {
   );
 };
 
-const Form: React.FC<any> = ({ categories }) => {
+const Search: React.FC<any> = ({ categories }) => {
   const [category, setCategory] = useState('');
   const [dropdown, setDropdown] = useState(false);
+  console.log(category);
 
   const [categoriesData, setCategoriesData] = useState(
     getTreeDataCategories(categories)
@@ -193,7 +115,7 @@ const Form: React.FC<any> = ({ categories }) => {
         })}
       </ul> */}
 
-      <div className="border px-4 py-2 rounded-full shadow-md flex gap-2  ">
+      <div className="border px-4 py-2 rounded-full shadow-md flex gap-2 ">
         <button
           type="button"
           onClick={() => setDropdown(!dropdown)}
@@ -225,7 +147,7 @@ const Form: React.FC<any> = ({ categories }) => {
       <div
         className={`${
           !dropdown && 'hidden'
-        } max-w-[490px] mx-auto absolute  flex gap-5 flex-col border  p-4 shadow-md  rounded-xl  bg-white top-16 left-0 right-0 z-10`}
+        } max-w-[1000px] absolute flex gap-5 flex-col border  p-4 shadow-md  rounded-xl  bg-white top-16 left-0 right-0 mx-auto  z-10`}
       >
         <PlacesAutocomplete
           value={location}
@@ -274,22 +196,27 @@ const Form: React.FC<any> = ({ categories }) => {
           name="location"
           className="border  p-2 rounded-lg "
         />
-        <input
-          type={'number'}
-          id="minPrice"
-          placeholder="Min hind"
-          name="minPrice"
-          className="border  p-2 rounded-lg "
-        />
-        <input
-          type={'number'}
-          id="maxPrice"
-          placeholder="Max hind"
-          name="maxPrice"
-          className="border  p-2 rounded-lg "
-        />
-        <div className="relative overflow-scroll h-[75px]">
-          <Categories categoriesData={categoriesData} />
+        <div className="flex justify-between gap-1">
+          <input
+            type={'number'}
+            id="minPrice"
+            placeholder="Min hind"
+            name="minPrice"
+            className="border  p-2 rounded-lg w-full"
+          />
+          <input
+            type={'number'}
+            id="maxPrice"
+            placeholder="Max hind"
+            name="maxPrice"
+            className="border p-2 rounded-lg w-full"
+          />
+        </div>
+        <div className="">
+          <Categories
+            categoriesData={categoriesData}
+            setCategory={setCategory}
+          />
         </div>
 
         {/* <button
@@ -303,4 +230,4 @@ const Form: React.FC<any> = ({ categories }) => {
   );
 };
 
-export default Form;
+export default Search;

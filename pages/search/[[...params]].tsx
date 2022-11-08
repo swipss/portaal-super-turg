@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import Post from '../../components/Post';
 import prisma from '../../lib/prisma';
 import { Post as PostInterface } from '../../types';
-import Form from '../../components/Form';
+import Form from '../../components/Search';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { title, location, minPrice, maxPrice, category } = query;
