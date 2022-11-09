@@ -127,11 +127,26 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen, categories }) => {
 
   const CategoryTree = ({ category, parentId = null, level = 0 }) => {
     const parentCategory = categories.find((item) => item.id === parentId);
-    console.log(parentCategory?.name, category?.name, level);
     return (
       <>
         {!parentCategory ? (
-          <p className={`${level === 0 && 'font-bold'}`}>{category.name}</p>
+          <div>
+            {level === 0 ? (
+              <button
+                onClick={(e) =>
+                  setPostData({ ...postData, category: category })
+                }
+                type="button"
+                className={`${
+                  postData?.category?.id === category.id && 'bg-gray-200 '
+                } border rounded-lg px-2.5 my-1 hover:bg-gray-100`}
+              >
+                {category.name}
+              </button>
+            ) : (
+              <>{category.name}</>
+            )}
+          </div>
         ) : (
           <div className="flex">
             <CategoryTree
@@ -139,11 +154,24 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen, categories }) => {
               parentId={parentCategory.parentId}
               level={level + 1}
             />
-            <p className={`${level == 0 && 'font-bold'}`}>
-              {' '}
+            <div>
               {'>'}
-              {category.name}
-            </p>
+              {level === 0 ? (
+                <button
+                  onClick={(e) =>
+                    setPostData({ ...postData, category: category })
+                  }
+                  type="button"
+                  className={`${
+                    postData?.category?.id === category.id && 'bg-gray-200'
+                  } border rounded-lg px-2.5 ml-1 hover:bg-gray-100`}
+                >
+                  {category.name + ' '}
+                </button>
+              ) : (
+                <>{category.name}</>
+              )}
+            </div>
           </div>
         )}
       </>
