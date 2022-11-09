@@ -131,7 +131,7 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen, categories }) => {
     return (
       <>
         {!parentCategory ? (
-          <p>{category.name}</p>
+          <p className={`${level === 0 && 'font-bold'}`}>{category.name}</p>
         ) : (
           <div className="flex">
             <CategoryTree
