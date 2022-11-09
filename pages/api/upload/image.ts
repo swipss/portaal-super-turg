@@ -23,7 +23,6 @@ export default async function handle(req, res) {
   }
   if (req.method === 'PUT') {
     const { data: image, account } = JSON.parse(req.body);
-    console.log(account, image, 'data!!!');
     const updateUserImage = await prisma.user.update({
       where: {
         id: account.id,

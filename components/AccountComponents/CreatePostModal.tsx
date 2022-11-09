@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import Router from 'next/router';
 import { useDropzone } from 'react-dropzone';
-import { Category } from '../types';
-import { LocationAutocomplete } from '../components/LocationAutocomplete';
+import { LocationAutocomplete } from '../LocationAutocomplete';
 import { TiDelete } from 'react-icons/ti';
 import { ListManager } from 'react-beautiful-dnd-grid';
-
-export type Props = {
-  categories: Category[];
-};
+import { GetServerSideProps } from 'next';
+import prisma from '../../lib/prisma';
 
 export interface IPostData {
   title: string;
@@ -24,32 +21,25 @@ interface ImageFile extends File {
   preview: string;
 }
 
-const ListElement = (props) => (
-  <img
-    src={props.secureURL}
-    className="w-10 h-10"
-  />
-);
-
 const MAX_SIZE_IN_BYTES = 10000000;
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`;
 
-const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
-  const [postData, setPostData] = useState<IPostData>();
+const CreatePostModal: React.FC<any> = ({ setModalOpen, categories }) => {
+  const [postData, setPostData] = useState<any>();
+  console.log(postData?.category);
 
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState([]);
 
+  const [categorySearchValue, setCategorySearchValue] = useState('');
+
   const handleDropList = (src, dest) => {
-    // Ignore drop outside droppable container
     const updatedList = [...list];
-    // const postDataUpdatedList = [...postData?.files];
     // Remove dragged item
     const [reorderedItem] = updatedList.splice(src, 1);
 
     // Add dropped item
     updatedList.splice(dest, 0, reorderedItem);
-    // postDataUpdatedList.splice(dest, 0, reorderedItem);
     // Update State
     const updatedListWithOrderedIndexes = updatedList.map((item) => {
       return { ...item, orderIndex: updatedList.indexOf(item) };
@@ -57,10 +47,9 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
     setList(updatedListWithOrderedIndexes);
 
     setPostData({ ...postData, files: updatedListWithOrderedIndexes });
-
-    // setItemList(updatedList);
   };
 
+  // Drag & Drop images
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: true,
     accept: {
@@ -86,6 +75,7 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
       }
     },
   });
+
   const handleDelete = (preview) => {
     const newFiles = postData?.files?.filter(
       (file) => file.preview !== preview
@@ -93,6 +83,7 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
     setPostData({ ...postData, files: newFiles });
     setList(newFiles);
   };
+
   const isValidForm = () => {
     if (postData?.title && postData?.price) return true;
   };
@@ -122,7 +113,6 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
           })
             .then((res) => res.json())
             .then((imageData) => {
-              console.log(imageData, 'DATA');
               fetch('/api/upload/image', {
                 method: 'post',
                 body: JSON.stringify({ data, imageData }),
@@ -153,7 +143,37 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
               type={'text'}
             />
           </div>
-          {/* TODO: Category selection with autocomplete */}
+          {/* Categories */}
+          <div className="mt-4">
+            <label className="font-bold ">
+              Kategooria <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Otsi..."
+              onChange={(e) => setCategorySearchValue(e.target.value)}
+            />
+            {categorySearchValue !== '' &&
+              categories
+                ?.filter((el) =>
+                  el.name
+                    .toLowerCase()
+                    .includes(categorySearchValue.toLowerCase())
+                )
+                .map((category) => (
+                  <div>
+                    <input
+                      type="radio"
+                      value={category.name}
+                      name="category"
+                      onClick={(e) =>
+                        setPostData({ ...postData, category: category })
+                      }
+                    />
+                    <label className="ml-1">{category.name}</label>
+                  </div>
+                ))}
+          </div>
           <div className="mt-4">
             <label className="font-bold">Kuulutuse sisu</label>
             <textarea
@@ -164,6 +184,7 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
               rows={6}
             />
           </div>
+          <div className="mt-4"></div>
 
           <div className="mt-4">
             <label className="font-bold ">
@@ -236,10 +257,7 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
                 direction="horizontal"
                 maxItems={4}
                 render={(item) => (
-                  <div
-                    className="relative"
-                    z-10
-                  >
+                  <div className="relative">
                     <img
                       src={item.preview}
                       className="w-32 p-1 bg-white m-1 h-32 object-cover object-center rounded shadow-md border"
@@ -257,51 +275,6 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen }) => {
             </div>
           ) : null}
 
-          {/* <div className="">
-            <DragDropContext onDragEnd={handleDrop}>
-              <Droppable
-                droppableId="list-container"
-                direction="grid"
-              >
-                {(provided) => (
-                  <div
-                    className="flex flex-wrap  gap-2 mt-"
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    {postData?.files?.map((item, index) => (
-                      <Draggable
-                        key={item.preview}
-                        draggableId={item.preview}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.dragHandleProps}
-                            {...provided.draggableProps}
-                            className="relative"
-                          >
-                            <TiDelete
-                              color="red"
-                              size={25}
-                              className="absolute -right-2 -top-2"
-                              onClick={() => handleDelete(item.name)}
-                            />
-                            <img
-                              src={item.preview}
-                              className="h-32 w-32 object-cover border-2 border-gray-300 rounded-md shadow-md p-1 mb-3"
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </div> */}
           {loading ? (
             <button
               disabled

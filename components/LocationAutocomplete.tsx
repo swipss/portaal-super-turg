@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete';
-import { IPostData } from '../pages/create';
+import { IPostData } from './AccountComponents/CreatePostModal';
 
 export const LocationAutocomplete: React.FC<{
   postData: IPostData;
@@ -12,7 +12,7 @@ export const LocationAutocomplete: React.FC<{
 
   return (
     <PlacesAutocomplete
-      value={postData?.location}
+      value={postData?.location ?? ''}
       onChange={(value: string) =>
         setPostData({ ...postData, location: value })
       }
@@ -38,7 +38,7 @@ export const LocationAutocomplete: React.FC<{
               return (
                 <div
                   {...getSuggestionItemProps(suggestion, { style })}
-                  key={suggestion.key}
+                  key={suggestion.description}
                 >
                   {suggestion.description}
                 </div>

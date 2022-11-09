@@ -8,7 +8,6 @@ import Form from '../../components/Search';
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { title, location, minPrice, maxPrice, category } = query;
-  console.log(query);
   const posts = await prisma.post.findMany({
     where: {
       published: true,

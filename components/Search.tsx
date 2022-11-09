@@ -7,7 +7,7 @@ import { AiFillCaretDown, AiFillCaretRight } from 'react-icons/ai';
 import { LocationAutocomplete } from './LocationAutocomplete';
 import PlacesAutocomplete from 'react-places-autocomplete';
 
-const Categories = ({
+export const Categories = ({
   categoriesData,
   parentId = null,
   level = 0,
@@ -19,7 +19,6 @@ const Categories = ({
   // .sort((a, b) => {
   //   return a.name < b.name ? -1 : 1;
   // });
-  // console.log(selectedCategory, 'here');
 
   const handleCategoryClick = (item) => {
     setCategory(item.name.toLowerCase());
@@ -34,9 +33,12 @@ const Categories = ({
   if (!items.length) return null;
 
   return (
-    <div className={`${level > 0 && ''} flex gap-2 overflow-x-scroll`}>
+    <div className={`flex gap-2 overflow-x-scroll`}>
       {items?.map((item) => (
-        <div className="flex flex-col gap-2  ">
+        <div
+          key={item.id}
+          className="flex flex-col gap-2  "
+        >
           <button
             type="button"
             onClick={() => handleCategoryClick(item)}
@@ -76,7 +78,6 @@ const Categories = ({
 const Search: React.FC<any> = ({ categories }) => {
   const [category, setCategory] = useState('');
   const [dropdown, setDropdown] = useState(false);
-  console.log(category);
 
   const [categoriesData, setCategoriesData] = useState(
     getTreeDataCategories(categories)
@@ -212,7 +213,7 @@ const Search: React.FC<any> = ({ categories }) => {
             className="border p-2 rounded-lg w-full"
           />
         </div>
-        <div className="">
+        <div>
           <Categories
             categoriesData={categoriesData}
             setCategory={setCategory}

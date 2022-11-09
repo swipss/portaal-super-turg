@@ -6,7 +6,7 @@ import { ConfirmationModal } from '../../components/AccountComponents/Confirmati
 import Post from '../../components/Post';
 import prisma from '../../lib/prisma';
 import { Post as PostInterface } from '../../types';
-import CreatePostModal from '../create';
+import CreatePostModal from '../../components/AccountComponents/CreatePostModal';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getSession({ req });
@@ -34,13 +34,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       createdAt: 'desc',
     },
   });
-  return {
-    props: { drafts: JSON.parse(JSON.stringify(drafts)) },
-  };
-};
 
-type Props = {
-  drafts: PostInterface[];
+  const categories = await prisma.category.findMany();
+  return {
+    props: {
+      drafts: JSON.parse(JSON.stringify(drafts)),
+      categories,
+    },
+  };
 };
 
 const UserPosts: React.FC<any> = (props) => {
@@ -112,8 +113,6 @@ const UserPosts: React.FC<any> = (props) => {
       body: JSON.stringify(selectedUnpublishedPosts),
     }).then((res) => window.location.reload());
   };
-  console.log(selectedPublishedPosts, 'published');
-  console.log(selectedUnpublishedPosts, 'unpublished');
 
   const handleSelectAllPublishedPosts = () => {
     if (!selectedPublishedPosts.length) {
@@ -253,22 +252,25 @@ const UserPosts: React.FC<any> = (props) => {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
+                      clipRule="evenodd"
                     ></path>
                   </svg>
-                  <button
-                    onClick={() => setModalOpen(false)}
-                    className="sr-only"
-                  >
-                    Close modal
-                  </button>
+                </button>
+                <button
+                  onClick={() => setModalOpen(false)}
+                  className="sr-only"
+                >
+                  Close modal
                 </button>
               </div>
               {/* <!-- Modal body --> */}
               <div className="p-6 space-y-6 h-[80vh] overflow-scroll">
-                <CreatePostModal setModalOpen={setModalOpen} />
+                <CreatePostModal
+                  setModalOpen={setModalOpen}
+                  categories={props?.categories}
+                />
               </div>
               {/* <!-- Modal footer --> */}
               {/* <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">

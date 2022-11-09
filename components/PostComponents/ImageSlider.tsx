@@ -15,7 +15,6 @@ export const ImageSlider: React.FC<{ images: ImageInterface[] }> = ({
   const handleImageChangeForward = () => {
     let currIndex = images?.indexOf(selectedImage);
     let nextIndex = currIndex + 1;
-    console.log(currIndex, nextIndex);
     if (!images?.[nextIndex]) {
       nextIndex = 0;
     }
@@ -24,7 +23,6 @@ export const ImageSlider: React.FC<{ images: ImageInterface[] }> = ({
   const handleImageChangeBackward = () => {
     let currIndex = images?.indexOf(selectedImage);
     let nextIndex = currIndex - 1;
-    console.log(currIndex, nextIndex);
     if (!images?.[nextIndex]) {
       nextIndex = images?.length - 1;
     }

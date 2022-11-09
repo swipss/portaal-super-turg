@@ -20,7 +20,6 @@ const Header: React.FC = () => {
   const publishedPostsLength = user?.posts?.filter(
     (post) => post.published === true
   );
-  console.log(user);
   const router = useRouter();
   const isActive: (pathname: string) => boolean = (pathname) =>
     router.pathname === pathname;

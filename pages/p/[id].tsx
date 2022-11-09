@@ -33,11 +33,10 @@ export async function getStaticProps({ params }) {
           author: true,
         },
       },
-      categories: true,
+      // categories: true,
       author: true,
     },
   });
-  // console.log(post);
   return {
     props: { post: JSON.parse(JSON.stringify(post)) },
     revalidate: 10,
@@ -269,7 +268,6 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     e.preventDefault();
     if (!comment) return;
     const result = await postComment(comment);
-    console.log(result, 'result');
     const newComments = getTreeData([...treeData, result]);
     setTreeData(newComments);
     setComment(null);

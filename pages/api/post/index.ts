@@ -14,8 +14,15 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { title, info, conditionRating, conditionInfo, price, location } =
-    JSON.parse(req.body);
+  const {
+    title,
+    info,
+    conditionRating,
+    conditionInfo,
+    price,
+    location,
+    category,
+  } = JSON.parse(req.body);
   const session: Session = await getSession({ req });
   const postResult = await prisma.post.create({
     data: {
@@ -27,12 +34,9 @@ export default async function handle(
       location: location,
       publishedOn: new Date(),
       author: { connect: { email: session?.user?.email } },
+      category: { connect: { id: category.id } },
     },
   });
-  // returns empty array
-  // const imageRes = await prisma.image.createMany({
-  //   data: data,
-  // });
 
   res.json(postResult);
 }

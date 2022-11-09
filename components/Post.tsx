@@ -52,7 +52,6 @@ const Post: React.FC<{
   const previewImage = images?.[0];
   const { data: session } = useSession();
   const postBelongsToUser = session?.user?.email === author?.email;
-  console.log(postBelongsToUser, session?.user?.email, author?.email);
   const router = useRouter();
   const isPostOnHomepage = router.pathname === '/';
 
@@ -129,9 +128,9 @@ const Post: React.FC<{
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
                             d="M6 18L18 6M6 6l12 12"
                           ></path>
                         </svg>
@@ -194,9 +193,9 @@ const Post: React.FC<{
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
                             d="M6 18L18 6M6 6l12 12"
                           ></path>
                         </svg>

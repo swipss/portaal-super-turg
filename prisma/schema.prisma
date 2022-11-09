@@ -23,7 +23,8 @@ model Post {
   images     Image[]
   author     User?      @relation(fields: [authorId], references: [id])
   comments   Comment[]
-  categories Category[]
+  category Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
   createdAt DateTime  @default(now()) @map("created_at")
 
 }
@@ -55,15 +56,6 @@ model Comment {
   parent_comment_id String?
   
 }
-
-// model Reply {
-//   id        String   @id @default(cuid())
-//   content   String
-//   author    User?    @relation(fields: [authorId], references: [id])
-//   authorId  String?
-//   comment   Comment? @relation(fields: [commentId], references: [id])
-//   commentId String?
-// }
 
 model Category {
   id       String  @id @default(cuid())

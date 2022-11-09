@@ -21,7 +21,6 @@ export async function getStaticProps({ params }) {
       },
     },
   });
-  // console.log(post);
   return {
     props: { user: JSON.parse(JSON.stringify(user)) },
     revalidate: 10,

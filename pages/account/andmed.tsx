@@ -37,8 +37,6 @@ const AccountData: NextPage<any> = (props) => {
   const [account, setAccount] = useState(props?.account);
   const { data: session } = useSession();
 
-  // console.log(account, 'account');
-
   const today = moment(new Date());
   const createdAt = account?.createdAt;
 
@@ -60,7 +58,6 @@ const AccountData: NextPage<any> = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(imageFile);
 
     await fetch('/api/update-account', {
       method: 'POST',

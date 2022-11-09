@@ -10,7 +10,6 @@ export default async function handle(
   res: NextApiResponse
 ) {
   const data = JSON.parse(req.body);
-  console.log(data);
 
   if (req.method === 'PUT') {
     const post = await prisma.post.update({

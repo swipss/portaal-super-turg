@@ -9,7 +9,6 @@ export default async function handle(
   const session = await getSession({ req });
   const data = JSON.parse(req.body);
   if (req.method === 'POST') {
-    console.log(data);
     const comment = await prisma.comment.create({
       data: {
         content: data.content,

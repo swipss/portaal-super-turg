@@ -6,7 +6,6 @@ import { LocationAutocomplete } from '../LocationAutocomplete';
 export const EditingModal = ({ post, setEditing }) => {
   const [editedPost, setEditedPost] = useState(post);
   const [list, setList] = useState(post?.images);
-  console.log(post?.images);
   const areChangesValid = () => {
     if (
       editedPost.conditionRating < 6 &&
