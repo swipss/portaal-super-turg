@@ -26,7 +26,6 @@ const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLI
 
 const CreatePostModal: React.FC<any> = ({ setModalOpen, categories }) => {
   const [postData, setPostData] = useState<any>();
-  console.log(postData?.category);
 
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState([]);
@@ -126,6 +125,31 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen, categories }) => {
       });
   };
 
+  const CategoryTree = ({ category, parentId = null, level = 0 }) => {
+    const parentCategory = categories.find((item) => item.id === parentId);
+    console.log(parentCategory?.name, category?.name, level);
+    return (
+      <>
+        {!parentCategory ? (
+          <p>{category.name}</p>
+        ) : (
+          <div className="flex">
+            <CategoryTree
+              category={parentCategory}
+              parentId={parentCategory.parentId}
+              level={level + 1}
+            />
+            <p className={`${level == 0 && 'font-bold'}`}>
+              {' '}
+              {'>'}
+              {category.name}
+            </p>
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <div className="max-w-xl mx-auto">
@@ -153,26 +177,27 @@ const CreatePostModal: React.FC<any> = ({ setModalOpen, categories }) => {
               placeholder="Otsi..."
               onChange={(e) => setCategorySearchValue(e.target.value)}
             />
-            {categorySearchValue !== '' &&
-              categories
-                ?.filter((el) =>
-                  el.name
-                    .toLowerCase()
-                    .includes(categorySearchValue.toLowerCase())
-                )
-                .map((category) => (
-                  <div>
-                    <input
-                      type="radio"
-                      value={category.name}
-                      name="category"
-                      onClick={(e) =>
-                        setPostData({ ...postData, category: category })
-                      }
+
+            {categorySearchValue !== '' && (
+              <>
+                {categories
+                  ?.filter((el) =>
+                    el.name
+                      .toLowerCase()
+                      .includes(categorySearchValue.toLowerCase())
+                  )
+                  .map((category) => (
+                    // takes category
+                    // displays category
+                    // checks if has children
+                    // if has children loop again
+                    <CategoryTree
+                      category={category}
+                      parentId={category.parentId}
                     />
-                    <label className="ml-1">{category.name}</label>
-                  </div>
-                ))}
+                  ))}
+              </>
+            )}
           </div>
           <div className="mt-4">
             <label className="font-bold">Kuulutuse sisu</label>
