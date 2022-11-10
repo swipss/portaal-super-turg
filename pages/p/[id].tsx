@@ -28,6 +28,7 @@ export async function getStaticProps({ params }) {
     },
     include: {
       images: true,
+      category: true,
       comments: {
         include: {
           author: true,
@@ -37,8 +38,13 @@ export async function getStaticProps({ params }) {
       author: true,
     },
   });
+  const categories = await prisma.category.findMany();
+
   return {
-    props: { post: JSON.parse(JSON.stringify(post)) },
+    props: {
+      post: JSON.parse(JSON.stringify(post)),
+      categories,
+    },
     revalidate: 10,
   };
 }
@@ -63,18 +69,6 @@ async function postComment(comment) {
   });
   const response = result.json();
   return response;
-}
-
-async function publishPost(
-  id: string,
-  setLoading: Dispatch<SetStateAction<boolean>>
-): Promise<void> {
-  setLoading(true);
-  await fetch(`/api/publish/${id}`, {
-    method: 'PUT',
-  });
-  await Router.push('/');
-  setLoading(false);
 }
 
 const Tree = ({
@@ -197,7 +191,34 @@ const Tree = ({
   );
 };
 
-const Post: React.FC<{ post: any }> = ({ post }) => {
+const CategoryTree = ({ category, parentId = null, level = 0, categories }) => {
+  const parentCategory = categories?.find((item) => item.id === parentId);
+  return (
+    <>
+      {!parentCategory ? (
+        <div>{category?.name}</div>
+      ) : (
+        <div className="flex">
+          <CategoryTree
+            category={parentCategory}
+            parentId={parentCategory?.parentId}
+            level={level + 1}
+            categories={categories}
+          />
+          <div>
+            {'>'}
+            {category?.name}
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+const Post: React.FC<{ post: any; categories: any }> = ({
+  post,
+  categories,
+}) => {
   const {
     images,
     author,
@@ -211,8 +232,10 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
     createdAt,
     reservedUntil,
     expiredOn,
+    category,
   } = post;
 
+  console.log(categories);
   const [loading, setLoading] = useState(false);
 
   const [comment, setComment] = useState(null);
@@ -304,6 +327,13 @@ const Post: React.FC<{ post: any }> = ({ post }) => {
             {' '}
             € {price.toFixed(2) || '0.00'}
           </p>
+        </div>
+        <div className="flex items-center justify-center">
+          <CategoryTree
+            category={category}
+            parentId={category?.parentId}
+            categories={categories}
+          />
         </div>
         {images.length ? (
           <div
