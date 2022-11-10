@@ -23,14 +23,14 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         gte: Number(minPrice),
         lte: Number(maxPrice) || 10000000000000,
       },
-      // categories: {
-      //   some: {
-      //     name: {
-      //       contains: String(category),
-      //     },
-      //   },
-      // },
+      category: {
+        name: {
+          contains: String(category),
+          mode: 'insensitive',
+        },
+      },
     },
+
     include: {
       author: {
         select: { name: true, email: true },
