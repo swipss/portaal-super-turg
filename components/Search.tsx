@@ -1,10 +1,9 @@
 import Router from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { BsFilterLeft } from 'react-icons/bs';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import { getTreeDataCategories } from '../lib/getTreeDataCategories';
-import { AiFillCaretDown, AiFillCaretRight } from 'react-icons/ai';
-import { LocationAutocomplete } from './LocationAutocomplete';
+import { AiFillCaretRight } from 'react-icons/ai';
 import PlacesAutocomplete from 'react-places-autocomplete';
 
 export const Categories = ({
@@ -33,20 +32,20 @@ export const Categories = ({
   if (!items.length) return null;
 
   return (
-    <div className={`flex gap-2 overflow-x-scroll`}>
+    <div>
       {items?.map((item) => (
         <div
           key={item.id}
-          className="flex flex-col gap-2  "
+          className="flex gap-2  "
         >
           <button
             type="button"
             onClick={() => handleCategoryClick(item)}
             className={`${
               selectedCategory === item.id &&
-              'border-none bg-blue-600 text-white'
+              'border-none bg-blue-600 text-white hover:bg-blue-500'
             } 
-               block w-max border py-3 px-4 text-gray-900 bg-white rounded-xl "
+               button border mb-1 hover:bg-gray-200
               `}
           >
             <div className="flex gap-2 items-center">
@@ -60,7 +59,7 @@ export const Categories = ({
             </div>
           </button>
           {selectedCategory === item.id && open && (
-            <div className="flex gap-5">
+            <div className=" ">
               <Categories
                 categoriesData={categoriesData}
                 parentId={item.id}
@@ -100,7 +99,7 @@ const Search: React.FC<any> = ({ categories }) => {
     <form
       onSubmit={handleSubmit}
       method="get"
-      className="my-5 flex flex-col gap-3 max-w-[500px] mx-auto bg-white rounded-full "
+      className="mb-6 flex  flex-col gap-3 max-w-[500px] mx-auto bg-white rounded-full "
     >
       {/* <ul className="flex relative my-3 gap-1 ">
         {menuItems.map((menu, index) => {
@@ -136,7 +135,7 @@ const Search: React.FC<any> = ({ categories }) => {
         />
         <button
           type="submit"
-          className="bg-blue-500  rounded-full w-14 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
+          className="bg-blue-500 rounded-full w-12 flex items-center justify-center shadow-lg shadow-blue-200 hover:bg-blue-600 disabled:opacity-50"
         >
           <AiOutlineArrowRight
             color="white"
@@ -148,7 +147,7 @@ const Search: React.FC<any> = ({ categories }) => {
       <div
         className={`${
           !dropdown && 'hidden'
-        } max-w-[1000px] absolute flex gap-5 flex-col border  p-4 shadow-md  rounded-xl  bg-white top-16 left-0 right-0 mx-auto  z-10`}
+        } max-w-[500px] h-[500px] absolute overflow-scroll flex gap-5 flex-col border  p-4 shadow-md  rounded-xl  bg-white top-16 left-0 right-0 mx-auto  z-10`}
       >
         <PlacesAutocomplete
           value={location}
@@ -190,13 +189,6 @@ const Search: React.FC<any> = ({ categories }) => {
             </div>
           )}
         </PlacesAutocomplete>
-        <input
-          type="text"
-          id="location"
-          placeholder="Asukoht"
-          name="location"
-          className="border  p-2 rounded-lg "
-        />
         <div className="flex justify-between gap-1">
           <input
             type={'number'}

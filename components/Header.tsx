@@ -1,12 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { AvatarDropdown } from './PostComponents/AvatarDropdown';
 import useSWR from 'swr';
 import Head from 'next/head';
 import { IoIosPaper } from 'react-icons/io';
-import { TiDelete } from 'react-icons/ti';
 
 async function fetchUserPosts() {
   const response = await fetch('/api/userPosts');
@@ -79,7 +78,7 @@ const Header: React.FC = () => {
       <div className="text-white">
         <Link href={'/'}>
           <a
-            className="text-white mr-4"
+            className="text-white mr-4 font-bold text-lg hover:text-gray-200"
             data-active={isActive('/')}
           >
             SuperTurg
@@ -115,7 +114,7 @@ const Header: React.FC = () => {
         <script src="https://unpkg.com/flowbite@1.5.3/dist/datepicker.js"></script>
       </Head>
       <nav className="bg-blue-500 w-full sticky top-0 z-50">
-        <div className="max-w-[1400px] h-16 flex mx-auto justify-between items-center px-2">
+        <div className="max-w-[900px] h-16 flex mx-auto justify-between items-center px-2">
           {left}
           <div className="relative">{right}</div>
         </div>
