@@ -1,9 +1,7 @@
 import moment from 'moment';
 import React from 'react';
-import AccountLayout from '../../components/AccountComponents/AccountLayout';
-import Layout from '../../components/Layout';
-import prisma from '../../lib/prisma';
-import { AiFillPhone } from 'react-icons/ai';
+import Layout from '../../components/Layouts/Layout';
+import { prisma } from '../../server/trpc/prisma';
 import { useSession } from 'next-auth/react';
 import { AiOutlineUserAdd } from 'react-icons/ai';
 import { BsFillChatFill } from 'react-icons/bs';
@@ -46,18 +44,18 @@ const User = ({ user }) => {
   return (
     <Layout>
       <div className="max-w-[700px] mx-auto p-6 ">
-        <div className="flex-col flex gap-3 items-center justify-center md:flex-row md:justify-start">
+        <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:justify-start">
           <img
             src={user?.image}
-            className="w-52 h-52 rounded-full"
+            className="rounded-full w-52 h-52"
           />
           <div className="flex flex-col items-center justify-center md:items-start">
-            <p className="font-bold text-2xl">{user?.name}</p>
-            <p className="font-medium text-sm">
+            <p className="text-2xl font-bold">{user?.name}</p>
+            <p className="text-sm font-medium">
               Liitus {moment(user?.createdAt).format('DD/MM/YY')}
             </p>
             {!profileBelongsToSessionUser && (
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <button className=" text-white flex items-center gap-2 bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg mt-2 text-sm px-3 py-2.5   dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 ">
                   <AiOutlineUserAdd
                     size={24}
@@ -77,19 +75,19 @@ const User = ({ user }) => {
                 </button>
               </div>
             )}
-            {/* <div className="flex gap-1 items-center">
+            {/* <div className="flex items-center gap-1">
               <AiFillPhone size={24} />
-              <p className="block text-sm my-2 font-medium text-gray-900">
+              <p className="block my-2 text-sm font-medium text-gray-900">
                 {user?.phone}
               </p>
             </div> */}
           </div>
         </div>
-        <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 mt-10">
+        <ul className="flex flex-wrap mt-10 text-sm font-medium text-center text-gray-500">
           <li className="mr-2">
             <a
               href="#"
-              className="inline-block py-3 px-4 text-white bg-blue-600 rounded-lg active"
+              className="inline-block px-4 py-3 text-white bg-blue-600 rounded-lg active"
               aria-current="page"
             >
               Andmed
@@ -98,24 +96,24 @@ const User = ({ user }) => {
           <li className="mr-2">
             <a
               href="#"
-              className="inline-block py-3 px-4 rounded-lg hover:text-gray-900 hover:bg-gray-100 "
+              className="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 "
             >
               Postitused
-              <span className="inline-flex justify-center items-center p-3 ml-3 w-3 h-3 text-sm font-medium text-blue-600 bg-blue-200 rounded-full ">
+              <span className="inline-flex items-center justify-center w-3 h-3 p-3 ml-3 text-sm font-medium text-blue-600 bg-blue-200 rounded-full ">
                 {user?.posts?.length}
               </span>
             </a>
           </li>
         </ul>
         <div className="flex items-center ">
-          <p className="block text-sm my-2 text-gray-900 ">Nimi</p>
-          <p className=" text-gray-900 text-sm font-medium mx-auto">
+          <p className="block my-2 text-sm text-gray-900 ">Nimi</p>
+          <p className="mx-auto text-sm font-medium text-gray-900 ">
             {user?.name}
           </p>
         </div>
         <div className="flex items-center ">
-          <p className="block text-sm my-2 text-gray-900 ">Telefon</p>
-          <p className=" text-gray-900 text-sm font-medium mx-auto">
+          <p className="block my-2 text-sm text-gray-900 ">Telefon</p>
+          <p className="mx-auto text-sm font-medium text-gray-900 ">
             {user?.phone}
           </p>
         </div>

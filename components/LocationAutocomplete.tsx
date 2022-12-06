@@ -1,10 +1,9 @@
 import React, { ReactNode, useState } from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete';
-import { IPostData } from './AccountComponents/CreatePostModal';
 
 export const LocationAutocomplete: React.FC<{
-  postData: IPostData;
-  setPostData: React.Dispatch<React.SetStateAction<IPostData>>;
+  postData: any;
+  setPostData: any;
 }> = ({ postData, setPostData }) => {
   const handleAddressSelect = async (value: string): Promise<void> => {
     setPostData({ ...postData, location: value });
@@ -12,7 +11,7 @@ export const LocationAutocomplete: React.FC<{
 
   return (
     <PlacesAutocomplete
-      value={postData?.location ?? ''}
+      value={postData?.location}
       onChange={(value: string) =>
         setPostData({ ...postData, location: value })
       }
@@ -24,7 +23,7 @@ export const LocationAutocomplete: React.FC<{
             {...getInputProps({
               placeholder: 'Alusta aadressi kirjutamisega...',
             })}
-            className="w-full border-2 border-gray-300 p-2 rounded-md"
+            className="w-full h-10 px-3 py-2 bg-gray-200 rounded"
           />
 
           <div>
@@ -37,8 +36,9 @@ export const LocationAutocomplete: React.FC<{
 
               return (
                 <div
-                  {...getSuggestionItemProps(suggestion, { style })}
+                  {...getSuggestionItemProps(suggestion)}
                   key={suggestion.description}
+                  className="p-2 rounded hover:bg-gray-200"
                 >
                   {suggestion.description}
                 </div>

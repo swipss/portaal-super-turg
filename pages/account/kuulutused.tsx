@@ -1,298 +1,282 @@
-import { GetServerSideProps } from 'next';
-import { getSession, useSession } from 'next-auth/react';
-import React, { useRef, useState } from 'react';
-import AccountLayout from '../../components/AccountComponents/AccountLayout';
-import { ConfirmationModal } from '../../components/AccountComponents/ConfirmationModal';
-import Post from '../../components/Post';
-import prisma from '../../lib/prisma';
-import { Post as PostInterface } from '../../types';
-import CreatePostModal from '../../components/AccountComponents/CreatePostModal';
+import { NextPage } from 'next';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import NewPostModal from '../../components/DraftComponents/CreatePostModal';
+import Layout from '../../components/Layouts/Layout';
+import PostSkeleton from '../../components/Layouts/PostSkeleton';
+import { trpc } from '../../utils/trpc';
+import Unauthorized from '../unauthorized';
+import 'react-toastify/dist/ReactToastify.css';
+import DraftsPost from '../../components/DraftComponents/DraftsPost';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getSession({ req });
+const Drafts: NextPage = () => {
+  const [posts, setPosts] = useState<any>();
 
-  if (!session) {
-    // user is not authenticated
-    res.statusCode = 403;
-    return { props: { drafts: [] } };
-  }
+  const { data, isLoading, isError, refetch } =
+    trpc.user.getUserPosts.useQuery();
+  const categories = trpc.post.getCategories.useQuery();
 
-  const drafts = await prisma.post.findMany({
-    // get drafts
-    where: {
-      author: { email: session.user.email },
-    },
-    include: {
-      author: {
-        select: { name: true, email: true },
+  const deactivate = trpc.user.deactivatePost.useMutation();
+  const activate = trpc.user.activatePost.useMutation();
+  const deactivateMultiple = trpc.user.deactivateMultiple.useMutation();
+  const activateMultiple = trpc.user.activateMultiple.useMutation();
+  const deletePostMutation = trpc.user.deletePost.useMutation();
+
+  const [loading, setLoading] = useState(false);
+  const [newPostModal, setNewPostModal] = useState(false);
+
+  const publishedPosts = posts
+    ?.filter((post) => post.published === true)
+    .sort((a, b) => {
+      const dateA = new Date(a.publishedOn).getTime();
+      const dateB = new Date(b.publishedOn).getTime();
+      return dateB > dateA ? 1 : -1;
+    });
+
+  const unpublishedPosts = posts
+    ?.filter((post) => post.published !== true)
+    .sort((a, b) => {
+      const dateA = new Date(a.expiredOn).getTime();
+      const dateB = new Date(b.expiredOn).getTime();
+      return dateB > dateA ? 1 : -1;
+    });
+
+  const [selectedPublishedPosts, setSelectedPublishedPosts] = useState<
+    string[]
+  >([]);
+  const [selectedUnpublishedPosts, setSelectedUnpublishedPosts] = useState<
+    string[]
+  >([]);
+
+  const deactivatePost = (id) => {
+    setLoading(true);
+    deactivate.mutate(id, {
+      onSuccess: (res) => {
+        refetch();
+        setLoading(false);
       },
-      images: {
-        select: { secureUrl: true },
+    });
+  };
+
+  const activatePost = (id) => {
+    setLoading(true);
+    activate.mutate(id, {
+      onSuccess: (res) => {
+        refetch();
+        setLoading(false);
       },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-
-  const categories = await prisma.category.findMany();
-  return {
-    props: {
-      drafts: JSON.parse(JSON.stringify(drafts)),
-      categories,
-    },
-  };
-};
-
-const UserPosts: React.FC<any> = (props) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [publishedPosts, setPublishedPosts] = useState(
-    props?.drafts
-      ?.filter((post) => post.published === true)
-      .sort((a, b) => {
-        const dateA = new Date(a.publishedOn).getTime();
-        const dateB = new Date(b.publishedOn).getTime();
-        return dateB > dateA ? 1 : -1;
-      })
-  );
-  const [unpublishedPosts, setUnpublishedPosts] = useState(
-    props?.drafts
-      ?.filter((post) => post.published !== true)
-      .sort((a, b) => {
-        const dateA = new Date(a.expiredOn).getTime();
-        const dateB = new Date(b.expiredOn).getTime();
-        return dateB > dateA ? 1 : -1;
-      })
-  );
-
-  const [sortedPublishedPosts, setSortedPublishedPosts] =
-    useState(publishedPosts);
-  const [sortedUnpublihsedPosts, setSortedUnpublishedPosts] =
-    useState(unpublishedPosts);
-
-  const [selectedPublishedPosts, setSelectedPublishedPosts] = useState([]);
-  const [selectedUnpublishedPosts, setSelectedUnpublishedPosts] = useState([]);
-
-  const [confirmationModal, setConfirmationModal] = useState(false);
-
-  const handleSelectPublishedPost = (post) => {
-    let newArray = [...selectedPublishedPosts, post];
-    if (selectedPublishedPosts.includes(post)) {
-      newArray = newArray.filter((item) => item.id !== post.id);
-    }
-    setSelectedPublishedPosts(newArray);
-  };
-  const handleSelectUnpublishedPost = (post) => {
-    let newArray = [...selectedUnpublishedPosts, post];
-    if (selectedUnpublishedPosts.includes(post)) {
-      newArray = newArray.filter((item) => item.id !== post.id);
-    }
-    setSelectedUnpublishedPosts(newArray);
+    });
   };
 
-  // const handleSelectAllPublishedPosts = () => {
-  //   if (selectedPublishedPosts.length) {
-  //     setSelectedPublishedPosts([]);
-  //   } else {
-  //     setSelectedPublishedPosts(sortedPublishedPosts);
-  //   }
-  // };
-
-  const deactivateMultiplePublishedPosts = async () => {
-    if (!selectedPublishedPosts.length) return;
-    await fetch('/api/activate-multiple/published', {
-      method: 'PUT',
-      body: JSON.stringify(selectedPublishedPosts),
-    }).then((res) => window.location.reload());
-  };
-
-  const activateMultiplePublishedPosts = async () => {
-    if (!selectedUnpublishedPosts.length) return;
-    await fetch('/api/activate-multiple/unpublished', {
-      method: 'PUT',
-      body: JSON.stringify(selectedUnpublishedPosts),
-    }).then((res) => window.location.reload());
-  };
+  const notify = () =>
+    toast.success('Kuulutus postitatud', {
+      position: 'top-center',
+      autoClose: 2500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'light',
+    });
 
   const handleSelectAllPublishedPosts = () => {
-    if (!selectedPublishedPosts.length) {
-      setSelectedPublishedPosts(publishedPosts);
-    } else {
+    if (selectedPublishedPosts.length === publishedPosts.length) {
       setSelectedPublishedPosts([]);
-    }
-  };
-  const handleSelectAllUnpublishedPosts = () => {
-    if (!selectedUnpublishedPosts.length) {
-      setSelectedUnpublishedPosts(unpublishedPosts);
     } else {
-      setSelectedUnpublishedPosts([]);
+      setSelectedPublishedPosts(publishedPosts.map((post) => post.id));
     }
   };
 
+  const handleSelectAllUnpublishedPosts = () => {
+    if (selectedUnpublishedPosts.length === unpublishedPosts.length) {
+      setSelectedUnpublishedPosts([]);
+    } else {
+      setSelectedUnpublishedPosts(unpublishedPosts.map((post) => post.id));
+    }
+  };
+
+  const handleSelectPublishedPost = (id) => {
+    if (selectedPublishedPosts.some((item) => item === id)) {
+      const newArr = selectedPublishedPosts.filter((item) => item !== id);
+      setSelectedPublishedPosts(newArr);
+    } else {
+      setSelectedPublishedPosts([...selectedPublishedPosts, id]);
+    }
+  };
+
+  const handleSelectUnpublishedPost = (id) => {
+    if (selectedUnpublishedPosts.some((item) => item === id)) {
+      const newArr = selectedUnpublishedPosts.filter((item) => item !== id);
+      setSelectedUnpublishedPosts(newArr);
+    } else {
+      setSelectedUnpublishedPosts([...selectedUnpublishedPosts, id]);
+    }
+  };
+
+  const handleSelectPost = (post) => {
+    post.published
+      ? handleSelectPublishedPost(post.id)
+      : handleSelectUnpublishedPost(post.id);
+  };
+
+  const isChecked = (id: string): boolean =>
+    selectedPublishedPosts.includes(id) ||
+    selectedUnpublishedPosts.includes(id);
+
+  const handleDeactivateMultiple = () => {
+    deactivateMultiple.mutate(selectedPublishedPosts, {
+      onSuccess: (res) => {
+        refetch();
+        setSelectedPublishedPosts([]);
+      },
+    });
+  };
+  const handleActivateMultiple = () => {
+    activateMultiple.mutate(selectedUnpublishedPosts, {
+      onSuccess: (res) => {
+        refetch();
+        setSelectedUnpublishedPosts([]);
+      },
+    });
+  };
+
+  const deletePost = (id) => {
+    deletePostMutation.mutate(id, {
+      onSuccess: () => {
+        refetch();
+      },
+    });
+  };
+
+  useEffect(() => {
+    setPosts(data);
+  }, [data]);
+
+  if (isLoading)
+    return (
+      <Layout>
+        <PostSkeleton />
+      </Layout>
+    );
+
+  if (isError)
+    return (
+      <Unauthorized>
+        Kuulutuse kuvamiseks
+        <Link href="/api/auth/signin">
+          <a className="ml-1 underline">logi sisse</a>
+        </Link>
+      </Unauthorized>
+    );
+
   return (
-    <AccountLayout>
-      <div className="flex justify-end">
-        <button
-          onClick={() => setModalOpen(!modalOpen)}
-          className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
-        >
-          Lisa kuulutus
-        </button>
-      </div>
+    <Layout>
+      <ToastContainer />
       <div>
-        <div className="mb-1">
-          <p className="mx-2 text-2xl font-bold tracking-tight text-gray-900">
-            Aktiivseid kuulutusi: {publishedPosts.length}
-          </p>
-        </div>
-        {/* <button
-          onClick={() => handleSelectAllPublishedPosts()}
-          className={` border px-2 py-0.5 rounded bg-gray-50`}
-        >
-          Vali kõik
-        </button> */}
-        <div>
-          {publishedPosts.length ? (
-            sortedPublishedPosts?.map((post) => (
-              <div key={post.id}>
-                <Post
-                  post={post}
-                  handleSelectPost={handleSelectPublishedPost}
-                  selectedPosts={selectedPublishedPosts}
-                />
-              </div>
-            ))
-          ) : (
-            <p>Aktiivsed postitused puuduvad</p>
-          )}
-        </div>
         <button
-          onClick={() => handleSelectAllPublishedPosts()}
-          className={`${
-            !publishedPosts.length && 'hidden'
-          } mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 `}
+          onClick={() => setNewPostModal(true)}
+          className="flex items-center justify-center float-right w-10 h-10 text-sm font-medium text-center text-white transition-all duration-75 ease-in-out rounded-lg shadow-lg b bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 hover:-translate-y-1"
         >
-          Vali kõik
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            ></path>
+          </svg>
         </button>
-        {selectedPublishedPosts.length ? (
+        <h1 className="pb-2 font-bold w-max">
+          Minu kuulutused ({posts?.length})
+        </h1>
+        {publishedPosts?.length > 0 && (
+          <h1 className="mt-2 title">
+            Aktiivsed kuulutused ({publishedPosts?.length})
+          </h1>
+        )}
+        {publishedPosts?.length > 0 && (
           <button
-            onClick={() => setConfirmationModal(true)}
-            className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
+            onClick={handleSelectAllPublishedPosts}
+            className="mt-2 text-white bg-blue-500 button hover:bg-blue-600"
+          >
+            Vali kõik
+          </button>
+        )}
+        {selectedPublishedPosts?.length > 0 && (
+          <button
+            onClick={handleDeactivateMultiple}
+            className="mt-2 ml-2 text-white bg-blue-500 button hover:bg-blue-600"
           >
             Deaktiveeri ({selectedPublishedPosts.length})
           </button>
-        ) : null}
-
-        <div className="mt-2 mb-1">
-          <p className="mx-2  text-2xl font-bold tracking-tight text-gray-900">
-            Mitteaktiivseid kuulutusi: {unpublishedPosts.length}
-          </p>
-        </div>
-        <div>
-          {sortedUnpublihsedPosts.length ? (
-            sortedUnpublihsedPosts?.map((post) => (
-              <div key={post.id}>
-                <Post
-                  post={post}
-                  handleSelectPost={handleSelectUnpublishedPost}
-                  selectedPosts={selectedUnpublishedPosts}
-                />
-              </div>
-            ))
-          ) : (
-            <p>Mitteaktiivsed postitused puuduvad</p>
-          )}
-        </div>
+        )}
+        {publishedPosts?.map((post) => (
+          <div key={post.id}>
+            <DraftsPost
+              activatePost={activatePost}
+              deactivatePost={deactivatePost}
+              post={post}
+              loading={loading}
+              handleSelectPost={handleSelectPost}
+              isChecked={isChecked}
+              deletePost={deletePost}
+            />
+          </div>
+        ))}
+        {unpublishedPosts?.length > 0 && (
+          <h1 className="my-2 title">
+            Mitteaktiivsed kuulutused ({unpublishedPosts?.length})
+          </h1>
+        )}
+        {unpublishedPosts?.length > 0 && (
+          <button
+            onClick={handleSelectAllUnpublishedPosts}
+            className="mt-2 text-white bg-blue-500 button hover:bg-blue-600"
+          >
+            Vali kõik
+          </button>
+        )}
+        {selectedUnpublishedPosts?.length > 0 && (
+          <button
+            onClick={handleActivateMultiple}
+            className="mt-2 ml-2 text-white bg-blue-500 button hover:bg-blue-600"
+          >
+            Aktiveeri ({selectedUnpublishedPosts.length})
+          </button>
+        )}
+        {unpublishedPosts?.map((post) => (
+          <div key={post.id}>
+            <DraftsPost
+              activatePost={activatePost}
+              deactivatePost={deactivatePost}
+              post={post}
+              loading={loading}
+              handleSelectPost={handleSelectPost}
+              isChecked={isChecked}
+              deletePost={deletePost}
+            />
+          </div>
+        ))}
       </div>
-      {confirmationModal && (
-        <ConfirmationModal
-          setConfirmationModal={setConfirmationModal}
-          onConfirm={deactivateMultiplePublishedPosts}
-          confirmationText="Kas oled kindel, et soovid valitud kuulutused deaktiveerida?"
-          confirmationButtonText={'Jah, deaktiveeri'}
+      {newPostModal && (
+        <NewPostModal
+          setNewPostModal={setNewPostModal}
+          categories={categories.data}
+          setPosts={setPosts}
+          posts={posts}
+          notify={notify}
         />
       )}
-
-      <button
-        onClick={() => handleSelectAllUnpublishedPosts()}
-        className=" mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
-      >
-        Vali kõik
-      </button>
-      {selectedUnpublishedPosts.length ? (
-        <button
-          onClick={() => activateMultiplePublishedPosts()}
-          className="mt-2 text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-1  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 "
-        >
-          Aktiveeri ({selectedUnpublishedPosts.length})
-        </button>
-      ) : null}
-
-      {modalOpen && (
-        <div className="overflow-y-auto overflow-x-hidden fixed top-0  right-0 left-0 bg-black bg-opacity-50 mx-auto flex justify-center z-50 w-full bg md:inset-0 h-[100vh] md:h-full">
-          <div className="relative p-4  w-full max-w-2xl h-full md:h-auto">
-            {/* <!-- Modal content --> */}
-            <div className="relative bg-white rounded-lg shadow">
-              {/* <!-- Modal header --> */}
-              <div className="flex justify-between items-start p-4 rounded-t border-b ">
-                <h3 className="text-xl font-semibold text-gray-900 ">
-                  Uus kuulutus
-                </h3>
-
-                <button
-                  onClick={() => setModalOpen(false)}
-                  type="button"
-                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setModalOpen(false)}
-                  className="sr-only"
-                >
-                  Close modal
-                </button>
-              </div>
-              {/* <!-- Modal body --> */}
-              <div className="p-6 space-y-6 h-[80vh] overflow-scroll">
-                <CreatePostModal
-                  setModalOpen={setModalOpen}
-                  categories={props?.categories}
-                />
-              </div>
-              {/* <!-- Modal footer --> */}
-              {/* <div className="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                <button
-                  type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  I accept
-                </button>
-                <button
-                  type="button"
-                  className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-                >
-                  Decline
-                </button>
-              </div> */}
-            </div>
-          </div>
-        </div>
-      )}
-    </AccountLayout>
+    </Layout>
   );
 };
 
-export default UserPosts;
+export default Drafts;

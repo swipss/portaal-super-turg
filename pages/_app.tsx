@@ -1,24 +1,10 @@
 import { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
-import Router from 'next/router';
 import '../public/globals.css';
-import { useState } from 'react';
-import { Loader } from '../components/Loader';
 import Head from 'next/head';
-import NProgress from 'nprogress';
+import { trpc } from '../utils/trpc';
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const [loading, setLoading] = useState(false);
-  Router.events.on('routeChangeStart', (url) => {
-    NProgress.start();
-    setLoading(true);
-  });
-
-  Router.events.on('routeChangeComplete', (url) => {
-    NProgress.done();
-    setLoading(false);
-  });
-
   return (
     <SessionProvider session={pageProps.session}>
       <Head>
@@ -30,10 +16,10 @@ const App = ({ Component, pageProps }: AppProps) => {
           referrerPolicy="no-referrer"
         />
       </Head>
-      {loading && <Loader />}
+      {/* {loading && <Loader />} */}
       <Component {...pageProps} />
     </SessionProvider>
   );
 };
 
-export default App;
+export default trpc.withTRPC(App);

@@ -3,11 +3,9 @@ import { GetServerSideProps, NextPage } from 'next';
 import { getSession, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useRef, useState } from 'react';
-
-import AccountLayout from '../../components/AccountComponents/AccountLayout';
-
-import prisma from '../../lib/prisma';
+import { prisma } from '../../server/trpc/prisma';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import Layout from '../../components/Layouts/Layout';
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getSession({ req });
@@ -17,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
   const account = await prisma.user.findUnique({
     where: {
-      email: session?.user?.email,
+      email: session?.user?.email ?? '',
     },
     include: {
       locations: true,
@@ -47,7 +45,7 @@ const AccountData: NextPage<any> = (props) => {
 
   const handleImageClick = () => {
     if (isEditing) {
-      inputFile.current.click();
+      inputFile?.current?.click();
     }
   };
 
@@ -64,8 +62,11 @@ const AccountData: NextPage<any> = (props) => {
       body: JSON.stringify(account),
     }).then(() => {
       const formData = new FormData();
-      formData.append('file', imageFile);
-      formData.append('upload_preset', process.env.NEXT_PUBLIC_UPLOAD_PRESET);
+      formData.append('file', imageFile ?? '');
+      formData.append(
+        'upload_preset',
+        process.env.NEXT_PUBLIC_UPLOAD_PRESET ?? ''
+      );
       fetch(CLOUDINARY_URL, {
         method: 'post',
         body: formData,
@@ -81,18 +82,18 @@ const AccountData: NextPage<any> = (props) => {
   };
 
   return (
-    <AccountLayout>
+    <Layout>
       <form
         className="p-2"
         onSubmit={handleSubmit}
       >
         <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-start">
+          <div className="flex items-start justify-between">
             <div className="relative">
               {isEditing && (
                 <div
                   onClick={() => handleImageClick()}
-                  className="absolute bg-gray-300 bg-opacity-50 h-full w-full flex items-center justify-center rounded-full cursor-pointer hover:bg-opacity-80"
+                  className="absolute flex items-center justify-center w-full h-full bg-gray-300 bg-opacity-50 rounded-full cursor-pointer hover:bg-opacity-80"
                 >
                   <AiOutlineCloudUpload
                     size={60}
@@ -102,7 +103,7 @@ const AccountData: NextPage<any> = (props) => {
               )}
               <img
                 src={imagePreview || account?.image || DEFAULT_IMAGE}
-                className="h-32 w-32 rounded-full object-cover object-center"
+                className="object-cover object-center w-32 h-32 rounded-full"
               />
             </div>
             <input
@@ -133,18 +134,18 @@ const AccountData: NextPage<any> = (props) => {
               </button>
             </div>
           </div>
-          <p className="font-medium text-sm text-gray-900">{account?.name}</p>
-          <em className="font-medium text-sm text-gray-900">
+          <p className="text-sm font-medium text-gray-900">{account?.name}</p>
+          <em className="text-sm font-medium text-gray-900">
             {account?.email}
           </em>
-          <p className="font-medium text-sm text-gray-900">
+          <p className="text-sm font-medium text-gray-900">
             Kasutaja alates {moment(account?.createdAt).format('DD/MM/YY')} (
             {today.diff(createdAt, 'days')} päeva tagasi)
           </p>
         </div>
 
-        <p className="font-bold mt-4">Kontakt</p>
-        <label className="block text-sm my-2 font-medium text-gray-900 ">
+        <p className="mt-4 font-bold">Kontakt</p>
+        <label className="block my-2 text-sm font-medium text-gray-900 ">
           Nimi
         </label>
         <div className="relative ">
@@ -157,7 +158,7 @@ const AccountData: NextPage<any> = (props) => {
             value={account?.name}
           />
         </div>
-        <label className="block text-sm my-2 font-medium text-gray-900 ">
+        <label className="block my-2 text-sm font-medium text-gray-900 ">
           Telefon
         </label>
         <div className="relative ">
@@ -171,7 +172,7 @@ const AccountData: NextPage<any> = (props) => {
           />
         </div>
 
-        <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 ">
           Meil
         </label>
         <div className="relative">
@@ -182,10 +183,10 @@ const AccountData: NextPage<any> = (props) => {
             placeholder={account?.email}
           />
         </div>
-        <p className="font-bold mt-4 border-t pt-2">Asukoht</p>
+        <p className="pt-2 mt-4 font-bold border-t">Asukoht</p>
         {account?.locations?.map((item, i) => (
           <>
-            <label className="block text-sm my-2 font-medium text-gray-900 ">
+            <label className="block my-2 text-sm font-medium text-gray-900 ">
               Piirkond/maakond
             </label>
             <div className="relative ">
@@ -207,7 +208,7 @@ const AccountData: NextPage<any> = (props) => {
             </div>
             <div className="flex gap-1">
               <div className="w-full">
-                <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+                <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 ">
                   Asula
                 </label>
                 <div className="relative ">
@@ -231,7 +232,7 @@ const AccountData: NextPage<any> = (props) => {
                 </div>
               </div>
               <div className="w-full">
-                <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+                <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 ">
                   Linnaosa
                 </label>
                 <div className="relative ">
@@ -255,7 +256,7 @@ const AccountData: NextPage<any> = (props) => {
                 </div>
               </div>
             </div>
-            <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+            <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 ">
               Täpsusta asukohta
             </label>
             <div className="relative ">
@@ -277,7 +278,7 @@ const AccountData: NextPage<any> = (props) => {
                 }
               />
             </div>
-            <label className="block text-sm mb-2 mt-4 font-medium text-gray-900 ">
+            <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 ">
               Asukoha link
             </label>
             <div className="relative ">
@@ -300,8 +301,8 @@ const AccountData: NextPage<any> = (props) => {
           </>
         ))}
 
-        <p className="font-bold mt-4  border-t pt-2">Keeled</p>
-        <label className="block text-sm my-2 font-medium text-gray-900 ">
+        <p className="pt-2 mt-4 font-bold border-t">Keeled</p>
+        <label className="block my-2 text-sm font-medium text-gray-900 ">
           Emakeel
         </label>
         <div className="relative ">
@@ -312,7 +313,7 @@ const AccountData: NextPage<any> = (props) => {
             <option value={'eesti'}>Eesti keel</option>
           </select>
         </div>
-        <label className="block text-sm my-2 font-medium text-gray-900 ">
+        <label className="block my-2 text-sm font-medium text-gray-900 ">
           Võõrkeeled
         </label>
         <div className="relative ">
@@ -323,7 +324,7 @@ const AccountData: NextPage<any> = (props) => {
             <option value={'vene'}>Vene keel</option>
           </select>
         </div>
-        <p className="font-bold mt-4  border-t pt-2">Lisainfo</p>
+        <p className="pt-2 mt-4 font-bold border-t">Lisainfo</p>
 
         <div className="relative ">
           <textarea
@@ -340,7 +341,7 @@ const AccountData: NextPage<any> = (props) => {
           </a>
         </Link>
       </form>
-    </AccountLayout>
+    </Layout>
   );
 };
 
