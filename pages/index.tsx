@@ -4,6 +4,7 @@ import { Post as PostInterface } from '../types';
 import { trpc } from '../utils/trpc';
 import PostSkeleton from '../components/Layouts/PostSkeleton';
 import Post from '../components/HomeComponents/Post';
+import Search from '../components/HomeComponents/Search';
 
 const Home: NextPage<{
   posts: PostInterface[];
@@ -13,6 +14,7 @@ const Home: NextPage<{
   return (
     <Layout>
       <main>
+        <Search />
         <div>
           {isLoading && <PostSkeleton />}
           {allPosts?.map((post) => (

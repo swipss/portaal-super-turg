@@ -9,7 +9,6 @@ import Spinner from '../Layouts/Spinner';
 const EditPostModal = ({ setModalOpen, post, refetch }) => {
   const [editedPost, setEditedPost] = useState<any>(post);
   const { mutateAsync, isLoading } = trpc.user.editPost.useMutation();
-  console.log(editedPost, 'editedPost');
 
   const reorderImages = (sourceIndex, destinationIndex) => {
     const arr = [...editedPost?.images];

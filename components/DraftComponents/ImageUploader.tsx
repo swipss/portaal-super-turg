@@ -17,7 +17,19 @@ const ImageUploader = ({
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     setIsUploading(true);
-    console.log('hello');
+    rejectedFiles?.forEach((file) => {
+      file.errors.forEach((error) => {
+        if (error.code === 'file-too-large') {
+          alert('Pildi maht ei tohi ületada 10MB');
+          return;
+        } else {
+          alert('Ebasobilik formaat');
+          return;
+        }
+      });
+      setIsUploading(false);
+      return;
+    });
     acceptedFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onload = () => {
