@@ -108,19 +108,7 @@ const ImageUploader = ({
         </svg>
         <p className="ml-1">Lohista või vali failid</p>
       </div>
-      {/* {!newPost?.images?.length || isUploading ? (
-        <div className="grid grid-cols-4 gap-2 mt-2 ">
-          {images.map((image, index) => (
-            <img
-              src={image}
-              key={index}
-              className={`w-20 h-20 object-cover object-center justify-self-center rounded ${
-                isUploading && 'animate-pulse'
-              }`}
-            />
-          ))}
-        </div>
-      ) : ( */}
+
       {isUploading ? (
         <div className="flex items-center justify-center h-20 mt-2 bg-gray-100 rounded">
           <Spinner />

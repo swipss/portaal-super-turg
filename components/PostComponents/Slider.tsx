@@ -6,7 +6,9 @@ import 'react-slideshow-image/dist/styles.css';
 const Slider: React.FC<{ images: any }> = ({ images }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const imageURLs = images?.map((image) => image.secureUrl);
+  const imageURLs = images
+    ?.sort((a, b) => a.orderIndex - b.orderIndex)
+    .map((image) => image.secureUrl);
 
   const indicators = (index) => {
     return (
@@ -63,7 +65,7 @@ const Slider: React.FC<{ images: any }> = ({ images }) => {
                 /> */}
             <img
               src={slideImage}
-              className="h-[500px] mx-auto rounded"
+              className="h-[500px] mx-auto rounded object-contain"
             />
           </div>
         ))}

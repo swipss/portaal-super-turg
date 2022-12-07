@@ -1,6 +1,4 @@
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-
 import { router, publicProcedure, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
@@ -23,9 +21,7 @@ export const userRouter = router({
         author: {
           select: { name: true, email: true },
         },
-        images: {
-          select: { secureUrl: true },
-        },
+        images: true,
         category: true,
       },
       orderBy: {
@@ -47,6 +43,7 @@ export const userRouter = router({
           z.object({
             secureUrl: z.string(),
             publicId: z.string(),
+            orderIndex: z.number(),
           })
         ),
       })
@@ -152,51 +149,74 @@ export const userRouter = router({
         },
       });
     }),
-  // editPost: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       title: z.string(),
-  //       content: z.string(),
-  //       conditionRating: z.number(),
-  //       conditionInfo: z.string(),
-  //       price: z.number(),
-  //       location: z.string(),
-
-  //     })
-  //   )
-  //   .mutation(({ ctx, input }) => {
-  //     const {
-  //       title,
-  //       content,
-  //       conditionRating,
-  //       conditionInfo,
-  //       price,
-  //       location,
-  //     } = input;
-  //     return ctx.prisma.post.update({
-  //       where: {
-
-  //       }
-  //       data: {
-  //         title: title,
-  //         category: { connect: { id: category } },
-  //         content: content,
-  //         conditionRating: conditionRating,
-  //         conditionInfo: conditionInfo,
-  //         price: price,
-  //         location: location,
-  //         publishedOn: new Date(),
-  //         author: { connect: { email: ctx.session.user?.email ?? '' } },
-  //         images: {
-  //           createMany: {
-  //             data: images,
-  //           },
-  //         },
-  //       },
-  //       include: {
-  //         author: true,
-  //         images: true,
-  //       },
-  //     });
-  //   }),
+  editPost: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string().nullish(),
+        category: z
+          .object({
+            id: z.string(),
+            name: z.string(),
+            parentId: z.string().nullish(),
+          })
+          .nullish(),
+        content: z.string().nullish(),
+        conditionRating: z.number().nullish(),
+        conditionInfo: z.string().nullish(),
+        price: z.number().nullish(),
+        location: z.string().nullish(),
+        images: z.array(
+          z.object({
+            id: z.string(),
+            postId: z.string(),
+            secureUrl: z.string(),
+            publicId: z.string(),
+            orderIndex: z.number(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const {
+        id,
+        title,
+        category,
+        content,
+        conditionRating,
+        conditionInfo,
+        price,
+        location,
+        images,
+      } = input;
+      console.log(images);
+      images.forEach(async (image) => {
+        await ctx.prisma.image.update({
+          where: {
+            id: image.id,
+          },
+          data: {
+            id: image.id,
+            postId: image.postId,
+            orderIndex: image.orderIndex,
+            secureUrl: image.secureUrl,
+            publicId: image.publicId,
+          },
+        });
+      });
+      return ctx.prisma.post.update({
+        where: {
+          id: id,
+        },
+        data: {
+          title: title,
+          category: { connect: { id: category?.id } },
+          content: content,
+          conditionRating: conditionRating,
+          conditionInfo: conditionInfo,
+          price: price,
+          location: location,
+        },
+      });
+    }),
 });

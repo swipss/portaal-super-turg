@@ -228,6 +228,7 @@ const Drafts: NextPage = () => {
               handleSelectPost={handleSelectPost}
               isChecked={isChecked}
               deletePost={deletePost}
+              refetch={refetch}
             />
           </div>
         ))}
@@ -262,6 +263,7 @@ const Drafts: NextPage = () => {
               handleSelectPost={handleSelectPost}
               isChecked={isChecked}
               deletePost={deletePost}
+              refetch={refetch}
             />
           </div>
         ))}

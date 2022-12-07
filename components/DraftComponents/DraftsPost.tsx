@@ -15,6 +15,7 @@ const DraftsPost = ({
   handleSelectPost,
   isChecked,
   deletePost,
+  refetch,
 }) => {
   const { data: session } = useSession();
   const postBelongsToUser = session?.user?.email === post.author?.email;
@@ -40,7 +41,11 @@ const DraftsPost = ({
       {post.images?.length ? (
         <div className="sm:h-[150px] h-[250px] w-full sm:w-[300px] relative rounded ">
           <Image
-            src={post.images?.[0]?.secureUrl}
+            src={
+              post.images?.reduce((prev, curr) => {
+                return prev?.orderIndex < curr?.orderIndex ? prev : curr;
+              }).secureUrl || post.images?.[0]?.secureUrl
+            }
             layout="fill"
             objectFit="cover"
             className="rounded"
@@ -90,6 +95,7 @@ const DraftsPost = ({
             post={post}
             loading={loading}
             deletePost={deletePost}
+            refetch={refetch}
           />
         )}
         <div className="w-full">

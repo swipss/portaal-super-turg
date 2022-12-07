@@ -8,6 +8,7 @@ const ActionsDropdown: React.FC<any> = ({
   post,
   loading,
   deletePost,
+  refetch,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   return (
@@ -25,6 +26,7 @@ const ActionsDropdown: React.FC<any> = ({
         <EditPostModal
           setModalOpen={setModalOpen}
           post={post}
+          refetch={refetch}
         />
       )}
       <button
