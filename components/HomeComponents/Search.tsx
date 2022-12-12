@@ -100,14 +100,8 @@ const Search: React.FC = () => {
           </svg>
         </button>
       </div>
-      <div className="pt-4 ">
-        <label
-          htmlFor="location"
-          className="text-sm text-gray-500"
-        >
-          Asukoht
-        </label>
-        <div className="flex items-center w-full gap-2 ">
+      <div className="pt-4">
+        <div className="flex items-center w-full gap-2">
           <PlacesAutocomplete
             value={searchParams?.location}
             onChange={(value: string) =>
@@ -121,7 +115,7 @@ const Search: React.FC = () => {
               getSuggestionItemProps,
               loading,
             }) => (
-              <div className="w-full overflow-scroll ">
+              <div className="w-full">
                 <div className="flex items-center">
                   <svg
                     className="inline-block w-6 h-6"
@@ -151,7 +145,7 @@ const Search: React.FC = () => {
                   />
                 </div>
 
-                <div className="mt-1 max-h-24">
+                <div className="mt-1">
                   {loading ? <div>Otsin...</div> : null}
 
                   {suggestions.map((suggestion) => {
@@ -163,7 +157,7 @@ const Search: React.FC = () => {
                       <div
                         {...getSuggestionItemProps(suggestion)}
                         key={suggestion.description}
-                        className="p-2 rounded hover:bg-gray-200"
+                        className="p-2 bg-white rounded hover:bg-gray-200"
                       >
                         {suggestion.description}
                       </div>
@@ -175,12 +169,6 @@ const Search: React.FC = () => {
           </PlacesAutocomplete>
         </div>
       </div>
-      <label
-        htmlFor="price"
-        className="text-sm text-gray-500"
-      >
-        Hind
-      </label>
 
       <div className="flex items-center w-full gap-2">
         <svg
