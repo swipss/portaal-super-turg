@@ -48,7 +48,7 @@ const Search: React.FC = () => {
     <form
       onSubmit={handleSubmit}
       ref={ref}
-      className={`w-full bg-white rounded-lg transition-all duration-200 ease-out ${
+      className={`w-full bg-white rounded-lg shadow-md transition-all duration-200 ease-out ${
         !isOpen ? 'h-14' : 'h-full'
       }  border overflow-hidden p-4 `}
     >
@@ -73,7 +73,7 @@ const Search: React.FC = () => {
           name="title"
           onChange={handleChange}
           type={'text'}
-          className="w-full ml-2 appearance-none text-slate-900 focus:outline-none"
+          className="w-full ml-2 text-lg font-medium appearance-none text-slate-900 focus:outline-none"
           placeholder="Otsi märksõna järgi"
         />
 
@@ -120,7 +120,7 @@ const Search: React.FC = () => {
                   <svg
                     className="inline-block w-6 h-6"
                     fill="none"
-                    stroke="black"
+                    stroke="grey"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -174,7 +174,7 @@ const Search: React.FC = () => {
         <svg
           className="w-6 h-6"
           fill="none"
-          stroke="currentColor"
+          stroke="grey"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
