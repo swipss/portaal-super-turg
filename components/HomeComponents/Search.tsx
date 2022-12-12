@@ -1,6 +1,7 @@
 import Router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete';
+import PostTypes from '../DraftComponents/PostTypes';
 
 const Search: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,10 +31,13 @@ const Search: React.FC = () => {
   const handleSubmit = (e) => {
     console.log('first');
     e.preventDefault();
-    Router.push({
-      pathname: '/otsing',
-      query: searchParams,
-    });
+    Router.push(
+      {
+        pathname: '/otsing',
+        query: searchParams,
+      },
+      '/'
+    );
   };
 
   const handleAddressSelect = async (value: string): Promise<void> => {
@@ -45,7 +49,7 @@ const Search: React.FC = () => {
       onSubmit={handleSubmit}
       ref={ref}
       className={`w-full bg-white rounded-lg transition-all duration-200 ease-out ${
-        !isOpen ? 'h-14' : 'h-72'
+        !isOpen ? 'h-14' : 'h-80 overflow-scroll'
       }  drop-shadow overflow-hidden p-4 `}
     >
       <div className="flex items-center">
@@ -209,6 +213,16 @@ const Search: React.FC = () => {
           />
         </div>
       </div>
+      <label
+        htmlFor="price"
+        className="text-sm text-gray-500 "
+      >
+        Tehingu tüüp
+      </label>
+      <PostTypes
+        obj={searchParams}
+        setObj={setSearchParams}
+      />
       <button
         type="submit"
         className="w-full p-2 mt-2 text-white rounded bg-messenger hover:bg-blue-600"

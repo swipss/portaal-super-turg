@@ -7,25 +7,25 @@ import { prisma } from '../../server/trpc/prisma';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import Layout from '../../components/Layouts/Layout';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getSession({ req });
-  if (!session) {
-    res.statusCode = 403;
-    return { props: { account: {} } };
-  }
-  const account = await prisma.user.findUnique({
-    where: {
-      email: session?.user?.email ?? '',
-    },
-    include: {
-      locations: true,
-    },
-  });
+// export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+//   const session = await getSession({ req });
+//   if (!session) {
+//     res.statusCode = 403;
+//     return { props: { account: {} } };
+//   }
+//   const account = await prisma.user.findUnique({
+//     where: {
+//       email: session?.user?.email ?? '',
+//     },
+//     include: {
+//       locations: true,
+//     },
+//   });
 
-  return {
-    props: { account: JSON.parse(JSON.stringify(account)) },
-  };
-};
+//   return {
+//     props: { account: JSON.parse(JSON.stringify(account)) },
+//   };
+// };
 
 const DEFAULT_IMAGE =
   'https://st2.depositphotos.com/4111759/12123/v/450/depositphotos_121232442-stock-illustration-male-default-placeholder-avatar-profile.jpg?forcejpeg=true';

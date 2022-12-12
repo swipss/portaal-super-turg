@@ -13,6 +13,7 @@ model Post {
   content    String?
   conditionRating  Int?
   conditionInfo String?
+  condition   String?
   published  Boolean?    @default(true)
   publishedOn DateTime?
   expiredOn DateTime?
@@ -20,6 +21,7 @@ model Post {
   authorId   String?
   price      Float?
   location   String?
+  type      String?
   images     Image[]
   author     User?      @relation(fields: [authorId], references: [id])
   comments   Comment[]

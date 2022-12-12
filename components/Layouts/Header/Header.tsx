@@ -26,7 +26,7 @@ const Header: React.FC = () => {
         <script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
         ></script>
-        <script src="https://unpkg.com/flowbite@1.5.3/dist/datepicker.js"></script>
+        <script src="https://unpkg.com/flowbite@1.5.5/dist/datepicker.js"></script>
       </Head>
       <nav className="sticky top-0 z-10 w-full bg-white shadow-md">
         <div className="relative flex items-center justify-between h-16 max-w-5xl px-2 mx-auto text-white">

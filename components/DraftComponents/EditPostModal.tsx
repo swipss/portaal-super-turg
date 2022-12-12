@@ -5,10 +5,12 @@ import ImageUploader from './ImageUploader';
 import { ListManager } from 'react-beautiful-dnd-grid';
 import { trpc } from '../../utils/trpc';
 import Spinner from '../Layouts/Spinner';
+import { AiFillInfoCircle } from 'react-icons/ai';
 
 const EditPostModal = ({ setModalOpen, post, refetch }) => {
   const [editedPost, setEditedPost] = useState<any>(post);
   const { mutateAsync, isLoading } = trpc.user.editPost.useMutation();
+  const [isPopover, setIsPopover] = useState(false);
 
   const reorderImages = (sourceIndex, destinationIndex) => {
     const arr = [...editedPost?.images];
@@ -20,6 +22,8 @@ const EditPostModal = ({ setModalOpen, post, refetch }) => {
     }));
     setEditedPost({ ...editedPost, images: [...arrWithIndexes] });
   };
+
+  console.log(editedPost.condition);
 
   const handleEdit = (e) => {
     e.preventDefault();
@@ -70,57 +74,129 @@ const EditPostModal = ({ setModalOpen, post, refetch }) => {
         />
 
         {/* Rating Picker */}
-        <h1>Seisukorra hinnang</h1>
-        <div className="mx-auto my-2 w-max">
-          <span className="mr-2 text-sm text-slate-400">väga halb</span>
+        <h1>Seisukord</h1>
+        <div>
           <button
             type="button"
-            className={`w-10 h-10 rounded hover:bg-red-500 shadow-md transition-all duration-50 ${
-              editedPost.conditionRating === 1 && 'bg-red-500'
-            }`}
-            onClick={() => setEditedPost({ ...editedPost, conditionRating: 1 })}
+            onClick={() =>
+              setEditedPost({
+                ...editedPost,
+                condition: 'new',
+                conditionRating: null,
+              })
+            }
+            className={` px-4 py-2 m-1 text-sm font-medium text-gray-700  ${
+              editedPost.condition === 'new' ? 'bg-gray-200' : 'bg-gray-100'
+            } rounded hover:bg-gray-200 min-w-max`}
           >
-            1
+            Uus
           </button>
           <button
             type="button"
-            onClick={() => setEditedPost({ ...editedPost, conditionRating: 2 })}
-            className={`w-10 h-10 rounded hover:bg-orange-500 shadow-md ml-2 transition-all duration-50  ${
-              editedPost.conditionRating === 2 && 'bg-orange-500'
-            }`}
+            onClick={() => setEditedPost({ ...editedPost, condition: 'used' })}
+            className={` px-4 py-2 m-1 text-sm font-medium text-gray-700  ${
+              editedPost.condition === 'used' ? 'bg-gray-200' : 'bg-gray-100'
+            } rounded hover:bg-gray-200 min-w-max`}
           >
-            2
+            Kasutatud
           </button>
-          <button
-            type="button"
-            onClick={() => setEditedPost({ ...editedPost, conditionRating: 3 })}
-            className={`w-10 h-10 rounded hover:bg-yellow-500 shadow-md ml-2 transition-all duration-50  ${
-              editedPost.conditionRating === 3 && 'bg-yellow-500'
-            }`}
-          >
-            3
-          </button>
-          <button
-            type="button"
-            onClick={() => setEditedPost({ ...editedPost, conditionRating: 4 })}
-            className={`w-10 h-10 rounded hover:bg-lime-500 shadow-md ml-2 transition-all duration-50  ${
-              editedPost.conditionRating === 4 && 'bg-lime-500'
-            }`}
-          >
-            4
-          </button>
-          <button
-            type="button"
-            onClick={() => setEditedPost({ ...editedPost, conditionRating: 5 })}
-            className={`w-10 h-10 rounded hover:bg-green-500 shadow-md ml-2 transition-all duration-50  ${
-              editedPost.conditionRating === 5 && 'bg-green-500'
-            }`}
-          >
-            5
-          </button>
-          <span className="ml-2 text-sm text-slate-400">väga hea</span>
         </div>
-        {/* End Rating Picker */}
+        {/* Rating Picker */}
+        {editedPost?.condition === 'used' && (
+          <>
+            <div className="relative flex items-center gap-1">
+              <h1>Seisukorra hinnang</h1>
+              <button
+                type="button"
+                onMouseOver={() => setIsPopover(true)}
+                onMouseOut={() => setIsPopover(false)}
+              >
+                <AiFillInfoCircle
+                  size={16}
+                  className="text-slate-900/75"
+                />
+              </button>
+              <div
+                className={`${!isPopover && 'hidden'}
+                 absolute z-50 text-sm font-light text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm bottom-7  `}
+              >
+                <div className="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">
+                    Seisukorra hinnang
+                  </h3>
+                </div>
+                <div className="px-3 py-2">
+                  <p>1 - väga halvas korras</p>
+                  <p>2 - halvas korras</p>
+                  <p>3 - keskmises korras</p>
+                  <p>4 - heas korras</p>
+                  <p>5 - väga heas korras, nagu uus</p>
+                </div>
+                <div data-popper-arrow></div>
+              </div>
+            </div>
+            <div className="flex my-2 w-max">
+              {/* <span className="mr-2 text-sm text-slate-400">väga halb</span> */}
+              <button
+                type="button"
+                onClick={() =>
+                  setEditedPost({ ...editedPost, conditionRating: 1 })
+                }
+                className={`w-10 h-10 rounded hover:bg-red-500 shadow-md transition-all duration-50 ${
+                  editedPost.conditionRating === 1 && 'bg-red-500'
+                }`}
+              >
+                1
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setEditedPost({ ...editedPost, conditionRating: 2 })
+                }
+                className={`w-10 h-10 rounded hover:bg-orange-500 shadow-md ml-2 transition-all duration-50  ${
+                  editedPost.conditionRating === 2 && 'bg-orange-500'
+                }`}
+              >
+                2
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setEditedPost({ ...editedPost, conditionRating: 3 })
+                }
+                className={`w-10 h-10 rounded hover:bg-yellow-500 shadow-md ml-2 transition-all duration-50  ${
+                  editedPost.conditionRating === 3 && 'bg-yellow-500'
+                }`}
+              >
+                3
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setEditedPost({ ...editedPost, conditionRating: 4 })
+                }
+                className={`w-10 h-10 rounded hover:bg-lime-500 shadow-md ml-2 transition-all duration-50  ${
+                  editedPost.conditionRating === 4 && 'bg-lime-500'
+                }`}
+              >
+                4
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setEditedPost({ ...editedPost, conditionRating: 5 })
+                }
+                className={`w-10 h-10 rounded hover:bg-green-500 shadow-md ml-2 transition-all duration-50  ${
+                  editedPost.conditionRating === 5 && 'bg-green-500'
+                }`}
+              >
+                5
+              </button>
+              {/* <span className="ml-2 text-sm text-slate-400">väga hea</span> */}
+            </div>
+            {/* End Rating Picker */}
+          </>
+        )}
 
         <h1 className="mt-2">Seisukorra põhjendus</h1>
         <textarea

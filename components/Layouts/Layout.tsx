@@ -11,7 +11,7 @@ const Layout: React.FC<Props> = ({
   children: React.ReactNode;
   userPosts: any;
 }) => (
-  <div className="bg-gray-100 ">
+  <div>
     <Header />
     <div className="max-w-5xl p-5 mx-auto">{children}</div>
   </div>

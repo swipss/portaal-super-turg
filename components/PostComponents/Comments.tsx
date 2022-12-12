@@ -87,9 +87,11 @@ const Comment = ({
                 } `}
               />
               <button
-                disabled={isLoading || !newReply.content}
+                disabled={isLoading || !newReply.content || !session}
                 type="submit"
-                className="text-white transition-all duration-100 bg-blue-500 button hover:bg-blue-600 disabled:opacity-50 disabled:hover-none"
+                className={`${
+                  !newReply?.content && 'w-0 px-0'
+                } text-white transition-all overflow-hidden  duration-100 bg-blue-500 button hover:bg-blue-600 disabled:opacity-50 disabled:hover-none`}
               >
                 Vasta
               </button>
@@ -212,7 +214,9 @@ const Comments = ({ postComments, session, post }) => {
         <button
           disabled={isLoading || !newComment.content}
           type="submit"
-          className="text-white bg-blue-500 button hover:bg-blue-600 disabled:opacity-50 disabled:hover-none"
+          className={`${
+            !newComment?.content && 'w-0 px-0'
+          } text-white bg-blue-500 button overflow-hidden  transition-all duration-200 block  hover:bg-blue-600 disabled:opacity-50 disabled:hover-none`}
         >
           Vasta
         </button>

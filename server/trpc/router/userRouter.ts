@@ -34,8 +34,10 @@ export const userRouter = router({
       z.object({
         title: z.string(),
         category: z.string(),
+        type: z.string(),
         content: z.string(),
-        conditionRating: z.number(),
+        condition: z.string().nullish(),
+        conditionRating: z.number().nullish(),
         conditionInfo: z.string(),
         price: z.number(),
         location: z.string(),
@@ -52,7 +54,9 @@ export const userRouter = router({
       const {
         title,
         category,
+        type,
         content,
+        condition,
         conditionRating,
         conditionInfo,
         price,
@@ -63,9 +67,11 @@ export const userRouter = router({
         data: {
           title: title,
           category: { connect: { id: category } },
+          type: type,
           content: content,
           conditionRating: conditionRating,
           conditionInfo: conditionInfo,
+          condition: condition,
           price: price,
           location: location,
           publishedOn: new Date(),
@@ -162,6 +168,7 @@ export const userRouter = router({
           })
           .nullish(),
         content: z.string().nullish(),
+        condition: z.string().nullish(),
         conditionRating: z.number().nullish(),
         conditionInfo: z.string().nullish(),
         price: z.number().nullish(),
@@ -183,6 +190,7 @@ export const userRouter = router({
         title,
         category,
         content,
+        condition,
         conditionRating,
         conditionInfo,
         price,
@@ -212,10 +220,28 @@ export const userRouter = router({
           title: title,
           category: { connect: { id: category?.id } },
           content: content,
+          condition: condition,
           conditionRating: conditionRating,
           conditionInfo: conditionInfo,
           price: price,
           location: location,
+        },
+      });
+    }),
+  addReservation: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        date: z.date(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.post.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          reservedUntil: input.date,
         },
       });
     }),

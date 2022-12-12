@@ -16,9 +16,11 @@ const ConditionRating: React.FC<{ conditionRating: number }> = ({
     <div className="flex items-center gap-2 mx-auto w-max">
       <p className="title">Seisukord</p>
       <span
-        className={`font-bold flex items-center justify-center w-10 h-10 rounded shadow ${colors[conditionRating]}`}
+        className={`font-bold text-white flex items-center justify-center w-10 h-10 rounded shadow ${
+          !conditionRating ? 'bg-green-500' : colors[conditionRating]
+        } `}
       >
-        {conditionRating}
+        {conditionRating ? conditionRating : 'UUS'}
       </span>
     </div>
   );

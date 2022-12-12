@@ -5,7 +5,7 @@ import { colors } from '../PostComponents/Rating';
 
 const Post = ({ post }) => {
   return (
-    <div className="relative block mt-2 bg-white rounded shadow sm:flex">
+    <div className="relative block mt-4 bg-white rounded shadow sm:flex">
       {post.images?.length ? (
         <div className="sm:h-[150px] h-[250px] w-full sm:w-[300px] relative rounded ">
           <Image
@@ -38,15 +38,24 @@ const Post = ({ post }) => {
 
           <div className="flex items-center justify-center gap-2 w-max">
             <span
-              className={`font-medium flex items-center justify-center w-5 h-5 text-white rounded ${
-                colors[post.conditionRating ?? 0]
+              className={`font-medium label tex-twhite ${
+                post?.condition === 'new'
+                  ? 'bg-green-500'
+                  : colors[post.conditionRating ?? 0]
               }`}
             >
-              {post.conditionRating ?? '0'}
+              {post.conditionRating ?? 'Uus'}
             </span>
-            <Link href={`/kuulutus/${post.id}`}>
-              <a className="underline title">{post.title}</a>
-            </Link>
+            <div className="flex items-center gap-2">
+              {post?.type && (
+                <span className="mt-1 text-yellow-700 bg-yellow-200 label">
+                  {post?.type?.charAt(0).toUpperCase() + post?.type?.slice(1)}
+                </span>
+              )}
+              <Link href={`/kuulutus/${post.id}`}>
+                <a className="underline title">{post.title}</a>
+              </Link>
+            </div>
           </div>
           <p className="flex items-center gap-1 text-gray-500">
             <svg

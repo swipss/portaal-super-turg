@@ -82,6 +82,7 @@ export const postRouter = router({
         location: z.string().nullish(),
         minPrice: z.string().nullish(),
         maxPrice: z.string().nullish(),
+        type: z.string().nullish(),
       })
     )
     .query(({ input, ctx }) => {
@@ -99,6 +100,10 @@ export const postRouter = router({
           price: {
             gt: Number(input.minPrice) || 0,
             lt: Number(input.maxPrice) || 999999999999,
+          },
+          type: {
+            contains: input.type ?? '',
+            mode: 'insensitive',
           },
         },
         include: {

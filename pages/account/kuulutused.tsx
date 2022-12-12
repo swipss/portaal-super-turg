@@ -177,7 +177,7 @@ const Drafts: NextPage = () => {
       <div>
         <button
           onClick={() => setNewPostModal(true)}
-          className="flex items-center justify-center float-right w-10 h-10 text-sm font-medium text-center text-white transition-all duration-75 ease-in-out rounded-lg shadow-lg b bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 hover:-translate-y-1"
+          className="flex items-center justify-center float-right w-10 h-10 text-sm font-medium text-center text-white transition-all duration-75 ease-in-out bg-blue-500 rounded-lg shadow-lg b from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 hover:-translate-y-1"
         >
           <svg
             className="w-6 h-6"

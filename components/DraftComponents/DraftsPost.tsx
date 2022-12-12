@@ -26,7 +26,7 @@ const DraftsPost = ({
   const isDraftsRoute = router.pathname === '/account/kuulutused';
 
   return (
-    <div className="relative block mt-2 bg-white rounded shadow sm:flex">
+    <div className="relative block mt-4 bg-white rounded shadow sm:flex">
       {postBelongsToUser && isDraftsRoute && (
         <input
           onClick={(e) => {
@@ -105,7 +105,7 @@ const DraftsPost = ({
             </span>
           )}
           {post.publishedOn && postBelongsToUser && (
-            <span className="mt-1 text-green-500 bg-green-200 label">
+            <span className="mt-1 text-green-700 bg-green-200 label">
               Aktiivne kuni{' '}
               {moment(post.publishedOn).add(1, 'M').format('DD.MM')}
             </span>
@@ -117,15 +117,24 @@ const DraftsPost = ({
           )}
           <div className="flex items-center justify-center gap-2 w-max">
             <span
-              className={`font-medium flex items-center justify-center w-5 h-5 text-white rounded ${
-                colors[post.conditionRating ?? 0]
+              className={`font-medium label tex-twhite ${
+                post?.condition === 'new'
+                  ? 'bg-green-500'
+                  : colors[post.conditionRating ?? 0]
               }`}
             >
-              {post.conditionRating ?? '0'}
+              {post.conditionRating ?? 'Uus'}
             </span>
-            <Link href={`/kuulutus/${post.id}`}>
-              <a className="underline title">{post.title}</a>
-            </Link>
+            <div className="flex items-center gap-2">
+              {post?.type && (
+                <span className="mt-1 text-yellow-700 bg-yellow-200 label">
+                  {post?.type?.charAt(0).toUpperCase() + post?.type?.slice(1)}
+                </span>
+              )}
+              <Link href={`/kuulutus/${post.id}`}>
+                <a className="underline title">{post.title}</a>
+              </Link>
+            </div>
           </div>
           <p className="flex items-center gap-1 text-gray-500">
             <svg
