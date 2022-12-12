@@ -49,8 +49,8 @@ const Search: React.FC = () => {
       onSubmit={handleSubmit}
       ref={ref}
       className={`w-full bg-white rounded-lg transition-all duration-200 ease-out ${
-        !isOpen ? 'h-14' : 'h-80 overflow-scroll'
-      }  drop-shadow overflow-hidden p-4 `}
+        !isOpen ? 'h-14' : 'h-full'
+      }  border overflow-hidden p-4 `}
     >
       <div className="flex items-center">
         <svg
@@ -73,7 +73,7 @@ const Search: React.FC = () => {
           name="title"
           onChange={handleChange}
           type={'text'}
-          className="w-full ml-2 text-slate-900 focus:outline-none"
+          className="w-full ml-2 appearance-none text-slate-900 focus:outline-none"
           placeholder="Otsi märksõna järgi"
         />
 
@@ -147,7 +147,7 @@ const Search: React.FC = () => {
                     {...getInputProps({
                       placeholder: 'Alusta aadressi kirjutamisega...',
                     })}
-                    className="w-full h-12 px-2 border-b outline-none"
+                    className="w-full h-12 px-2 border-b outline-none appearance-none"
                   />
                 </div>
 
@@ -177,7 +177,7 @@ const Search: React.FC = () => {
       </div>
       <label
         htmlFor="price"
-        className="text-sm text-gray-500 "
+        className="text-sm text-gray-500"
       >
         Hind
       </label>
@@ -202,14 +202,14 @@ const Search: React.FC = () => {
             type={'number'}
             name="minPrice"
             onChange={handleChange}
-            className="w-full h-12 px-2 text-center border-b outline-none"
+            className="w-full h-12 px-2 text-center border-b outline-none appearance-none"
           />
           <span>-</span>
           <input
             name="maxPrice"
             onChange={handleChange}
             type={'number'}
-            className="w-full h-12 px-2 my-2 text-center border-b outline-none"
+            className="w-full h-12 px-2 my-2 text-center border-b outline-none appearance-none"
           />
         </div>
       </div>
