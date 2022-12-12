@@ -48,7 +48,7 @@ const Search: React.FC = () => {
     <form
       onSubmit={handleSubmit}
       ref={ref}
-      className={`w-full bg-white rounded-lg shadow-md transition-all duration-200 ease-out ${
+      className={`w-full bg-white rounded-lg box-shadow  transition-all duration-200 ease-out ${
         !isOpen ? 'h-14' : 'h-full'
       }  border overflow-hidden p-4 `}
     >
