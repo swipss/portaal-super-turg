@@ -18,7 +18,7 @@ const CreatePostModal: React.FC<any> = ({
   const [newPost, setNewPost] = useState<any>({});
   const [categorySearchValue, setCategorySearchValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const createNew = trpc.user.createNewPost.useMutation();
+  const createNew = trpc.drafts.createNewPost.useMutation();
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
