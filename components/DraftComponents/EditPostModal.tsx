@@ -9,7 +9,7 @@ import { AiFillInfoCircle } from 'react-icons/ai';
 
 const EditPostModal = ({ setModalOpen, post, refetch }) => {
   const [editedPost, setEditedPost] = useState<any>(post);
-  const { mutateAsync, isLoading } = trpc.user.editPost.useMutation();
+  const { mutateAsync, isLoading } = trpc.drafts.editPost.useMutation();
   const [isPopover, setIsPopover] = useState(false);
 
   const reorderImages = (sourceIndex, destinationIndex) => {

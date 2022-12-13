@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -9,7 +9,7 @@ import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
 
 const Header: React.FC = () => {
-  const { data: user, isLoading } = trpc.user.getUser.useQuery();
+  const { data: user, isLoading, refetch } = trpc.drafts.getUser.useQuery();
 
   const router = useRouter();
 
@@ -26,7 +26,6 @@ const Header: React.FC = () => {
         <script
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`}
         ></script>
-        <script src="https://unpkg.com/flowbite@1.5.5/dist/datepicker.js"></script>
       </Head>
       <nav className="sticky top-0 z-10 w-full bg-white shadow-md">
         <div className="relative flex items-center justify-between h-16 max-w-5xl px-2 mx-auto text-white">

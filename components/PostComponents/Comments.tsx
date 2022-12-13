@@ -15,6 +15,7 @@ const Comment = ({
   handleSubmitReply,
   isLoading,
   deleteComment,
+  online,
 }) => {
   const children = comments
     .filter((item) => item.parent_comment_id === parentId)
@@ -30,10 +31,15 @@ const Comment = ({
       {children?.map((child) => (
         <div className={`w-full my-2  ${level > 0 && 'pl-14'}`}>
           <div className="relative flex flex-col items-start gap-2 md:flex-row">
-            <img
-              src={child.author?.image}
-              className="flex-grow-0 w-10 h-10 rounded-full "
-            />
+            <div className="relative">
+              {online && (
+                <span className="absolute bottom-0 w-4 h-4 p-1 bg-green-500 border border-white rounded-full -right-1"></span>
+              )}
+              <img
+                src={child.author?.image}
+                className="flex-grow-0 w-10 h-10 rounded-full "
+              />
+            </div>
             <div>
               <div className="px-3 py-2 bg-gray-100 rounded">
                 <strong>{child.author?.name}</strong>
@@ -110,6 +116,7 @@ const Comment = ({
             selectedComment={selectedComment}
             isLoading={isLoading}
             deleteComment={deleteComment}
+            online={online}
           />
         </div>
       ))}
@@ -117,7 +124,7 @@ const Comment = ({
   );
 };
 
-const Comments = ({ postComments, session, post }) => {
+const Comments = ({ postComments, session, post, online }) => {
   const [comments, setComments] = useState(postComments);
   const [selectedComment, setSelectedComment] = useState('');
 
@@ -232,6 +239,7 @@ const Comments = ({ postComments, session, post }) => {
         handleSubmitReply={handleSubmitReply}
         isLoading={isLoading}
         deleteComment={deleteComment}
+        online={online}
       />
     </>
   );

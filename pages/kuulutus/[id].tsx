@@ -112,6 +112,7 @@ const NewPostPage: NextPage = () => {
           postComments={data?.comments}
           session={session}
           post={data}
+          online={data?.author?.online}
         />
       </div>
     </Layout>

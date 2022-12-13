@@ -18,7 +18,7 @@ const ActionsDropdown: React.FC<any> = ({
   const [startDate, setStartDate]: any = useState(new Date());
   const date = new Date();
 
-  const { mutate } = trpc.user.addReservation.useMutation();
+  const { mutate } = trpc.drafts.addReservation.useMutation();
 
   const handleAddReservation = () => {
     mutate(

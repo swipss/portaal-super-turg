@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { router, publicProcedure, protectedProcedure } from '../trpc';
 
-export const userRouter = router({
+export const draftsRouter = router({
   getUser: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.user.findUnique({
       where: {

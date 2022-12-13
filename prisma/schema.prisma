@@ -103,6 +103,7 @@ model User {
   sessions      Session[]
   role          Role      @default(USER)
   locations Location[]
+  online Boolean?
 
   comments Comment[]
   phone    String?

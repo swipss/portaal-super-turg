@@ -14,14 +14,14 @@ const Drafts: NextPage = () => {
   const [posts, setPosts] = useState<any>();
 
   const { data, isLoading, isError, refetch } =
-    trpc.user.getUserPosts.useQuery();
+    trpc.drafts.getUserPosts.useQuery();
   const categories = trpc.post.getCategories.useQuery();
 
-  const deactivate = trpc.user.deactivatePost.useMutation();
-  const activate = trpc.user.activatePost.useMutation();
-  const deactivateMultiple = trpc.user.deactivateMultiple.useMutation();
-  const activateMultiple = trpc.user.activateMultiple.useMutation();
-  const deletePostMutation = trpc.user.deletePost.useMutation();
+  const deactivate = trpc.drafts.deactivatePost.useMutation();
+  const activate = trpc.drafts.activatePost.useMutation();
+  const deactivateMultiple = trpc.drafts.deactivateMultiple.useMutation();
+  const activateMultiple = trpc.drafts.activateMultiple.useMutation();
+  const deletePostMutation = trpc.drafts.deletePost.useMutation();
 
   const [loading, setLoading] = useState(false);
   const [newPostModal, setNewPostModal] = useState(false);

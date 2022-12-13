@@ -5,52 +5,31 @@ import { prisma } from '../../server/trpc/prisma';
 import { useSession } from 'next-auth/react';
 import { AiOutlineUserAdd } from 'react-icons/ai';
 import { BsFillChatFill } from 'react-icons/bs';
+import { trpc } from '../../utils/trpc';
+import { useRouter } from 'next/router';
 
-export async function getStaticProps({ params }) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: String(params?.id),
-    },
-    include: {
-      posts: {
-        where: {
-          published: true,
-        },
-      },
-    },
-  });
-  return {
-    props: { user: JSON.parse(JSON.stringify(user)) },
-    revalidate: 10,
-  };
-}
-
-export async function getStaticPaths() {
-  const users = await prisma.user.findMany();
-
-  return {
-    paths: users.map((user) => ({
-      params: {
-        id: user.id.toString(),
-      },
-    })),
-    fallback: 'blocking',
-  };
-}
-
-const User = ({ user }) => {
+const User = () => {
   const { data: session } = useSession();
+  const router = useRouter();
+  const { id: userId } = router.query;
+  const { data: user } = trpc.home.getUser.useQuery(String(userId));
   const profileBelongsToSessionUser = session?.user?.email === user?.email;
   return (
     <Layout>
       <div className="max-w-[700px] mx-auto p-6 ">
-        <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:justify-start">
-          <img
-            src={user?.image}
-            className="rounded-full w-52 h-52"
-          />
+        <div className="relative flex flex-col items-center justify-center gap-3 md:flex-row md:justify-start">
+          <div className="relative">
+            <img
+              src={user?.image ?? ''}
+              className="rounded-full w-52 h-52"
+            />
+            {user?.online && (
+              <span className="absolute w-8 h-8 p-2 bg-green-500 border-2 border-white rounded-full bottom-3 right-3"></span>
+            )}
+          </div>
           <div className="flex flex-col items-center justify-center md:items-start">
             <p className="text-2xl font-bold">{user?.name}</p>
+
             <p className="text-sm font-medium">
               Liitus {moment(user?.createdAt).format('DD/MM/YY')}
             </p>
