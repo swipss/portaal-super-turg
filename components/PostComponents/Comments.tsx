@@ -15,7 +15,6 @@ const Comment = ({
   handleSubmitReply,
   isLoading,
   deleteComment,
-  online,
 }) => {
   const children = comments
     .filter((item) => item.parent_comment_id === parentId)
@@ -32,9 +31,6 @@ const Comment = ({
         <div className={`w-full my-2  ${level > 0 && 'pl-14'}`}>
           <div className="relative flex flex-col items-start gap-2 md:flex-row">
             <div className="relative">
-              {online && (
-                <span className="absolute bottom-0 w-4 h-4 p-1 bg-green-500 border border-white rounded-full -right-1"></span>
-              )}
               <img
                 src={child.author?.image}
                 className="flex-grow-0 w-10 h-10 rounded-full "
@@ -116,7 +112,6 @@ const Comment = ({
             selectedComment={selectedComment}
             isLoading={isLoading}
             deleteComment={deleteComment}
-            online={online}
           />
         </div>
       ))}
@@ -124,7 +119,7 @@ const Comment = ({
   );
 };
 
-const Comments = ({ postComments, session, post, online }) => {
+const Comments = ({ postComments, session, post }) => {
   const [comments, setComments] = useState(postComments);
   const [selectedComment, setSelectedComment] = useState('');
 
@@ -239,7 +234,6 @@ const Comments = ({ postComments, session, post, online }) => {
         handleSubmitReply={handleSubmitReply}
         isLoading={isLoading}
         deleteComment={deleteComment}
-        online={online}
       />
     </>
   );
