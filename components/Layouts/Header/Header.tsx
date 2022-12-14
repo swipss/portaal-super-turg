@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import Head from 'next/head';
 import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
-import { io } from 'socket.io-client';
+import io from 'socket.io-client';
 
 let socket;
 
