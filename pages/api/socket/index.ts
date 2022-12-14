@@ -11,7 +11,6 @@ const SocketHandler = (req, res) => {
 
     io.on('connection', (socket) => {
       socket.on('disconnect', () => {
-        console.log('DISCONNECTED');
         console.log('user ' + users[socket.id] + ' disconnected');
         delete users[socket.id];
         console.log(users);
@@ -26,7 +25,6 @@ const SocketHandler = (req, res) => {
       });
 
       socket.on('get-online-users', () => {
-        console.log('HERE');
         socket.emit('online-users', users);
       });
     });
