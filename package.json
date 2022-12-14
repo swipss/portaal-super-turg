@@ -52,6 +52,8 @@
     "react-router-dom": "^6.4.3",
     "react-slideshow-image": "^4.0.5",
     "react-toastify": "^9.1.1",
+    "socket.io": "^4.5.4",
+    "socket.io-client": "^4.5.4",
     "superjson": "^1.11.0",
     "swr": "^1.3.0",
     "tailwindcss-brand-colors": "^0.3.3",

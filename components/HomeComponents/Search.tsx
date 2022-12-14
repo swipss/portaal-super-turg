@@ -7,7 +7,6 @@ const Search: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchParams, setSearchParams] = useState<any>({});
   const ref: any = useRef(null);
-  console.log(searchParams);
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
