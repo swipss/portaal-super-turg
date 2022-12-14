@@ -28,7 +28,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     fetch('/api/socket').finally(() => {
-      socket = io('https://portaal-super-turg.vercel.app/');
+      socket = io('http://portaal-super-turg.vercel.app/');
       socket.on('connect', () => {
         console.log('CONNECTED');
       });
