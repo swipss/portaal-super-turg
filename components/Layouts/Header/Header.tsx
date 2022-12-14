@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -7,6 +7,9 @@ import useSWR from 'swr';
 import Head from 'next/head';
 import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
+import { io } from 'socket.io-client';
+
+let socket;
 
 const Header: React.FC = () => {
   const { data: user, isLoading, refetch } = trpc.drafts.getUser.useQuery();
@@ -20,6 +23,27 @@ const Header: React.FC = () => {
     (post) => post.published === true
   );
 
+  const [onlineUsers, setOnlineUsers] = useState<number>();
+  console.log('online users', onlineUsers);
+
+  useEffect(() => {
+    fetch('/api/socket');
+    socket = io();
+    socket.on('connect', () => {
+      console.log('CONNECTED');
+    });
+    socket.emit('get-online-users');
+    socket.on('online-users', (users) => {
+      setOnlineUsers(Object.values(users).length);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      socket.emit('login', user?.id);
+    }
+  }, [user]);
+
   return (
     <>
       <Head>
@@ -28,6 +52,9 @@ const Header: React.FC = () => {
         ></script>
       </Head>
       <nav className="sticky top-0 z-10 w-full bg-white shadow-md">
+        <p className="text-xs text-gray-400">
+          {onlineUsers} kasutaja(t) online
+        </p>
         <div className="relative flex items-center justify-between h-16 max-w-5xl px-2 mx-auto text-white">
           <Link href={'/'}>
             <a
@@ -38,8 +65,6 @@ const Header: React.FC = () => {
             </a>
           </Link>
           <div>
-            {/* {isLoading && <h1>Login sisse...</h1>} */}
-
             {!user ? (
               <Link href="/api/auth/signin">
                 <a className="font-bold text-slate-900">Logi sisse</a>

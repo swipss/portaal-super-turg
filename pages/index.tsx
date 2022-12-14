@@ -9,8 +9,6 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useSession } from 'next-auth/react';
 
-let socket;
-
 const Home: NextPage<{
   posts: PostInterface[];
   categories: any;
