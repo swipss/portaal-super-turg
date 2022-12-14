@@ -27,14 +27,15 @@ const Header: React.FC = () => {
   console.log('online users', onlineUsers);
 
   useEffect(() => {
-    fetch('/api/socket');
-    socket = io();
-    socket.on('connect', () => {
-      console.log('CONNECTED');
-    });
-    socket.emit('get-online-users');
-    socket.on('online-users', (users) => {
-      setOnlineUsers(Object.values(users).length);
+    fetch('/api/socket').finally(() => {
+      socket = io();
+      socket.on('connect', () => {
+        console.log('CONNECTED');
+      });
+      socket.emit('get-online-users');
+      socket.on('online-users', (users) => {
+        setOnlineUsers(Object.values(users).length);
+      });
     });
   }, []);
 
