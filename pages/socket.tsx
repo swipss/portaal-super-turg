@@ -12,8 +12,12 @@ const SocketPage = () => {
 
   useEffect(() => {
     fetch('/api/socket');
-    socket = io();
-
+    if (process.env.NODE_ENV === 'development') {
+      socket = io('http://localhost:3000');
+    }
+    if (process.env.NODE_ENV === 'production') {
+      socket = io('https://portaal-super-turg.vercel.app');
+    }
     socket.on('connect', () => {
       console.log('CONNECTED');
     });
