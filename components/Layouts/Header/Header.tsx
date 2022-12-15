@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { AvatarDropdown } from './AvatarDropdown';
-import useSWR from 'swr';
 import Head from 'next/head';
 import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
 import io from 'socket.io-client';
 
-const socket = io('https://portaal-super-turg.vercel.app/', {
-  reconnectionDelay: 1000,
-  reconnection: true,
+const socket = io('http://localhost:3000', {
   transports: ['websocket'],
-  agent: false,
-  upgrade: false,
-  rejectUnauthorized: false,
-  reconnectionAttempts: 10,
 });
 
 const Header: React.FC = () => {
