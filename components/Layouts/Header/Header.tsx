@@ -9,9 +9,7 @@ import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
 import io from 'socket.io-client';
 
-const socket = io({
-  transports: ['websocket'],
-});
+const socket = io();
 
 const Header: React.FC = () => {
   const { data: user, isLoading, refetch } = trpc.drafts.getUser.useQuery();
