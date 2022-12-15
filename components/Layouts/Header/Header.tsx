@@ -9,7 +9,9 @@ import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
 import io from 'socket.io-client';
 
-let socket;
+const socket = io({
+  transports: ['websocket'],
+});
 
 const Header: React.FC = () => {
   const { data: user, isLoading, refetch } = trpc.drafts.getUser.useQuery();
@@ -28,9 +30,6 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     fetch('/api/socket').finally(() => {
-      socket = io('https://portaal-super-turg.vercel.app/', {
-        transports: ['websocket'],
-      });
       socket.on('connect', () => {
         console.log('CONNECTED');
       });
