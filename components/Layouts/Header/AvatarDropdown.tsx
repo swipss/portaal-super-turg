@@ -15,7 +15,6 @@ export const AvatarDropdown = ({ user }) => {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
-        console.log('clicked outside');
         setIsOpen(false);
       }
     };

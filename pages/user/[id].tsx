@@ -1,15 +1,11 @@
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import Layout from '../../components/Layouts/Layout';
-import { prisma } from '../../server/trpc/prisma';
 import { useSession } from 'next-auth/react';
 import { AiOutlineUserAdd } from 'react-icons/ai';
 import { BsFillChatFill } from 'react-icons/bs';
 import { trpc } from '../../utils/trpc';
 import { useRouter } from 'next/router';
-import io from 'socket.io-client';
-
-const socket = io();
 
 const User = () => {
   const { data: session } = useSession();
@@ -17,18 +13,6 @@ const User = () => {
   const { id: userId } = router.query;
   const { data: user } = trpc.home.getUser.useQuery(String(userId));
   const profileBelongsToSessionUser = session?.user?.email === user?.email;
-
-  const [onlineUsers, setOnlineUsers] = useState();
-  console.log(onlineUsers, 'ONLINE USERS');
-  const [isUserOnline, setIsUserOnline] = useState(false);
-  console.log(isUserOnline, 'STATUS');
-
-  useEffect(() => {
-    socket.emit('get-online-users');
-    socket.on('online-users', (users) => {
-      setIsUserOnline(Object.values(users).includes(user?.id));
-    });
-  }, [user]);
 
   return (
     <Layout>
@@ -39,9 +23,6 @@ const User = () => {
               src={user?.image ?? ''}
               className="rounded-full w-52 h-52"
             />
-            {isUserOnline && (
-              <span className="absolute w-8 h-8 p-2 bg-green-500 border-2 border-white rounded-full bottom-3 right-3"></span>
-            )}
           </div>
           <div className="flex flex-col items-center justify-center md:items-start">
             <p className="text-2xl font-bold">{user?.name}</p>

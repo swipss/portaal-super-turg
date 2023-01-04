@@ -5,11 +5,6 @@ import { AvatarDropdown } from './AvatarDropdown';
 import Head from 'next/head';
 import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
-import io from 'socket.io-client';
-
-const socket = io({
-  transports: ['websocket'],
-});
 
 const Header: React.FC = () => {
   const { data: user, isLoading, refetch } = trpc.drafts.getUser.useQuery();
@@ -23,27 +18,6 @@ const Header: React.FC = () => {
     (post) => post.published === true
   );
 
-  const [onlineUsers, setOnlineUsers] = useState<number>();
-  console.log('online users', onlineUsers);
-
-  useEffect(() => {
-    fetch('/api/socket').finally(() => {
-      socket.on('connect', () => {
-        console.log('CONNECTED');
-      });
-      socket.emit('get-online-users');
-      socket.on('online-users', (users) => {
-        setOnlineUsers(Object.values(users).length);
-      });
-    });
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      socket.emit('login', user?.id);
-    }
-  }, [user]);
-
   return (
     <>
       <Head>
@@ -52,9 +26,9 @@ const Header: React.FC = () => {
         ></script>
       </Head>
       <nav className="sticky top-0 z-10 w-full bg-white shadow-md">
-        <p className="text-xs text-gray-400">
+        {/* <p className="text-xs text-gray-400">
           {onlineUsers} kasutaja(t) online
-        </p>
+        </p> */}
         <div className="relative flex items-center justify-between h-16 max-w-5xl px-2 mx-auto text-white">
           <Link href={'/'}>
             <a

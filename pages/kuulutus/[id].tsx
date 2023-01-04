@@ -13,6 +13,33 @@ import ConditionRating from '../../components/PostComponents/Rating';
 import Slider from '../../components/PostComponents/Slider';
 import { trpc } from '../../utils/trpc';
 
+const PostsCarousel = ({ carouselPosts, postId }) => {
+  return (
+    <div className="flex gap-4 w-max">
+      {carouselPosts.map((post) => (
+        <div
+          className={`rounded gap-1 ${
+            post.id === postId && 'outline outline-gray-500'
+          }`}
+        >
+          <img
+            src={post.images?.[0]?.secureUrl}
+            className="object-cover object-center w-full h-20 rounded"
+          />
+          <div className="p-1 text-center">
+            <Link href={`/kuulutus/${post.id}`}>
+              <a className="text-sm underline">{post.title}</a>
+            </Link>
+            <p className="text-sm">
+              <strong>{post.price?.toFixed(2)}</strong> EUR
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const NewPostPage: NextPage = () => {
   const router = useRouter();
   const { id: postId } = router.query;
@@ -20,6 +47,8 @@ const NewPostPage: NextPage = () => {
   const { data, isLoading, isError } = trpc.post.getSingle.useQuery({
     postId: String(postId),
   });
+  const { data: carouselPosts } = trpc.post.getAll.useQuery();
+  console.log(carouselPosts);
 
   const categories = trpc.post.getCategories.useQuery();
 
@@ -46,6 +75,12 @@ const NewPostPage: NextPage = () => {
   }
   return (
     <Layout>
+      <div className="p-1 overflow-scroll">
+        <PostsCarousel
+          carouselPosts={carouselPosts}
+          postId={data?.id}
+        />
+      </div>
       <div className="p-4 bg-white rounded shadow-xl">
         {data?.reservedUntil && (
           <p className="p-1 my-2 text-lg font-medium tracking-wider text-center text-white bg-red-400 rounded animate-pulse">

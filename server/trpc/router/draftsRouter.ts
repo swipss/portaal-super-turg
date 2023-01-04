@@ -197,7 +197,6 @@ export const draftsRouter = router({
         location,
         images,
       } = input;
-      console.log(images);
       images.forEach(async (image) => {
         await ctx.prisma.image.update({
           where: {

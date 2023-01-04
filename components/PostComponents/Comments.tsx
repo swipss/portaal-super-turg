@@ -181,7 +181,6 @@ const Comments = ({ postComments, session, post }) => {
       },
     });
   };
-  console.log(newComment);
 
   const deleteComment = (id) => {
     setIsLoading(true);

@@ -10,7 +10,7 @@ const Search: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
-        console.log('clicked outside');
+        ('clicked outside');
         setIsOpen(false);
       }
     };
@@ -28,7 +28,6 @@ const Search: React.FC = () => {
   };
 
   const handleSubmit = (e) => {
-    console.log('first');
     e.preventDefault();
     Router.push(
       {

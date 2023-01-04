@@ -23,8 +23,6 @@ const EditPostModal = ({ setModalOpen, post, refetch }) => {
     setEditedPost({ ...editedPost, images: [...arrWithIndexes] });
   };
 
-  console.log(editedPost.condition);
-
   const handleEdit = (e) => {
     e.preventDefault();
     mutateAsync(editedPost, {

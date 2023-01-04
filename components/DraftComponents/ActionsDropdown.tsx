@@ -28,7 +28,6 @@ const ActionsDropdown: React.FC<any> = ({
           console.log(err);
         },
         onSuccess: () => {
-          console.log('done');
           refetch();
           setReservationModalOpen(false);
         },

@@ -5,9 +5,6 @@ import { trpc } from '../utils/trpc';
 import PostSkeleton from '../components/Layouts/PostSkeleton';
 import Post from '../components/HomeComponents/Post';
 import Search from '../components/HomeComponents/Search';
-import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
-import { useSession } from 'next-auth/react';
 
 const Home: NextPage<{
   posts: PostInterface[];

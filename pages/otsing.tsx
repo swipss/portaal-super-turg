@@ -10,8 +10,6 @@ const SearchPage: NextPage = () => {
   const router = useRouter();
   const params = router.query;
   const { data: posts, isLoading } = trpc.post.getByParams.useQuery(params);
-  console.log(posts);
-  console.log(params, 'params');
   return (
     <Layout>
       <main>
