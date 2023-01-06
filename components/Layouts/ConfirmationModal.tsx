@@ -7,7 +7,7 @@ export const ConfirmationModal = ({
   confirmationButtonText,
 }) => {
   return (
-    <div className="fixed z-50 flex items-center justify-center w-full h-full overflow-x-hidden overflow-y-auto  top-32 md:inset-0 md:top-32 md:h-full">
+    <div className="fixed z-50 flex items-center justify-center w-full h-full overflow-x-hidden overflow-y-auto top-32 md:inset-0 md:top-32 md:h-full">
       <div className="relative w-full h-full max-w-md p-4 ">
         <div className="relative rounded-lg shadow-2xl bg-gray-50 dark:bg-gray-700">
           <button
@@ -40,9 +40,9 @@ export const ConfirmationModal = ({
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>

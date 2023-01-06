@@ -9,6 +9,13 @@ export const draftsRouter = router({
       },
       include: {
         posts: true,
+        likes: {
+          where: {
+            user: {
+              email: ctx.session.user?.email ?? '',
+            },
+          },
+        },
       },
     });
   }),

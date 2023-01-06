@@ -6,10 +6,7 @@ import PostSkeleton from '../components/Layouts/PostSkeleton';
 import Post from '../components/HomeComponents/Post';
 import Search from '../components/HomeComponents/Search';
 
-const Home: NextPage<{
-  posts: PostInterface[];
-  categories: any;
-}> = ({ posts, categories }) => {
+const Home: NextPage = () => {
   const { data: allPosts, isLoading } = trpc.post.getAll.useQuery();
 
   return (

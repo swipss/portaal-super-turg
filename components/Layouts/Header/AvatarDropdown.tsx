@@ -116,11 +116,8 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="#">
-                <a
-                  href="#"
-                  className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"
-                >
+              <Link href="/account/lemmikud">
+                <a className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100">
                   Lemmikud
                 </a>
               </Link>

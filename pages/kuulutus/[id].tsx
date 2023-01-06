@@ -52,19 +52,32 @@ const NewPostPage: NextPage = () => {
 
   const categories = trpc.post.getCategories.useQuery();
 
+  const likePost = trpc.post.likePost.useMutation();
+
   const { data: session } = useSession();
 
-  const videos = YouTubeLinkParser(data?.content);
-
-  function YouTubeLinkParser(string) {
-    // Use a regular expression to find all YouTube links in the string
+  const YouTubeLinkParser = (string) => {
     const youtubeLinks = string?.match(
       /https:\/\/www\.youtube\.com\/watch\?v=[a-zA-Z0-9]+/g
     );
 
-    // Return the YouTube links as embeddable URLs
     return youtubeLinks?.map((link) => link.replace('watch?v=', 'embed/'));
-  }
+  };
+  const videos = YouTubeLinkParser(data?.content);
+
+  const handleLikePost = () => {
+    likePost.mutate(
+      {
+        postId: String(data?.id),
+        user: String(session?.user?.email),
+      },
+      {
+        onSuccess: () => {
+          console.log('liked post');
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -142,6 +155,7 @@ const NewPostPage: NextPage = () => {
           />
           {data?.author?.phone ?? '(puudub)'}
         </div>
+        <button onClick={handleLikePost}>Lisa lemmikuks</button>
         <h1 className="my-2 title">Kommentaarid</h1>
         <Comments
           postComments={data?.comments}

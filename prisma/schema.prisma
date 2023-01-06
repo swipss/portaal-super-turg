@@ -28,6 +28,16 @@ model Post {
   category Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
   createdAt DateTime  @default(now()) @map("created_at")
+  likes PostLikes[]
+
+}
+
+model PostLikes {
+  id         String     @id @default(cuid())
+  user User @relation(fields: [userId], references: [id])
+  userId String
+  post Post @relation(fields: [postId], references: [id])
+  postId String
 
 }
 
@@ -103,10 +113,10 @@ model User {
   sessions      Session[]
   role          Role      @default(USER)
   locations Location[]
-
   comments Comment[]
   phone    String?
   socials  Social[]
+  likes PostLikes[]
   
 
   @@map("users")

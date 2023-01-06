@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { router, publicProcedure } from '../trpc';
+import { router, publicProcedure, protectedProcedure } from '../trpc';
 
 export const postRouter = router({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -109,6 +109,21 @@ export const postRouter = router({
         include: {
           images: true,
           author: true,
+        },
+      });
+    }),
+  likePost: protectedProcedure
+    .input(
+      z.object({
+        user: z.string(),
+        postId: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.postLikes.create({
+        data: {
+          post: { connect: { id: input.postId } },
+          user: { connect: { email: input.user } },
         },
       });
     }),
