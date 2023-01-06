@@ -3,6 +3,7 @@ import { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { AiFillPhone } from 'react-icons/ai';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../../components/Layouts/Layout';
@@ -44,7 +45,7 @@ const NewPostPage: NextPage = () => {
   const router = useRouter();
   const { id: postId } = router.query;
 
-  const { data, isLoading, isError } = trpc.post.getSingle.useQuery({
+  const { data, isLoading, isError, refetch } = trpc.post.getSingle.useQuery({
     postId: String(postId),
   });
   const { data: carouselPosts } = trpc.post.getAll.useQuery();
@@ -53,6 +54,7 @@ const NewPostPage: NextPage = () => {
   const categories = trpc.post.getCategories.useQuery();
 
   const likePost = trpc.post.likePost.useMutation();
+  const unlikePost = trpc.post.removeLike.useMutation();
 
   const { data: session } = useSession();
 
@@ -65,7 +67,15 @@ const NewPostPage: NextPage = () => {
   };
   const videos = YouTubeLinkParser(data?.content);
 
+  const postLikes = data?.likes;
+  const [hasUserLikedPost, setHasUserLikedPost] = useState(
+    postLikes?.some((like) => like.user.email === session?.user?.email)
+  );
+  console.log(hasUserLikedPost);
+
   const handleLikePost = () => {
+    setHasUserLikedPost(true);
+
     likePost.mutate(
       {
         postId: String(data?.id),
@@ -74,6 +84,21 @@ const NewPostPage: NextPage = () => {
       {
         onSuccess: () => {
           console.log('liked post');
+        },
+      }
+    );
+  };
+  const handleUnlikePost = () => {
+    setHasUserLikedPost(false);
+
+    unlikePost.mutate(
+      {
+        postId: String(data?.id),
+        user: String(session?.user?.email),
+      },
+      {
+        onSuccess: () => {
+          console.log('unliked post');
         },
       }
     );
@@ -155,7 +180,11 @@ const NewPostPage: NextPage = () => {
           />
           {data?.author?.phone ?? '(puudub)'}
         </div>
-        <button onClick={handleLikePost}>Lisa lemmikuks</button>
+        {hasUserLikedPost ? (
+          <button onClick={handleUnlikePost}>Eemalda lemmikutest</button>
+        ) : (
+          <button onClick={handleLikePost}>Lisa lemmikuks</button>
+        )}
         <h1 className="my-2 title">Kommentaarid</h1>
         <Comments
           postComments={data?.comments}

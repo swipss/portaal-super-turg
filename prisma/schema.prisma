@@ -39,6 +39,8 @@ model PostLikes {
   post Post @relation(fields: [postId], references: [id])
   postId String
 
+  @@unique([userId, postId])
+
 }
 
 model Image {

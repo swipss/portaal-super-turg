@@ -34,6 +34,11 @@ export const postRouter = router({
             },
           },
           author: true,
+          likes: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
     }),
@@ -124,6 +129,28 @@ export const postRouter = router({
         data: {
           post: { connect: { id: input.postId } },
           user: { connect: { email: input.user } },
+        },
+      });
+    }),
+  removeLike: protectedProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+        user: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          email: input.user,
+        },
+      });
+      return await ctx.prisma.postLikes.delete({
+        where: {
+          userId_postId: {
+            postId: input.postId,
+            userId: String(user?.id),
+          },
         },
       });
     }),
