@@ -154,4 +154,22 @@ export const postRouter = router({
         },
       });
     }),
+  createReport: protectedProcedure
+    .input(
+      z.object({
+        reason: z.string(),
+        postId: z.string(),
+        reportedBy: z.string().nullish(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.prisma.report.create({
+        data: {
+          reason: input.reason,
+          post: { connect: { id: input.postId } },
+          reportedBy: { connect: { email: input.reportedBy ?? '' } },
+          date: new Date(),
+        },
+      });
+    }),
 });

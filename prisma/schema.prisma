@@ -29,6 +29,7 @@ model Post {
   categoryId String?
   createdAt DateTime  @default(now()) @map("created_at")
   likes PostLikes[]
+  reports Report[]
 
 }
 
@@ -119,6 +120,7 @@ model User {
   phone    String?
   socials  Social[]
   likes PostLikes[]
+  reports Report[]
   
 
   @@map("users")
@@ -158,4 +160,16 @@ model VerificationToken {
 enum Role {
   USER
   ADMIN
+}
+
+model Report {
+  id   String  @id @default(cuid())
+  reportedBy User?   @relation(fields: [reportedById], references: [id])
+  reason String
+  date DateTime
+  post Post?   @relation(fields: [postId], references: [id])
+  postId String
+  reportedById String
+  
+
 }

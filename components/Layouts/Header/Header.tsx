@@ -45,6 +45,13 @@ const Header: React.FC = () => {
               </Link>
             ) : (
               <div className="flex">
+                {user?.role === 'ADMIN' && (
+                  <Link href={'/admin/teavitused'}>
+                    <a className="flex items-center px-4 mr-2 text-sm font-medium text-red-600 bg-red-300 rounded-full hover:bg-red-400">
+                      Admin
+                    </a>
+                  </Link>
+                )}
                 <Link href={'/account/kuulutused'}>
                   <a
                     href="#"
