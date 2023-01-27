@@ -8,11 +8,48 @@ export const adminRouter = router({
         post: {
           include: {
             images: true,
-            author: true,
+            author: {
+              include: {
+                reports: true,
+              },
+            },
           },
         },
         reportedBy: true,
       },
     });
   }),
+  resolveReport: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.report.update({
+        where: {
+          id: input,
+        },
+        data: {
+          resolved: true,
+        },
+      });
+    }),
+  deleteReport: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.report.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
+  unresolveReport: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.report.update({
+        where: {
+          id: input,
+        },
+        data: {
+          resolved: false,
+        },
+      });
+    }),
 });
