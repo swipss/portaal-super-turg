@@ -52,4 +52,12 @@ export const adminRouter = router({
         },
       });
     }),
+  getAllUsers: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.user.findMany({
+      include: {
+        posts: true,
+        comments: true,
+      },
+    });
+  }),
 });

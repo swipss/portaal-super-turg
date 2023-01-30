@@ -47,7 +47,7 @@ const Header: React.FC = () => {
               <div className="flex">
                 {user?.role === 'ADMIN' && (
                   <Link href={'/admin/teavitused'}>
-                    <a className="flex items-center px-4 mr-2 text-sm font-medium text-red-600 bg-red-300 rounded-full hover:bg-red-400">
+                    <a className="flex items-center px-4 mr-2 text-sm font-medium text-black bg-white border rounded-full hover:bg-gray-100">
                       Admin
                     </a>
                   </Link>

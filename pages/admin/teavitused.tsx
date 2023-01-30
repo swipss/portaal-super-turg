@@ -1,9 +1,48 @@
 import moment from 'moment';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../../components/Layouts/Layout';
 import { trpc } from '../../utils/trpc';
 import Unauthorized from '../unauthorized';
+
+const adminRoutes = [
+  {
+    path: '/admin/teavitused',
+    name: 'Teavitused',
+  },
+  {
+    path: '/admin/kasutajad',
+    name: 'Kasutajad',
+  },
+  {
+    path: '/admin/lisateenused',
+    name: 'Lisateenused',
+  },
+  {
+    path: '/admin/kataloogid',
+    name: 'Kataloogid',
+  },
+];
+
+export const AdminTabs = () => {
+  const activePath = useRouter().pathname;
+  return (
+    <div className="flex flex-row justify-start w-full gap-2 mb-2">
+      {adminRoutes.map((route) => (
+        <Link href={route.path}>
+          <a
+            className={`${
+              route.path === activePath && 'bg-gray-100'
+            } flex items-center justify-center w-1/3 px-6 py-3 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-100`}
+          >
+            {route.name}
+          </a>
+        </Link>
+      ))}
+    </div>
+  );
+};
 
 const ReportsPage = () => {
   const { data: user } = trpc.drafts.getUser.useQuery();
@@ -33,11 +72,18 @@ const ReportsPage = () => {
       onSuccess: () => refetch(),
     });
   };
+
+  const handleUnresolveReport = (id: string) => {
+    unresolveReport.mutate(id, {
+      onSuccess: () => refetch(),
+    });
+  };
   return (
     <Layout>
+      <AdminTabs />
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="inline-flex mb-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+        className="inline-flex mb-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-3 py-1.5"
         type="button"
       >
         {isResolvedFilter === false ? 'Aktiivsed' : 'Arhiiv'}
@@ -58,37 +104,37 @@ const ReportsPage = () => {
         </svg>
       </button>
       {isDropdownOpen && (
-        <div className="absolute z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600">
-          <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200">
+        <div className="absolute z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow">
+          <ul className="p-3 space-y-1 text-sm text-gray-700">
             <li>
-              <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+              <div className="flex items-center p-2 rounded hover:bg-gray-100">
                 <input
                   id="active"
                   type="radio"
                   onClick={() => setIsResolvedFilter(false)}
                   checked={isResolvedFilter === false}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
                 />
                 <label
                   htmlFor="active"
-                  className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                  className="w-full ml-2 text-sm font-medium text-gray-900 rounded"
                 >
                   Aktiivsed
                 </label>
               </div>
             </li>
             <li>
-              <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+              <div className="flex items-center p-2 rounded hover:bg-gray-100">
                 <input
                   id="resolved"
                   type="radio"
                   onClick={() => setIsResolvedFilter(true)}
                   checked={isResolvedFilter === true}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
                 />
                 <label
                   htmlFor="resolved"
-                  className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                  className="w-full ml-2 text-sm font-medium text-gray-900 rounded"
                 >
                   Arhiiv
                 </label>
@@ -173,12 +219,20 @@ const ReportsPage = () => {
                           Kustuta
                         </button>
                       ) : (
-                        <button
-                          onClick={() => handleDeleteReport(report.id)}
-                          className="font-medium text-red-600 hover:underline"
-                        >
-                          Kustuta jäädavalt
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleDeleteReport(report.id)}
+                            className="font-medium text-red-600 hover:underline"
+                          >
+                            Kustuta jäädavalt
+                          </button>
+                          <button
+                            onClick={() => handleUnresolveReport(report.id)}
+                            className="text-blue-600"
+                          >
+                            Taasta
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
