@@ -18,6 +18,8 @@ import { BiCopy } from 'react-icons/bi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReportModal from '../../components/ReportModal';
+import { MdReportGmailerrorred } from 'react-icons/md';
+import Spinner from '../../components/Layouts/Spinner';
 
 const PostsCarousel = ({ carouselPosts, postId }) => {
   return (
@@ -50,73 +52,36 @@ const PostsCarousel = ({ carouselPosts, postId }) => {
 const NewPostPage: NextPage = () => {
   const router = useRouter();
   const { id: postId } = router.query;
+  const { data: session } = useSession();
+
   const [loading, setLoading] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
-  const { data, isLoading, isError } = trpc.post.getSingle.useQuery({
+  const { data, isLoading, isError, refetch } = trpc.post.getSingle.useQuery({
     postId: String(postId),
   });
   const { data: carouselPosts } = trpc.post.getAll.useQuery();
   const categories = trpc.post.getCategories.useQuery();
-  const likePost = trpc.post.likePost.useMutation();
-  const unlikePost = trpc.post.removeLike.useMutation();
+  const createLike = trpc.post.createLike.useMutation();
+  const deleteLike = trpc.post.deleteLike.useMutation();
 
-  const { data: session } = useSession();
+  const videos = YouTubeLinkParser(data?.content);
 
-  const YouTubeLinkParser = (string) => {
+  function YouTubeLinkParser(string) {
     const youtubeLinks = string?.match(
       /https:\/\/www\.youtube\.com\/watch\?v=[a-zA-Z0-9]+/g
     );
 
     return youtubeLinks?.map((link) => link.replace('watch?v=', 'embed/'));
-  };
-  const videos = YouTubeLinkParser(data?.content);
+  }
 
-  const postLikes = data?.likes;
-  const [hasUserLikedPost, setHasUserLikedPost] = useState(
-    postLikes?.some((like) => like?.user?.email === session?.user?.email)
-  );
-
-  const handleLikePost = () => {
-    if (!session) {
-      return router.push('/signin');
+  function hasUserLikedPost() {
+    if (data?.likes) {
+      return data?.likes?.some(
+        (like) => like.user?.email === session?.user?.email
+      );
     }
-    setLoading(true);
-
-    likePost.mutate(
-      {
-        postId: String(data?.id),
-        user: String(session?.user?.email),
-      },
-      {
-        onSuccess: () => {
-          console.log('liked post');
-          setLoading(false);
-          setHasUserLikedPost(true);
-        },
-      }
-    );
-  };
-  const handleUnlikePost = async () => {
-    if (!session) {
-      return router.push('/signin');
-    }
-    setLoading(true);
-
-    unlikePost.mutateAsync(
-      {
-        postId: String(data?.id),
-        user: String(session?.user?.email),
-      },
-      {
-        onSuccess: () => {
-          console.log('unliked post');
-          setLoading(false);
-          setHasUserLikedPost(false);
-        },
-      }
-    );
-  };
+  }
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -129,6 +94,44 @@ const NewPostPage: NextPage = () => {
       draggable: true,
       progress: undefined,
       theme: 'light',
+    });
+  };
+
+  const handleReportClick = () => {
+    if (!session) {
+      router.push('/signin');
+    }
+    setIsReportModalOpen(true);
+  };
+
+  const handleLikePost = () => {
+    if (!session) {
+      router.push('/signin');
+    }
+    setLoading(true);
+    createLike.mutate(
+      { postId: data?.id!, user: session?.user?.email! },
+      {
+        onSuccess: () => {
+          refetch();
+          setLoading(false);
+        },
+      }
+    );
+  };
+
+  const handleDeleteLike = () => {
+    setLoading(true);
+    // find like with user email and post id
+    const like = data?.likes?.find(
+      (like) => like.user?.email === session?.user?.email
+    );
+
+    deleteLike.mutate(like?.id!, {
+      onSuccess: () => {
+        refetch();
+        setLoading(false);
+      },
     });
   };
 
@@ -211,36 +214,57 @@ const NewPostPage: NextPage = () => {
             Aktiivne kuni{' '}
             {moment(data?.publishedOn).add(1, 'month').format('DD.MM')}
           </div>
-          {hasUserLikedPost ? (
-            <div className="flex items-center gap-1">
-              <AiFillHeart
-                size={20}
-                color="red"
-              />
-              <button
-                onClick={handleUnlikePost}
-                className={`${loading && 'opacity-20 animate-pulse'}`}
-              >
-                Eemalda lemmikutest
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1">
-              <AiOutlineHeart size={20} />
-              <button
-                onClick={handleLikePost}
-                className={`${loading && 'opacity-20 animate-pulse'}`}
-              >
-                Lisa lemmikuks
-              </button>
-            </div>
-          )}
+
           <ToastContainer />
           <div className="flex items-center gap-1">
-            <BiCopy size={20} />
-            <button onClick={() => handleCopyLink()}>Kopeeri link</button>
+            {hasUserLikedPost() ? (
+              <>
+                <AiFillHeart
+                  size={20}
+                  color={'red'}
+                />
+                <button
+                  onClick={() => handleDeleteLike()}
+                  className="px-1 rounded-md disabled:opacity-50 hover:bg-gray-100"
+                  disabled={loading}
+                >
+                  Eemalda lemmikutest
+                </button>
+                {loading && <Spinner />}
+              </>
+            ) : (
+              <>
+                <AiOutlineHeart size={20} />
+                <button
+                  onClick={() => handleLikePost()}
+                  className="px-1 rounded-md disabled:opacity-50 hover:bg-gray-100"
+                  disabled={loading}
+                >
+                  Lisa lemmikuks
+                </button>
+                {loading && <Spinner />}
+              </>
+            )}
           </div>
-          <button onClick={() => setIsReportModalOpen(true)}>Teata</button>
+          <div className="flex items-center gap-1">
+            <BiCopy size={20} />
+            <button
+              onClick={() => handleCopyLink()}
+              className="px-1 rounded-md hover:bg-gray-100"
+            >
+              Kopeeri link
+            </button>
+          </div>
+          <div className="flex items-center gap-1">
+            <MdReportGmailerrorred size={20} />
+            <button
+              onClick={() => handleReportClick()}
+              className="px-1 rounded-md hover:bg-gray-100"
+            >
+              Teata
+            </button>
+          </div>
+
           <h1 className="my-2 title">Kommentaarid</h1>
           <Comments
             postComments={data?.comments}

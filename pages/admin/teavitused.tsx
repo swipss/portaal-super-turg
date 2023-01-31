@@ -28,7 +28,7 @@ const adminRoutes = [
 export const AdminTabs = () => {
   const activePath = useRouter().pathname;
   return (
-    <div className="flex flex-row justify-start w-full gap-2 mb-2">
+    <div className="flex flex-row justify-start w-full gap-2 mb-2 overflow-scroll">
       {adminRoutes.map((route) => (
         <Link href={route.path}>
           <a

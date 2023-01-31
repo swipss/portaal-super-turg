@@ -28,19 +28,8 @@ model Post {
   category Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
   createdAt DateTime  @default(now()) @map("created_at")
-  likes PostLikes[]
   reports Report[]
-
-}
-
-model PostLikes {
-  id         String     @id @default(cuid())
-  user User @relation(fields: [userId], references: [id])
-  userId String
-  post Post @relation(fields: [postId], references: [id])
-  postId String
-
-  @@unique([userId, postId])
+  likes LikeOnPost[]
 
 }
 
@@ -119,11 +108,20 @@ model User {
   comments Comment[]
   phone    String?
   socials  Social[]
-  likes PostLikes[]
   reports Report[]
+  likes LikeOnPost[]
   
 
   @@map("users")
+  
+}
+
+model LikeOnPost {
+  id String @id @default(cuid())
+  userId String?
+  postId String?
+  user User? @relation(fields: [userId], references: [id])
+  post Post? @relation(fields: [postId], references: [id])
 }
 
 model Location {

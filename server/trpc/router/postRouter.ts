@@ -36,7 +36,11 @@ export const postRouter = router({
           author: true,
           likes: {
             include: {
-              user: true,
+              user: {
+                select: {
+                  email: true,
+                },
+              },
             },
           },
         },
@@ -117,43 +121,7 @@ export const postRouter = router({
         },
       });
     }),
-  likePost: protectedProcedure
-    .input(
-      z.object({
-        user: z.string(),
-        postId: z.string(),
-      })
-    )
-    .mutation(({ input, ctx }) => {
-      return ctx.prisma.postLikes.create({
-        data: {
-          post: { connect: { id: input.postId } },
-          user: { connect: { email: input.user } },
-        },
-      });
-    }),
-  removeLike: protectedProcedure
-    .input(
-      z.object({
-        postId: z.string(),
-        user: z.string(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const user = await ctx.prisma.user.findUnique({
-        where: {
-          email: input.user,
-        },
-      });
-      return await ctx.prisma.postLikes.delete({
-        where: {
-          userId_postId: {
-            postId: input.postId,
-            userId: String(user?.id),
-          },
-        },
-      });
-    }),
+
   createReport: protectedProcedure
     .input(
       z.object({
@@ -169,6 +137,31 @@ export const postRouter = router({
           post: { connect: { id: input.postId } },
           reportedBy: { connect: { email: input.reportedBy ?? '' } },
           date: new Date(),
+        },
+      });
+    }),
+  createLike: protectedProcedure
+    .input(
+      z.object({
+        postId: z.string(),
+        user: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.likeOnPost.create({
+        data: {
+          post: { connect: { id: input.postId } },
+          user: { connect: { email: input.user } },
+        },
+      });
+    }),
+  // delete like
+  deleteLike: protectedProcedure
+    .input(z.string())
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.likeOnPost.delete({
+        where: {
+          id: input,
         },
       });
     }),
