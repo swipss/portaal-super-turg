@@ -91,7 +91,9 @@ const UsersPage = () => {
           <tbody>
             {users
               ?.filter((user) =>
-                user.name?.toLowerCase().includes(searchNameFilter)
+                user.name
+                  ?.toLowerCase()
+                  .includes(searchNameFilter.toLowerCase())
               )
               .map((user) => (
                 <tr className="bg-white hover:bg-gray-50">

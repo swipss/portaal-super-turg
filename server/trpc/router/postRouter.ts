@@ -155,13 +155,26 @@ export const postRouter = router({
         },
       });
     }),
-  // delete like
   deleteLike: protectedProcedure
     .input(z.string())
     .mutation(({ input, ctx }) => {
       return ctx.prisma.likeOnPost.delete({
         where: {
           id: input,
+        },
+      });
+    }),
+  incrementPostViews: publicProcedure
+    .input(z.string())
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.post.update({
+        where: {
+          id: input,
+        },
+        data: {
+          views: {
+            increment: 1,
+          },
         },
       });
     }),

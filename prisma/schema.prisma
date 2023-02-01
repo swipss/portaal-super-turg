@@ -22,6 +22,7 @@ model Post {
   price      Float?
   location   String?
   type      String?
+  views      Int?       @default(0)
   images     Image[]
   author     User?      @relation(fields: [authorId], references: [id])
   comments   Comment[]

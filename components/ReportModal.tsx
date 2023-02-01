@@ -1,20 +1,25 @@
 import { useSession } from 'next-auth/react';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { trpc } from '../utils/trpc';
+import Spinner from './Layouts/Spinner';
 
 const ReportModal = ({
   setIsReportModalOpen,
   postId,
+  notify,
 }: {
   setIsReportModalOpen: Dispatch<SetStateAction<boolean>>;
   postId: string;
+  notify: (text: string) => void;
 }) => {
   const [reason, setReason] = useState('');
   const { data: session } = useSession();
   const reportPost = trpc.post.createReport.useMutation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     reportPost.mutateAsync(
       {
         reason: reason,
@@ -25,6 +30,8 @@ const ReportModal = ({
         onSuccess: () => {
           console.log('reported post');
           setIsReportModalOpen(false);
+          setIsLoading(false);
+          notify('Kuulutus edukalt teavitatud');
         },
       }
     );
@@ -80,9 +87,11 @@ const ReportModal = ({
 
               <button
                 type="submit"
-                className="w-full text-white bg-messenger hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                disabled={isLoading}
+                className="disabled:opacity-50 w-full items-center justify-center flex gap-1 text-white bg-messenger hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Saada
+                {isLoading && <Spinner />}
               </button>
             </form>
           </div>

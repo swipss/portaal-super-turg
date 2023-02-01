@@ -4,8 +4,13 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { AiFillHeart, AiFillPhone, AiOutlineHeart } from 'react-icons/ai';
+import { useEffect, useState } from 'react';
+import {
+  AiFillHeart,
+  AiFillPhone,
+  AiOutlineHeart,
+  AiOutlineEye,
+} from 'react-icons/ai';
 import ReactMarkdown from 'react-markdown';
 import Layout from '../../components/Layouts/Layout';
 import { Loader } from '../../components/Layouts/Loader';
@@ -64,6 +69,8 @@ const NewPostPage: NextPage = () => {
   const categories = trpc.post.getCategories.useQuery();
   const createLike = trpc.post.createLike.useMutation();
   const deleteLike = trpc.post.deleteLike.useMutation();
+  const { mutate: incrementMutate } =
+    trpc.post.incrementPostViews.useMutation();
 
   const videos = YouTubeLinkParser(data?.content);
 
@@ -83,9 +90,8 @@ const NewPostPage: NextPage = () => {
     }
   }
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success('Kuulutuse link kopeeritud', {
+  const notify = (text: string) => {
+    toast.success(text, {
       position: 'top-center',
       autoClose: 1000,
       hideProgressBar: false,
@@ -95,6 +101,11 @@ const NewPostPage: NextPage = () => {
       progress: undefined,
       theme: 'light',
     });
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    notify('Kuulutuse link kopeeritud');
   };
 
   const handleReportClick = () => {
@@ -134,6 +145,10 @@ const NewPostPage: NextPage = () => {
       },
     });
   };
+
+  useEffect(() => {
+    incrementMutate(String(data?.id));
+  }, [data]);
 
   if (isLoading) {
     return <Loader />;
@@ -216,53 +231,65 @@ const NewPostPage: NextPage = () => {
           </div>
 
           <ToastContainer />
-          <div className="flex items-center gap-1">
-            {hasUserLikedPost() ? (
-              <>
-                <AiFillHeart
-                  size={20}
-                  color={'red'}
-                />
+
+          <div className="flex justify-between">
+            <div>
+              <div className="flex items-center gap-1">
+                {hasUserLikedPost() ? (
+                  <>
+                    <AiFillHeart
+                      size={20}
+                      color={'red'}
+                    />
+                    <button
+                      onClick={() => handleDeleteLike()}
+                      className="px-1 rounded-md disabled:opacity-50 hover:bg-gray-100"
+                      disabled={loading}
+                    >
+                      Eemalda lemmikutest
+                    </button>
+                    {loading && <Spinner />}
+                  </>
+                ) : (
+                  <>
+                    <AiOutlineHeart size={20} />
+                    <button
+                      onClick={() => handleLikePost()}
+                      className="px-1 rounded-md disabled:opacity-50 hover:bg-gray-100"
+                      disabled={loading}
+                    >
+                      Lisa lemmikuks
+                    </button>
+                    {loading && <Spinner />}
+                  </>
+                )}
+              </div>
+              <div className="flex items-center gap-1">
+                <BiCopy size={20} />
                 <button
-                  onClick={() => handleDeleteLike()}
-                  className="px-1 rounded-md disabled:opacity-50 hover:bg-gray-100"
-                  disabled={loading}
+                  onClick={() => handleCopyLink()}
+                  className="px-1 rounded-md hover:bg-gray-100"
                 >
-                  Eemalda lemmikutest
+                  Kopeeri link
                 </button>
-                {loading && <Spinner />}
-              </>
-            ) : (
-              <>
-                <AiOutlineHeart size={20} />
+              </div>
+              <div className="flex items-center gap-1">
+                <MdReportGmailerrorred size={20} />
                 <button
-                  onClick={() => handleLikePost()}
-                  className="px-1 rounded-md disabled:opacity-50 hover:bg-gray-100"
-                  disabled={loading}
+                  onClick={() => handleReportClick()}
+                  className="px-1 rounded-md hover:bg-gray-100"
                 >
-                  Lisa lemmikuks
+                  Teata
                 </button>
-                {loading && <Spinner />}
-              </>
-            )}
-          </div>
-          <div className="flex items-center gap-1">
-            <BiCopy size={20} />
-            <button
-              onClick={() => handleCopyLink()}
-              className="px-1 rounded-md hover:bg-gray-100"
-            >
-              Kopeeri link
-            </button>
-          </div>
-          <div className="flex items-center gap-1">
-            <MdReportGmailerrorred size={20} />
-            <button
-              onClick={() => handleReportClick()}
-              className="px-1 rounded-md hover:bg-gray-100"
-            >
-              Teata
-            </button>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-1">
+                <AiOutlineEye size={20} />
+                <span>{data?.views} vaatamist</span>
+              </div>
+            </div>
           </div>
 
           <h1 className="my-2 title">Kommentaarid</h1>
@@ -277,6 +304,7 @@ const NewPostPage: NextPage = () => {
         <ReportModal
           setIsReportModalOpen={setIsReportModalOpen}
           postId={data?.id!}
+          notify={notify}
         />
       )}
     </>
