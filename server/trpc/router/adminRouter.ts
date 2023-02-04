@@ -60,4 +60,28 @@ export const adminRouter = router({
       },
     });
   }),
+  addCategory: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        parentId: z.string().nullish(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.category.create({
+        data: {
+          name: input.name,
+          parentId: input.parentId,
+        },
+      });
+    }),
+  deleteCategory: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.category.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
 });

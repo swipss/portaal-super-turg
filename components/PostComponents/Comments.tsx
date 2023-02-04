@@ -29,11 +29,11 @@ const Comment = ({
     <>
       {children?.map((child) => (
         <div className={`w-full my-2  ${level > 0 && 'pl-14'}`}>
-          <div className="relative flex flex-col items-start gap-2 md:flex-row">
-            <div className="relative">
+          <div className="relative flex items-start gap-2 ">
+            <div className="relative flex-shrink-0">
               <img
                 src={child.author?.image}
-                className="flex-grow-0 w-10 h-10 rounded-full "
+                className="flex-shrink-0 w-10 h-10 rounded-full "
               />
             </div>
             <div>

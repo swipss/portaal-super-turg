@@ -5,7 +5,7 @@ import PostTypes from '../DraftComponents/PostTypes';
 
 const Search: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchParams, setSearchParams] = useState<any>({});
+  const [searchParams, setSearchParams] = useState<any>();
   const ref: any = useRef(null);
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -29,13 +29,10 @@ const Search: React.FC = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Router.push(
-      {
-        pathname: '/otsing',
-        query: searchParams,
-      },
-      '/'
-    );
+    Router.push({
+      pathname: '/otsing',
+      query: searchParams,
+    });
   };
 
   const handleAddressSelect = async (value: string): Promise<void> => {
