@@ -17,7 +17,7 @@ const Category = ({
   handleNewCategoryModal,
   handleDeleteCategory,
 }) => {
-  const children = categories.filter((c) => c.parentId === parentId);
+  const children = categories?.filter((c) => c.parentId === parentId);
   if (!children.length) return null;
   return (
     <>
