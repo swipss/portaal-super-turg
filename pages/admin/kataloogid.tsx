@@ -19,10 +19,10 @@ const Category = ({
   handleCategoryClick,
 }) => {
   const children = categories?.filter((c) => c.parentId === parentId);
-  if (!children.length) return null;
+  if (!children?.length) return null;
   return (
     <>
-      {children.map((child) => (
+      {children?.map((child) => (
         <>
           <tr className="bg-white border-b">
             <th
@@ -35,13 +35,13 @@ const Category = ({
               >
                 {child.name}
               </span>
-              <button
-                onClick={() => handleNewCategoryModal(child.name, child.id)}
-                className="px-2 ml-1 border rounded-md hover:bg-gray-100"
-              >
-                Lisa
-              </button>
             </th>
+            <button
+              onClick={() => handleNewCategoryModal(child.name, child.id)}
+              className="px-2 ml-6 font-medium text-gray-900 border rounded-md hover:bg-gray-100"
+            >
+              Lisa
+            </button>
             <Category
               setNewCategoryName={setNewCategoryName}
               newCategoryName={newCategoryName}
@@ -306,7 +306,9 @@ const CatalogsPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
-  const [newCategoryParentId, setNewCategoryParentId] = useState('');
+  const [newCategoryParentId, setNewCategoryParentId] = useState<string | null>(
+    ''
+  );
   const [newCategoryName, setNewCategoryName] = useState('');
   const [parentCategoryName, setParentCategoryName] = useState('');
   const [editableCategoryName, setEditableCategoryName] = useState('');
@@ -335,7 +337,10 @@ const CatalogsPage = () => {
     );
   };
 
-  const handleNewCategoryModal = (parentName: string, parentId: string) => {
+  const handleNewCategoryModal = (
+    parentName: string,
+    parentId: string | null
+  ) => {
     setIsModalOpen(true);
     setParentCategoryName(parentName);
     setNewCategoryParentId(parentId);
@@ -413,7 +418,7 @@ const CatalogsPage = () => {
                 handleCategoryClick={handleCategoryClick}
               />
               <button
-                onClick={() => handleNewCategoryModal('', '')}
+                onClick={() => handleNewCategoryModal('', null)}
                 className="px-2 my-2 ml-4 font-medium text-black border rounded-md hover:bg-gray-100"
               >
                 Lisa
