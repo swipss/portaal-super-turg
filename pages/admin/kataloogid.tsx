@@ -312,7 +312,7 @@ const CatalogsPage = () => {
   const [editableCategoryName, setEditableCategoryName] = useState('');
   const [editableCategoryId, setEditableCategoryId] = useState('');
   const [deletableCategoryId, setDeletableCategoryId] = useState('');
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(true);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [confirmationValue, setConfirmationValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
