@@ -4,6 +4,7 @@ import Spinner from '../../components/Layouts/Spinner';
 import { trpc } from '../../utils/trpc';
 import Unauthorized from '../unauthorized';
 import { AdminTabs } from './teavitused';
+import { AiOutlineExclamationCircle } from 'react-icons/ai';
 
 const Category = ({
   categories,
@@ -15,7 +16,7 @@ const Category = ({
   setNewCategoryName,
   newCategoryName,
   handleNewCategoryModal,
-  handleDeleteCategory,
+  handleCategoryClick,
 }) => {
   const children = categories?.filter((c) => c.parentId === parentId);
   if (!children.length) return null;
@@ -23,18 +24,17 @@ const Category = ({
     <>
       {children.map((child) => (
         <>
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <tr className="bg-white border-b">
             <th
               scope="row"
-              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              className="px-6 py-4 font-medium text-gray-900 align-text-top whitespace-nowrap"
             >
-              <button
-                onClick={() => handleDeleteCategory(child.id)}
-                className="px-1 mr-1 text-red-400 rounded hover:bg-red-50"
+              <span
+                onClick={() => handleCategoryClick(child.name, child.id)}
+                className="px-1 rounded cursor-pointer hover:bg-gray-100"
               >
-                x
-              </button>
-              {child.name}
+                {child.name}
+              </span>
               <button
                 onClick={() => handleNewCategoryModal(child.name, child.id)}
                 className="px-2 ml-1 border rounded-md hover:bg-gray-100"
@@ -52,7 +52,7 @@ const Category = ({
               parentId={child.id}
               depth={(depth += 1)}
               handleNewCategoryModal={handleNewCategoryModal}
-              handleDeleteCategory={handleDeleteCategory}
+              handleCategoryClick={handleCategoryClick}
             />
           </tr>
         </>
@@ -72,7 +72,7 @@ const NewCategoryModal = ({
   return (
     <div className="fixed left-0 right-0 z-50 p-4 overflow-x-hidden overflow-y-auto top-40">
       <div className="relative h-full max-w-[300px] mx-auto">
-        <div className="relative w-full bg-white rounded-lg shadow ">
+        <div className="relative w-full bg-white rounded-lg shadow">
           <button
             onClick={() => setIsModalOpen(false)}
             type="button"
@@ -137,21 +137,190 @@ const NewCategoryModal = ({
   );
 };
 
+const CategoryEditingModal = ({
+  editableCategoryName,
+  setEditableCategoryName,
+  setIsEditingModalOpen,
+  handleEditCategory,
+  handleDeleteCategory,
+  isLoading,
+  setIsConfirmationModalOpen,
+}) => {
+  return (
+    <div className="fixed left-0 right-0 z-50 p-4 overflow-x-hidden overflow-y-auto top-40">
+      <div className="relative h-full max-w-[300px] mx-auto">
+        <div className="relative w-full bg-white rounded-lg shadow">
+          <button
+            onClick={() => setIsEditingModalOpen(false)}
+            type="button"
+            className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
+          >
+            <svg
+              className="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+            <span className="sr-only">Close modal</span>
+          </button>
+          <div className="px-6 py-6 lg:px-8">
+            <h3 className="mb-4 text-xl font-medium text-gray-900">
+              Muuda kategooriat
+            </h3>
+            <form className="space-y-6">
+              <div>
+                <label
+                  htmlFor="reason"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Kategooria nimi
+                </label>
+                <input
+                  value={editableCategoryName}
+                  onChange={(e) => setEditableCategoryName(e.target.value)}
+                  name="reason"
+                  type="text"
+                  id="reason"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  required
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setIsConfirmationModalOpen(true)}
+                  type="button"
+                  disabled={isLoading}
+                  className="disabled:opacity-50 w-full text-gray-900 items-center justify-center flex gap-1 border hover:bg-red-500 hover:text-white hover:border-red-500 bg-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                >
+                  Kustuta
+                </button>
+                <button
+                  onClick={(e) => handleEditCategory(e)}
+                  type="submit"
+                  disabled={isLoading}
+                  className="disabled:opacity-50 w-full items-center justify-center flex gap-1 text-white bg-messenger hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                >
+                  Salvesta
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ConfirmationModal = ({
+  setIsConfirmationModalOpen,
+  handleDeleteCategory,
+  isLoading,
+  confirmationValue,
+  setConfirmationValue,
+}) => {
+  return (
+    <div className="fixed left-0 right-0 z-[99] p-4 overflow-x-hidden overflow-y-auto top-40">
+      <div className="relative h-full max-w-[300px] mx-auto">
+        <div className="relative w-full bg-white rounded-lg shadow">
+          <button
+            onClick={() => setIsConfirmationModalOpen(false)}
+            type="button"
+            className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center "
+          >
+            <svg
+              className="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+            <span className="sr-only">Close modal</span>
+          </button>
+          <div className="px-6 py-6 lg:px-8">
+            <h3 className="mb-4 text-xl font-medium text-gray-900">
+              Kustuta kategooria
+            </h3>
+            <form className="space-y-6">
+              <div>
+                <div className="flex flex-col items-center gap-2 p-2 mb-2 text-sm text-center text-red-600 bg-red-200 rounded">
+                  <AiOutlineExclamationCircle
+                    size={24}
+                    color="red"
+                  />
+                  <p>Kategooria kustutamisega kustuvad kõik alamkategooriad!</p>
+                </div>
+                <label
+                  htmlFor="reason"
+                  className="block mb-2 text-sm font-medium text-gray-900 "
+                >
+                  Admin parool
+                </label>
+                <input
+                  name="reason"
+                  value={confirmationValue}
+                  onChange={(e) => setConfirmationValue(e.target.value)}
+                  type="text"
+                  id="reason"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  required
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={(e) => handleDeleteCategory(e)}
+                  type="button"
+                  disabled={
+                    confirmationValue !==
+                      process.env.NEXT_PUBLIC_ADMIN_PASSWORD || isLoading
+                  }
+                  className="disabled:opacity-50 w-full disabled:hover:bg-white disabled:hover:border-gray-200 disabled:hover:text-gray-900 text-gray-900 items-center justify-center flex gap-1 border hover:bg-red-500 hover:text-white hover:border-red-500 bg-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                >
+                  Kustuta
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const CatalogsPage = () => {
   const { data: user } = trpc.drafts.getUser.useQuery();
   const { data: categories, refetch } = trpc.post.getCategories.useQuery();
   const addCategory = trpc.admin.addCategory.useMutation();
   const deleteCategory = trpc.admin.deleteCategory.useMutation();
+  const editCategory = trpc.admin.editCategory.useMutation();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
   const [newCategoryParentId, setNewCategoryParentId] = useState('');
   const [newCategoryName, setNewCategoryName] = useState('');
   const [parentCategoryName, setParentCategoryName] = useState('');
+  const [editableCategoryName, setEditableCategoryName] = useState('');
+  const [editableCategoryId, setEditableCategoryId] = useState('');
+  const [deletableCategoryId, setDeletableCategoryId] = useState('');
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(true);
+  const [confirmationValue, setConfirmationValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  let depth = 0;
+  console.log(editableCategoryName);
 
-  const handleAddCategory = (e) => {
+  let depth: number = 0;
+
+  const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     addCategory.mutate(
@@ -166,18 +335,45 @@ const CatalogsPage = () => {
     );
   };
 
-  const handleNewCategoryModal = (parentName, parentId) => {
+  const handleNewCategoryModal = (parentName: string, parentId: string) => {
     setIsModalOpen(true);
     setParentCategoryName(parentName);
     setNewCategoryParentId(parentId);
   };
 
-  const handleDeleteCategory = (id) => {
-    deleteCategory.mutate(id, {
+  const handleDeleteCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    deleteCategory.mutate(deletableCategoryId, {
       onSuccess: () => {
         refetch();
+        setIsEditingModalOpen(false);
+        setIsConfirmationModalOpen(false);
+        setIsLoading(false);
       },
     });
+  };
+
+  const handleCategoryClick = (name: string, id: string) => {
+    setEditableCategoryName(name);
+    setEditableCategoryId(id);
+    setDeletableCategoryId(id);
+    setIsEditingModalOpen(true);
+  };
+
+  const handleEditCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    editCategory.mutate(
+      { id: editableCategoryId, name: editableCategoryName },
+      {
+        onSuccess: () => {
+          refetch();
+          setIsEditingModalOpen(false);
+          setIsLoading(false);
+        },
+      }
+    );
   };
 
   if (user?.role !== 'ADMIN') {
@@ -193,8 +389,8 @@ const CatalogsPage = () => {
       <Layout>
         <AdminTabs />
         <div className="relative overflow-x-auto rounded-lg shadow-md">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+          <table className="w-full text-sm text-left text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase">
               <tr>
                 <th
                   scope="col"
@@ -214,10 +410,10 @@ const CatalogsPage = () => {
                 depth={depth}
                 setIsModalOpen={setIsModalOpen}
                 handleNewCategoryModal={handleNewCategoryModal}
-                handleDeleteCategory={handleDeleteCategory}
+                handleCategoryClick={handleCategoryClick}
               />
               <button
-                onClick={() => handleNewCategoryModal('', null)}
+                onClick={() => handleNewCategoryModal('', '')}
                 className="px-2 my-2 ml-4 font-medium text-black border rounded-md hover:bg-gray-100"
               >
                 Lisa
@@ -236,6 +432,26 @@ const CatalogsPage = () => {
           />
         )}
       </Layout>
+      {isEditingModalOpen && (
+        <CategoryEditingModal
+          editableCategoryName={editableCategoryName}
+          setIsEditingModalOpen={setIsEditingModalOpen}
+          setEditableCategoryName={setEditableCategoryName}
+          handleEditCategory={handleEditCategory}
+          handleDeleteCategory={handleDeleteCategory}
+          isLoading={isLoading}
+          setIsConfirmationModalOpen={setIsConfirmationModalOpen}
+        />
+      )}
+      {isConfirmationModalOpen && (
+        <ConfirmationModal
+          setIsConfirmationModalOpen={setIsConfirmationModalOpen}
+          handleDeleteCategory={handleDeleteCategory}
+          isLoading={isLoading}
+          confirmationValue={confirmationValue}
+          setConfirmationValue={setConfirmationValue}
+        />
+      )}
     </>
   );
 };
