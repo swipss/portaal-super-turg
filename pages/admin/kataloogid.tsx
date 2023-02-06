@@ -4,7 +4,7 @@ import Spinner from '../../components/Layouts/Spinner';
 import { trpc } from '../../utils/trpc';
 import Unauthorized from '../unauthorized';
 import { AdminTabs } from './teavitused';
-import { AiOutlineExclamationCircle } from 'react-icons/ai';
+import { AiOutlineExclamationCircle, AiOutlinePlus } from 'react-icons/ai';
 import { Category } from '@prisma/client';
 
 const Category = ({
@@ -408,7 +408,7 @@ const CatalogsPage = () => {
               selectedParentCategory === undefined && 'bg-gray-100'
             } flex items-center justify-center px-1 text-xs  font-medium text-gray-500 border border-gray-300 rounded-lg  hover:bg-gray-100`}
           >
-            Kõik
+            KÕIK
           </button>
           {parentCategories?.map((category) => (
             <button
@@ -420,6 +420,15 @@ const CatalogsPage = () => {
               {category.name}
             </button>
           ))}
+          <button
+            onClick={() => handleNewCategoryModal('', null)}
+            className="px-1 font-medium text-black border border-blue-200 rounded-lg py-0.5 hover:bg-blue-200 bg-blue-100"
+          >
+            <AiOutlinePlus
+              size={12}
+              color="blue"
+            />
+          </button>
         </div>
         <div className="relative overflow-x-auto rounded-lg shadow-md">
           <table className="w-full text-sm text-left text-gray-500">
@@ -442,7 +451,7 @@ const CatalogsPage = () => {
                       selectedParentCategory.id
                     )
                   }
-                  className="px-2 ml-4 font-medium text-gray-900 border rounded-md hover:bg-gray-100"
+                  className="px-2 mb-2 ml-4 font-medium text-gray-900 border rounded-md hover:bg-gray-100"
                 >
                   Lisa alamkat
                 </button>
@@ -459,12 +468,6 @@ const CatalogsPage = () => {
                 handleCategoryClick={handleCategoryClick}
                 parentId={selectedParentCategory?.id ?? null}
               />
-              <button
-                onClick={() => handleNewCategoryModal('', null)}
-                className="block px-2 my-2 ml-4 font-medium text-black border rounded-md hover:bg-gray-100"
-              >
-                Lisa uus peakategooria
-              </button>
             </tbody>
           </table>
         </div>
