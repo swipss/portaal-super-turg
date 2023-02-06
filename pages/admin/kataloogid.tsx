@@ -401,25 +401,27 @@ const CatalogsPage = () => {
     <>
       <Layout>
         <AdminTabs />
-        <div className="flex gap-2 overflow-scroll">
-          <button
-            onClick={() => setSelectedParentCategory(undefined)}
-            className={`${
-              selectedParentCategory === undefined && 'bg-gray-100'
-            } flex items-center justify-center px-6 py-3 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg  hover:bg-gray-100`}
-          >
-            Kõik
-          </button>
-          {parentCategories?.map((category) => (
+        <div className="py-4 overflow-scroll">
+          <div className="flex gap-2 w-max">
             <button
-              onClick={() => setSelectedParentCategory(category)}
+              onClick={() => setSelectedParentCategory(undefined)}
               className={`${
-                selectedParentCategory === category && 'bg-gray-100'
-              } flex items-center justify-center px-6 py-3 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg  hover:bg-gray-100`}
+                selectedParentCategory === undefined && 'bg-gray-100'
+              } flex items-center justify-center px-1 text-xs  font-medium text-gray-500 border border-gray-300 rounded-lg  hover:bg-gray-100`}
             >
-              {category.name}
+              Kõik
             </button>
-          ))}
+            {parentCategories?.map((category) => (
+              <button
+                onClick={() => setSelectedParentCategory(category)}
+                className={`${
+                  selectedParentCategory === category && 'bg-gray-100'
+                } flex items-center justify-center w-fit  text-xs px-1 font-medium text-gray-500 border border-gray-300 rounded-lg  hover:bg-gray-100`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="relative overflow-x-auto rounded-lg shadow-md">
           <table className="w-full text-sm text-left text-gray-500">
