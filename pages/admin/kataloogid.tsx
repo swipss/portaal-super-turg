@@ -5,10 +5,11 @@ import { trpc } from '../../utils/trpc';
 import Unauthorized from '../unauthorized';
 import { AdminTabs } from './teavitused';
 import { AiOutlineExclamationCircle } from 'react-icons/ai';
+import { Category } from '@prisma/client';
 
 const Category = ({
   categories,
-  parentId = null,
+  parentId,
   depth,
   setIsModalOpen,
   setnewCategoryParentId,
@@ -23,39 +24,40 @@ const Category = ({
   return (
     <>
       {children?.map((child) => (
-        <>
-          <tr className="bg-white border-b">
-            <th
-              scope="row"
-              className="px-6 py-4 font-medium text-gray-900 align-text-top whitespace-nowrap"
+        <tr
+          className="bg-white border-b"
+          key={child.id}
+        >
+          <th
+            scope="row"
+            className="px-4 py-2 font-medium text-gray-900 align-text-top whitespace-nowrap"
+          >
+            <span
+              onClick={() => handleCategoryClick(child.name, child.id)}
+              className="px-1 rounded cursor-pointer hover:bg-gray-100"
             >
-              <span
-                onClick={() => handleCategoryClick(child.name, child.id)}
-                className="px-1 rounded cursor-pointer hover:bg-gray-100"
-              >
-                {child.name}
-              </span>
-            </th>
-            <button
-              onClick={() => handleNewCategoryModal(child.name, child.id)}
-              className="px-2 ml-6 font-medium text-gray-900 border rounded-md hover:bg-gray-100"
-            >
-              Lisa
-            </button>
-            <Category
-              setNewCategoryName={setNewCategoryName}
-              newCategoryName={newCategoryName}
-              setnewCategoryParentId={setnewCategoryParentId}
-              newCategoryParentId={newCategoryParentId}
-              setIsModalOpen={setIsModalOpen}
-              categories={categories}
-              parentId={child.id}
-              depth={(depth += 1)}
-              handleNewCategoryModal={handleNewCategoryModal}
-              handleCategoryClick={handleCategoryClick}
-            />
-          </tr>
-        </>
+              {child.name}
+            </span>
+          </th>
+          <button
+            onClick={() => handleNewCategoryModal(child.name, child.id)}
+            className="px-2 ml-4 font-medium text-gray-900 border rounded-md hover:bg-gray-100"
+          >
+            Lisa
+          </button>
+          <Category
+            setNewCategoryName={setNewCategoryName}
+            newCategoryName={newCategoryName}
+            setnewCategoryParentId={setnewCategoryParentId}
+            newCategoryParentId={newCategoryParentId}
+            setIsModalOpen={setIsModalOpen}
+            categories={categories}
+            parentId={child.id}
+            depth={(depth += 1)}
+            handleNewCategoryModal={handleNewCategoryModal}
+            handleCategoryClick={handleCategoryClick}
+          />
+        </tr>
       ))}
     </>
   );
@@ -318,7 +320,13 @@ const CatalogsPage = () => {
   const [confirmationValue, setConfirmationValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(editableCategoryName);
+  let parentCategories = categories?.filter((c) => !c.parentId);
+
+  const [selectedParentCategory, setSelectedParentCategory] = useState<
+    Category | undefined
+  >(parentCategories?.[0]);
+
+  console.log(parentCategories, selectedParentCategory);
 
   let depth: number = 0;
 
@@ -393,19 +401,52 @@ const CatalogsPage = () => {
     <>
       <Layout>
         <AdminTabs />
+        <div className="flex gap-2 overflow-scroll">
+          <button
+            onClick={() => setSelectedParentCategory(undefined)}
+            className={`${
+              selectedParentCategory === undefined && 'bg-gray-100'
+            } flex items-center justify-center px-6 py-3 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg  hover:bg-gray-100`}
+          >
+            Kõik
+          </button>
+          {parentCategories?.map((category) => (
+            <button
+              onClick={() => setSelectedParentCategory(category)}
+              className={`${
+                selectedParentCategory === category && 'bg-gray-100'
+              } flex items-center justify-center px-6 py-3 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg  hover:bg-gray-100`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
         <div className="relative overflow-x-auto rounded-lg shadow-md">
           <table className="w-full text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-700 uppercase">
               <tr>
                 <th
                   scope="col"
-                  className="px-6 py-3"
+                  className="px-2 py-3"
                 >
                   Peakategooria
                 </th>
               </tr>
             </thead>
             <tbody>
+              {selectedParentCategory && (
+                <button
+                  onClick={() =>
+                    handleNewCategoryModal(
+                      selectedParentCategory.name,
+                      selectedParentCategory.id
+                    )
+                  }
+                  className="px-2 ml-4 font-medium text-gray-900 border rounded-md hover:bg-gray-100"
+                >
+                  Lisa alamkat
+                </button>
+              )}
               <Category
                 newCategoryParentId={newCategoryParentId}
                 setnewCategoryParentId={setNewCategoryParentId}
@@ -416,12 +457,13 @@ const CatalogsPage = () => {
                 setIsModalOpen={setIsModalOpen}
                 handleNewCategoryModal={handleNewCategoryModal}
                 handleCategoryClick={handleCategoryClick}
+                parentId={selectedParentCategory?.id ?? null}
               />
               <button
                 onClick={() => handleNewCategoryModal('', null)}
-                className="px-2 my-2 ml-4 font-medium text-black border rounded-md hover:bg-gray-100"
+                className="block px-2 my-2 ml-4 font-medium text-black border rounded-md hover:bg-gray-100"
               >
-                Lisa
+                Lisa uus peakategooria
               </button>
             </tbody>
           </table>

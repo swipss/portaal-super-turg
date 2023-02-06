@@ -30,7 +30,10 @@ export const AdminTabs = () => {
   return (
     <div className="flex flex-row justify-start w-full gap-2 mb-2 overflow-scroll">
       {adminRoutes.map((route) => (
-        <Link href={route.path}>
+        <Link
+          href={route.path}
+          key={route.path}
+        >
           <a
             className={`${
               route.path === activePath && 'bg-gray-100'
