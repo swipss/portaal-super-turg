@@ -2,6 +2,7 @@ import Router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import PostTypes from '../DraftComponents/PostTypes';
+import CategorySelect from './CategorySelect';
 
 const Search: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -95,7 +96,12 @@ const Search: React.FC = () => {
           </svg>
         </button>
       </div>
+
       <div className="pt-4">
+        <CategorySelect
+          setSearchParams={setSearchParams}
+          searchParams={searchParams}
+        />
         <div className="flex items-center w-full gap-2">
           <PlacesAutocomplete
             value={searchParams?.location}
