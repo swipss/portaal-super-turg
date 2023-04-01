@@ -33,15 +33,14 @@ const Categories = ({
   if (!children?.length) return null;
   return (
     <>
-      <div className="mb-2 border-b">
+      <div className="border-y">
         {children?.map((category) => (
           <>
             <button
               type="button"
-              className={`hover:bg-blue-500 hover:border-blue-500 hover:text-white transition-all px-2 py-1 mb-2 mr-2 bg-white border rounded-lg ${
-                selectedCategory === category.name &&
-                'bg-[#3B81F6] border-[#3B81F6] text-white'
-              }`}
+              className={`${
+                selectedCategory === category.name && '!bg-blue-500 text-white'
+              } px-4 py-2 m-1 text-sm font-medium text-gray-700 rounded hover:bg-blue-500 hover:text-white  transition-all duration-75 bg-gray-100 `}
               onClick={() => handleCategoryClick(category)}
             >
               {category.name}

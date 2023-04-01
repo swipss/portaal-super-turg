@@ -84,50 +84,6 @@ export const postRouter = router({
         },
       });
     }),
-  getByParams: publicProcedure
-    .input(
-      z.object({
-        title: z.string().nullish(),
-        location: z.string().nullish(),
-        minPrice: z.string().nullish(),
-        maxPrice: z.string().nullish(),
-        type: z.string().nullish(),
-        category: z.string().nullish(),
-      })
-    )
-    .query(({ input, ctx }) => {
-      return ctx.prisma.post.findMany({
-        where: {
-          published: true,
-          title: {
-            contains: input.title ?? '',
-            mode: 'insensitive',
-          },
-          location: {
-            contains: input.location ?? '',
-            mode: 'insensitive',
-          },
-          price: {
-            gt: Number(input.minPrice) || 0,
-            lt: Number(input.maxPrice) || 999999999999,
-          },
-          type: {
-            contains: input.type ?? '',
-            mode: 'insensitive',
-          },
-          category: {
-            name: {
-              contains: input.category ?? '',
-              mode: 'insensitive',
-            },
-          },
-        },
-        include: {
-          images: true,
-          author: true,
-        },
-      });
-    }),
 
   createReport: protectedProcedure
     .input(
@@ -182,6 +138,54 @@ export const postRouter = router({
           views: {
             increment: 1,
           },
+        },
+      });
+    }),
+  getPostsByCategoryIds: publicProcedure
+    .input(
+      z.object({
+        categoryIds: z.array(z.string()).nullish(),
+        title: z.string().nullish(),
+        location: z.string().nullish(),
+        minPrice: z.string().nullish(),
+        maxPrice: z.string().nullish(),
+        type: z.string().nullish(),
+      })
+    )
+    .query(({ input, ctx }) => {
+      const where: any = {
+        published: true,
+        title: {
+          contains: input.title ?? '',
+          mode: 'insensitive',
+        },
+        location: {
+          contains: input.location ?? '',
+          mode: 'insensitive',
+        },
+        price: {
+          gt: Number(input.minPrice) || 0,
+          lt: Number(input.maxPrice) || 999999999999,
+        },
+        type: {
+          contains: input.type ?? '',
+          mode: 'insensitive',
+        },
+      };
+
+      if (input.categoryIds?.length) {
+        where.category = {
+          id: {
+            in: input.categoryIds,
+          },
+        };
+      }
+
+      return ctx.prisma.post.findMany({
+        where,
+        include: {
+          images: true,
+          author: true,
         },
       });
     }),
