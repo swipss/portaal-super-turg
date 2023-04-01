@@ -1,13 +1,42 @@
+import { useSession } from 'next-auth/react';
 import Router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete';
+import { trpc } from '../../utils/trpc';
 import PostTypes from '../DraftComponents/PostTypes';
 import CategorySelect from './CategorySelect';
+
+const RecentSearches = (session) => {
+  const { data: user } = trpc.drafts.getUser.useQuery();
+  if (!user?.searches?.length) return null;
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-1 mt-2">
+      <div className="text-sm text-gray-500">Viimati sisestatud: </div>
+      <div className="flex flex-wrap justify-center gap-1">
+        {user?.searches
+          ?.slice(-5)
+          .reverse()
+          .map((search) => (
+            <div
+              key={search}
+              className="text-sm text-blue-500 underline cursor-pointer hover:text-gray-700"
+            >
+              {search + ','}
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+};
 
 const Search: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchParams, setSearchParams] = useState<any>();
   const ref: any = useRef(null);
+  const { data: session } = useSession();
+  const { mutate } = trpc.home.addRecentSearch.useMutation();
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -28,9 +57,15 @@ const Search: React.FC = () => {
     setSearchParams({ ...searchParams, [e.target.name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    Router.push({
+    if (session) {
+      mutate({
+        user: session.user?.email ?? '',
+        searchText: searchParams?.title,
+      });
+    }
+    await Router.push({
       pathname: '/otsing',
       query: searchParams,
     });
@@ -96,12 +131,14 @@ const Search: React.FC = () => {
           </svg>
         </button>
       </div>
+      {session && <RecentSearches />}
 
       <div className="pt-4">
         <CategorySelect
           setSearchParams={setSearchParams}
           searchParams={searchParams}
         />
+
         <div className="flex items-center w-full gap-2">
           <PlacesAutocomplete
             value={searchParams?.location}

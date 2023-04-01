@@ -112,6 +112,7 @@ model User {
   socials  Social[]
   reports Report[]
   likes LikeOnPost[]
+  searches String[]
   
 
   @@map("users")

@@ -1,6 +1,11 @@
+import { Category, Post } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { AiFillCaretDown, AiFillCaretRight } from 'react-icons/ai';
 import { trpc } from '../../utils/trpc';
+
+interface TCategory extends Category {
+  posts: Post[];
+}
 
 const Categories = ({
   categories,
@@ -14,11 +19,7 @@ const Categories = ({
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
 
-  useEffect(() => {
-    console.log('selected category', selectedCategory);
-  }, [selectedCategory]);
-
-  const handleCategoryClick = (category) => {
+  function handleCategoryClick(category: TCategory): void {
     if (selectedCategory === category.name) {
       setSelectedCategory('');
       setIsExpanded(false);
@@ -26,9 +27,23 @@ const Categories = ({
     } else {
       setSelectedCategory(category.name);
       setIsExpanded(true);
-      setSearchParams({ ...searchParams, category: category.name });
+      setSearchParams({
+        ...searchParams,
+        category: category.name.toLowerCase(),
+      });
     }
-  };
+  }
+
+  function countPosts(category: TCategory, categories: TCategory[]): number {
+    let postCount = category.posts.length;
+    const children = categories.filter((c) => c.parentId === category.id);
+    if (children.length) {
+      children.forEach((child) => {
+        postCount += countPosts(child, categories);
+      });
+    }
+    return postCount;
+  }
 
   if (!children?.length) return null;
   return (
@@ -39,11 +54,13 @@ const Categories = ({
             <button
               type="button"
               className={`${
-                selectedCategory === category.name && '!bg-blue-500 text-white'
-              } px-4 py-2 m-1 text-sm font-medium text-gray-700 rounded hover:bg-blue-500 hover:text-white  transition-all duration-75 bg-gray-100 `}
+                selectedCategory === category.name
+                  ? '!bg-blue-500 text-white'
+                  : 'bg-gray-100'
+              } px-4 py-2 m-1 text-sm font-medium text-gray-700 rounded hover:bg-blue-500 hover:text-white  transition-all duration-75`}
               onClick={() => handleCategoryClick(category)}
             >
-              {category.name}
+              {`${category.name} (${countPosts(category, categories)})`}
             </button>
             {selectedCategory === category.name && isExpanded && (
               <Categories

@@ -47,7 +47,15 @@ export const postRouter = router({
       });
     }),
   getCategories: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.category.findMany();
+    return ctx.prisma.category.findMany({
+      include: {
+        posts: {
+          where: {
+            published: true,
+          },
+        },
+      },
+    });
   }),
   postComment: publicProcedure
     .input(

@@ -12,7 +12,9 @@ const SearchPage: NextPage = () => {
   const params = router.query;
   const { data: categories } = trpc.post.getCategories.useQuery();
 
-  const topLevelCategory = categories?.find((c) => c.name === params.category);
+  const topLevelCategory = categories?.find(
+    (c) => c.name.toLowerCase() === params.category
+  );
 
   const { data: categoryPosts, isLoading } =
     trpc.post.getPostsByCategoryIds.useQuery({
