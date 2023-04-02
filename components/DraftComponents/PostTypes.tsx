@@ -1,4 +1,4 @@
-const typeValues = [
+export const typeValues = [
   'müük',
   'ost',
   'vahetus',
