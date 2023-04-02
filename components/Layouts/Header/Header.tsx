@@ -5,6 +5,7 @@ import { AvatarDropdown } from './AvatarDropdown';
 import Head from 'next/head';
 import { IoIosPaper } from 'react-icons/io';
 import { trpc } from '../../../utils/trpc';
+import { useSession } from 'next-auth/react';
 
 const Header: React.FC = () => {
   const { data: user } = trpc.drafts.getUser.useQuery();

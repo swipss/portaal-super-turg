@@ -3,6 +3,9 @@ import { router, publicProcedure, protectedProcedure } from '../trpc';
 
 export const draftsRouter = router({
   getUser: protectedProcedure.query(({ ctx }) => {
+    if (!ctx.session.user) {
+      return null;
+    }
     return ctx.prisma.user.findUnique({
       where: {
         email: ctx.session.user?.email ?? '',

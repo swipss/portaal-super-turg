@@ -11,7 +11,6 @@ const SearchPage: NextPage = () => {
   const router = useRouter();
   const params = router.query;
   const { data: categories } = trpc.post.getCategories.useQuery();
-
   const topLevelCategory = categories?.find(
     (c) => c.name.toLowerCase() === params.category
   );
@@ -21,7 +20,6 @@ const SearchPage: NextPage = () => {
       ...params,
       categoryIds: getChildrenIds(topLevelCategory, []),
     });
-  console.log(getChildrenIds(topLevelCategory, []));
   function getChildrenIds(category, allIds) {
     if (category?.id) {
       allIds.push(category?.id);

@@ -1,4 +1,5 @@
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import Router from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import PlacesAutocomplete from 'react-places-autocomplete';
@@ -6,28 +7,60 @@ import { trpc } from '../../utils/trpc';
 import PostTypes from '../DraftComponents/PostTypes';
 import CategorySelect from './CategorySelect';
 
-const RecentSearches = (session) => {
-  const { data: user } = trpc.drafts.getUser.useQuery();
-  if (!user?.searches?.length) return null;
+const RecentSearches = () => {
+  const [searchHistory, setSearchHistory] = useState([]);
 
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-1 mt-2">
-      <div className="text-sm text-gray-500">Viimati sisestatud: </div>
-      <div className="flex flex-wrap justify-center gap-1">
-        {user?.searches
-          ?.slice(-5)
-          .reverse()
-          .map((search) => (
-            <div
-              key={search}
-              className="text-sm text-blue-500 underline cursor-pointer hover:text-gray-700"
-            >
-              {search + ','}
-            </div>
-          ))}
+  useEffect(() => {
+    const searchHistoryString = document?.cookie
+      ?.split(';')
+      .find((cookie) => cookie?.includes('recentSearches='))
+      ?.split('=')[1];
+    const historyArray = searchHistoryString
+      ? JSON.parse(searchHistoryString)
+      : [];
+    setSearchHistory(historyArray);
+  }, []);
+  const { data: user } = trpc.drafts.getUser.useQuery();
+
+  if (user?.searches?.length) {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-1 mt-2">
+        <div className="text-sm text-gray-500">Viimati sisestatud: </div>
+        <div className="flex flex-wrap justify-center gap-1">
+          {user.searches
+            .slice(-5)
+            .reverse()
+            .map((search) => (
+              <Link href={`/otsing?title=${search}`}>
+                <a className="text-sm text-blue-500 underline cursor-pointer hover:text-gray-700">
+                  {search + ','}
+                </a>
+              </Link>
+            ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else if (searchHistory.length) {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-1 mt-2">
+        <div className="text-sm text-gray-500">Viimati sisestatud: </div>
+        <div className="flex flex-wrap justify-center gap-1">
+          {searchHistory
+            .slice(-5)
+            .reverse()
+            .map((search) => (
+              <Link href={`/otsing?title=${search}`}>
+                <a className="text-sm text-blue-500 underline cursor-pointer hover:text-gray-700">
+                  {search + ','}
+                </a>
+              </Link>
+            ))}
+        </div>
+      </div>
+    );
+  } else {
+    return null;
+  }
 };
 
 const Search: React.FC = () => {
@@ -57,15 +90,28 @@ const Search: React.FC = () => {
     setSearchParams({ ...searchParams, [e.target.name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (session) {
-      mutate({
-        user: session.user?.email ?? '',
-        searchText: searchParams?.title,
-      });
+    if (searchParams?.title) {
+      if (session) {
+        mutate({
+          user: session.user?.email ?? '',
+          searchText: searchParams?.title,
+        });
+      } else {
+        const recentSearchString = document.cookie
+          .split(';')
+          .find((cookie) => cookie.includes('recentSearches='))
+          ?.split('=')[1];
+        let recentSearches = recentSearchString
+          ? JSON.parse(recentSearchString)
+          : [];
+        recentSearches.push(searchParams?.title);
+        const updatedRecentSearchString = JSON.stringify(recentSearches);
+        document.cookie = `recentSearches=${updatedRecentSearchString}; path=/`;
+      }
     }
-    await Router.push({
+    Router.push({
       pathname: '/otsing',
       query: searchParams,
     });
@@ -131,7 +177,7 @@ const Search: React.FC = () => {
           </svg>
         </button>
       </div>
-      {session && <RecentSearches />}
+      <RecentSearches />
 
       <div className="pt-4">
         <CategorySelect
