@@ -23,7 +23,8 @@ const Categories = ({
     if (selectedCategory === category.name) {
       setSelectedCategory('');
       setIsExpanded(false);
-      setSearchParams({ ...searchParams, category: null });
+      const { category: _, ...rest } = searchParams;
+      setSearchParams(rest);
     } else {
       setSelectedCategory(category.name);
       setIsExpanded(true);
@@ -57,7 +58,7 @@ const Categories = ({
                 selectedCategory === category.name
                   ? '!bg-blue-500 text-white'
                   : 'bg-gray-100'
-              } px-4 py-2 m-1 text-sm font-medium text-gray-700 rounded hover:bg-blue-500 hover:text-white  transition-all duration-75`}
+              } px-2 py-2 m-1 text-xs font-medium text-gray-700 rounded hover:bg-blue-500 hover:text-white  transition-all duration-75`}
               onClick={() => handleCategoryClick(category)}
             >
               {`${category.name} (${countPosts(category, categories)})`}

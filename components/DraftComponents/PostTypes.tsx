@@ -11,7 +11,14 @@ export const typeValues = [
 
 const PostTypes = ({ obj, setObj }) => {
   const handleSelect = (value) => {
-    setObj({ ...obj, type: value });
+    // if the value is already selected, remove it, otherwise set it
+    if (obj?.type === value) {
+      const { type: _, ...rest } = obj;
+      setObj(rest);
+    } else {
+      setObj({ ...obj, type: value });
+    }
+    // setObj({ ...obj, type: value });
   };
 
   return (

@@ -12,21 +12,42 @@ const SearchPage: NextPage = () => {
   const router = useRouter();
   const params = router.query;
   const { data: categories } = trpc.post.getCategories.useQuery();
+
+  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedCondition, setSelectedCondition] = useState<string>('');
+
   const topLevelCategory = categories?.find(
     (c) => c.name.toLowerCase() === params.category
   );
-  const [selectedCondition, setSelectedCondition] = useState<string | null>(
-    null
-  );
-  const [selectedType, setSelectedType] = useState<string | null>(null);
 
   const { data: categoryPosts, isLoading } =
     trpc.post.getPostsByCategoryIds.useQuery({
       ...params,
       categoryIds: getChildrenIds(topLevelCategory, []),
     });
+
   const { data: titlePosts, isLoading: titleLoading } =
     trpc.post.getPostsByTitle.useQuery(params);
+
+  const filteredTitlePosts = titlePosts?.filter((post) => {
+    if (selectedType && selectedType !== post.type) {
+      return false;
+    }
+    if (selectedCondition && selectedCondition !== post.condition) {
+      return false;
+    }
+    return true;
+  });
+
+  const filteredCategoryPosts = categoryPosts?.filter((post) => {
+    if (selectedType && selectedType !== post.type) {
+      return false;
+    }
+    if (selectedCondition && selectedCondition !== post.condition) {
+      return false;
+    }
+    return true;
+  });
 
   const filteredPosts = [
     ...(categoryPosts ?? []),
@@ -39,33 +60,19 @@ const SearchPage: NextPage = () => {
     ) ?? []),
   ];
 
-  const conditionFilteredPosts = selectedCondition
-    ? filteredPosts?.filter((post) => {
-        if (selectedCondition === 'new') {
-          return (
-            post.conditionRating === null &&
-            (!selectedType || post.type === selectedType)
-          );
-        } else {
-          return (
-            post.conditionRating !== null &&
-            post.conditionRating >= 1 &&
-            post.conditionRating <= 5 &&
-            (!selectedType || post.type === selectedType)
-          );
-        }
-      })
-    : filteredPosts.filter(
-        (post) => !selectedType || post.type === selectedType
-      );
-
-  function handleTypeClick(type: string) {
-    if (selectedType === type) {
-      setSelectedType(null);
-    } else {
-      setSelectedType(type);
+  const filteredFilteredPosts = filteredPosts?.filter((post) => {
+    // Filter posts by type and condition
+    let isMatch = true;
+    if (selectedType && post.type !== selectedType) {
+      isMatch = false;
     }
-  }
+    if (selectedCondition && post.condition !== selectedCondition) {
+      isMatch = false;
+    }
+    return isMatch;
+  });
+
+  // fitler Filter posts by type and condition
 
   function getChildrenIds(category, allIds) {
     if (category?.id) {
@@ -80,9 +87,18 @@ const SearchPage: NextPage = () => {
     return allIds;
   }
 
-  function handleConditionClick(condition: string) {
+  function handleClickType(type: string): void {
+    // if the clicked type is the same as the selected type, deselect it, otherwise select it
+    if (selectedType === type) {
+      setSelectedType('');
+    } else {
+      setSelectedType(type);
+    }
+  }
+
+  function handleClickCondition(condition: string): void {
     if (selectedCondition === condition) {
-      setSelectedCondition(null);
+      setSelectedCondition('');
     } else {
       setSelectedCondition(condition);
     }
@@ -90,77 +106,141 @@ const SearchPage: NextPage = () => {
   return (
     <Layout>
       <main>
+        {/* display how many posts were found if the title was inputted */}
         {params.title && (
-          <p className="my-2 text-center">
-            Märksõna "{params.title}" järgi leiti <b>{categoryPosts?.length}</b>{' '}
-            postitust{' '}
-          </p>
-        )}
-        <Search />
-        {filteredPosts?.length > 0 && (
-          <div className="flex flex-wrap mt-2">
-            {typeValues.map((type) => (
-              <button
-                type="button"
-                onClick={() => handleTypeClick(type)}
-                className={`px-4 py-2 m-1 text-sm font-medium text-gray-700  ${
-                  selectedType === type
-                    ? 'bg-blue-500 rounded-md text-white'
-                    : 'bg-gray-100 rounded-md hover:bg-gray-200'
-                }`}
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1)} (
-                {filteredPosts?.filter((p) => p.type === type).length})
-              </button>
-            ))}
+          <div className="mb-2 text-sm font-medium text-center text-gray-700">
+            {filteredTitlePosts?.length}{' '}
+            {filteredTitlePosts?.length === 1 ? 'tulemus' : 'tulemust'}{' '}
+            {params.title && `otsingule "${params.title}"`}
           </div>
         )}
-        <div className="flex flex-wrap mt-2">
+        <Search />
+
+        {/* buttons for selecting post type then filtering posts by that post type */}
+        <div className="flex flex-wrap gap-2 my-2">
+          {typeValues.map((type) => (
+            <button
+              type="button"
+              className={`${
+                selectedType === type ? 'bg-blue-500 text-white' : 'bg-gray-100'
+              } px-4 py-2 rounded-md text-gray-700 font-medium text-sm`}
+              onClick={() => handleClickType(type)}
+            >
+              {type.charAt(0).toUpperCase() + type.slice(1)}{' '}
+              {/* give the amount of posts for that type based on what posts are being rendered */}
+              (
+              {params.title &&
+                params.category &&
+                filteredPosts?.filter((post) => post.type === type).length}
+              {params.title &&
+                !params.category &&
+                titlePosts?.filter((post) => post.type === type).length}
+              {!params.title &&
+                categoryPosts?.filter((post) => post.type === type).length}
+              )
+            </button>
+          ))}
+        </div>
+
+        {/* buttons for selecting post condition */}
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => handleConditionClick('new')}
-            className={`px-4 py-2 m-1 text-sm font-medium text-gray-700  ${
+            className={`${
               selectedCondition === 'new'
-                ? 'bg-blue-500 rounded-md text-white'
-                : 'bg-gray-100 rounded-md hover:bg-gray-200'
-            }`}
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100'
+            } px-4 py-2 rounded-md text-gray-700 text-sm font-medium`}
+            onClick={() => handleClickCondition('new')}
           >
-            Uus ({filteredPosts?.filter((p) => p.condition === 'new').length})
+            Uus{' '}
+            {/* give the amount of posts for that condition based on what posts are being rendered and what type is selected */}
+            (
+            {params.title &&
+              params.category &&
+              filteredPosts?.filter(
+                (post) =>
+                  (post.condition === 'new' && post.type == selectedType) ||
+                  (selectedType === '' && post.condition === 'new')
+              ).length}
+            {params.title &&
+              !params.category &&
+              titlePosts?.filter(
+                (post) =>
+                  (post.condition === 'new' && post.type == selectedType) ||
+                  (selectedType === '' && post.condition === 'new')
+              ).length}
+            {!params.title &&
+              categoryPosts?.filter(
+                (post) =>
+                  (post.condition === 'new' && post.type == selectedType) ||
+                  (selectedType === '' && post.condition === 'new')
+              ).length}
+            )
           </button>
+
           <button
             type="button"
-            onClick={() => handleConditionClick('used')}
-            className={`px-4 py-2 m-1 text-sm font-medium text-gray-700  ${
+            className={`${
               selectedCondition === 'used'
-                ? 'bg-blue-500 rounded-md text-white'
-                : 'bg-gray-100 rounded-md hover:bg-gray-200'
-            }`}
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100'
+            } px-4 py-2 rounded-md text-gray-700 text-sm font-medium`}
+            onClick={() => handleClickCondition('used')}
           >
-            Kasutatud (
-            {filteredPosts?.filter((p) => p.condition === 'used').length})
+            Kasutatud{' '}
+            {/* give the amount of posts for that condition based on what posts are being rendered and what type is selected */}
+            (
+            {params.title &&
+              params.category &&
+              filteredPosts?.filter(
+                (post) =>
+                  (post.condition === 'used' && post.type == selectedType) ||
+                  (selectedType === '' && post.condition === 'used')
+              ).length}
+            {params.title &&
+              !params.category &&
+              titlePosts?.filter(
+                (post) =>
+                  (post.condition === 'used' && post.type == selectedType) ||
+                  (selectedType === '' && post.condition === 'used')
+              ).length}
+            {!params.title &&
+              categoryPosts?.filter(
+                (post) =>
+                  (post.condition === 'used' && post.type == selectedType) ||
+                  (selectedType === '' && post.condition === 'used')
+              ).length}
+            )
           </button>
         </div>
-        <div>
-          {isLoading && titleLoading && <PostSkeleton />}
-          {/* if the user didnt specify the text search, render posts by category */}
-          {!params.title ? (
-            <div>
-              {categoryPosts?.map((post) => (
-                <div key={post.id}>
-                  <Post post={post} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div>
-              {conditionFilteredPosts?.map((post) => (
-                <div key={post.id}>
-                  <Post post={post} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+
+        {!params.title &&
+          filteredCategoryPosts?.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+            />
+          ))}
+
+        {params.title &&
+          !params.category &&
+          filteredTitlePosts?.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+            />
+          ))}
+
+        {params.title &&
+          params.category &&
+          filteredFilteredPosts?.map((post) => (
+            <Post
+              key={post.id}
+              post={post}
+            />
+          ))}
+        {isLoading && <PostSkeleton />}
       </main>
     </Layout>
   );

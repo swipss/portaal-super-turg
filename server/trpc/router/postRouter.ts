@@ -158,6 +158,7 @@ export const postRouter = router({
         minPrice: z.string().nullish(),
         maxPrice: z.string().nullish(),
         type: z.string().nullish(),
+        postAge: z.string().nullish(),
       })
     )
     .query(({ input, ctx }) => {
@@ -178,6 +179,12 @@ export const postRouter = router({
         type: {
           contains: input.type ?? '',
           mode: 'insensitive',
+        },
+        createdAt: {
+          gt: new Date(
+            new Date().getTime() -
+              Number(input.postAge ?? 30) * 24 * 60 * 60 * 1000
+          ),
         },
       };
 
@@ -205,6 +212,7 @@ export const postRouter = router({
         minPrice: z.string().nullish(),
         maxPrice: z.string().nullish(),
         type: z.string().nullish(),
+        postAge: z.string().nullish(),
       })
     )
     .query(({ input, ctx }) => {
@@ -226,6 +234,12 @@ export const postRouter = router({
           type: {
             contains: input.type ?? '',
             mode: 'insensitive',
+          },
+          createdAt: {
+            gt: new Date(
+              new Date().getTime() -
+                Number(input.postAge ?? 30) * 24 * 60 * 60 * 1000
+            ),
           },
         },
         include: {

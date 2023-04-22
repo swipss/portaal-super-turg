@@ -65,7 +65,7 @@ const RecentSearches = () => {
 
 const Search: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchParams, setSearchParams] = useState<any>();
+  const [searchParams, setSearchParams] = useState<any>({ postAge: '30' });
   const ref: any = useRef(null);
   const { data: session } = useSession();
   const { mutate } = trpc.home.addRecentSearch.useMutation();
@@ -89,7 +89,7 @@ const Search: React.FC = () => {
     const value = e.target.value;
     setSearchParams({ ...searchParams, [e.target.name]: value });
   };
-
+  console.log(searchParams);
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchParams?.title) {
@@ -144,6 +144,7 @@ const Search: React.FC = () => {
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           ></path>
         </svg>
+
         <input
           value={searchParams?.title}
           onClick={() => setIsOpen(true)}
@@ -184,7 +185,6 @@ const Search: React.FC = () => {
           setSearchParams={setSearchParams}
           searchParams={searchParams}
         />
-
         <div className="flex items-center w-full gap-2">
           <PlacesAutocomplete
             value={searchParams?.location}
@@ -285,12 +285,62 @@ const Search: React.FC = () => {
           />
         </div>
       </div>
+
+      <label
+        htmlFor="postAge"
+        className="text-sm text-gray-500 "
+      >
+        Kuulutuse vanus kuni
+      </label>
+
+      <div className="flex items-center gap-2 mb-2">
+        <svg
+          fill="none"
+          stroke="grey"
+          className="w-6 h-6"
+          stroke-width="1.5"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
+          ></path>
+        </svg>
+        <label
+          htmlFor="postAge"
+          className="sr-only"
+        >
+          Underline select
+        </label>
+        <select
+          onChange={handleChange}
+          name="postAge"
+          id="postAge"
+          className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+        >
+          <option value={9999}>Puudub</option>
+          {Array.from({ length: 30 }, (_, index) => index + 1).map((item) => (
+            <option
+              selected={item === 30}
+              key={item}
+              value={item}
+              className="text-gray-500"
+            >
+              {item === 1 ? '1 päev' : `${item} päeva`}
+            </option>
+          ))}
+        </select>
+      </div>
       <label
         htmlFor="price"
-        className="text-sm text-gray-500 "
+        className="text-sm text-gray-500"
       >
         Tehingu tüüp
       </label>
+
       <PostTypes
         obj={searchParams}
         setObj={setSearchParams}
