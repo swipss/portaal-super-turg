@@ -9,10 +9,14 @@ export const typeValues = [
   'soovin teenust',
 ];
 
-const PostTypes = ({ handleChange }) => {
+const PostTypes = ({ obj, setObj }) => {
+  const handleSelect = (e) => {
+    const value = e.target.value;
+    setObj({ ...obj, [e.target.name]: value });
+  };
   return (
     <select
-      onChange={handleChange}
+      onChange={handleSelect}
       name="type"
       id="type"
       className="block  py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"

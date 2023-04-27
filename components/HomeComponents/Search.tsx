@@ -345,7 +345,10 @@ const Search: React.FC = () => {
           Tehingu tüüp
         </label>
 
-        <PostTypes handleChange={handleChange} />
+        <PostTypes
+          obj={searchParams}
+          setObj={setSearchParams}
+        />
       </div>
 
       <button

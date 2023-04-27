@@ -15,7 +15,7 @@ const SearchPage: NextPage = () => {
 
   const [selectedType, setSelectedType] = useState<
     string | string[] | undefined
-  >(params?.type ?? '');
+  >(params?.type);
   const [selectedCondition, setSelectedCondition] = useState<string>('');
 
   const topLevelCategory = categories?.find(
@@ -100,7 +100,6 @@ const SearchPage: NextPage = () => {
             </button>
           ))}
         </div>
-        {/* buttons for selecting whether the post type is new ('Uus') or used ('Kasutatud'), if the user has clicked on a type, render how many posts go for that type, on click of a condition, dont render a different number on the condition  */}
         <div className="flex flex-wrap mt-2">
           <button
             type="button"
