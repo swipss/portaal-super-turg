@@ -13,66 +13,19 @@ const SearchPage: NextPage = () => {
   const params = router.query;
   const { data: categories } = trpc.post.getCategories.useQuery();
 
-  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<
+    string | string[] | undefined
+  >(params?.type ?? '');
   const [selectedCondition, setSelectedCondition] = useState<string>('');
 
   const topLevelCategory = categories?.find(
     (c) => c.name.toLowerCase() === params.category
   );
 
-  const { data: categoryPosts, isLoading } =
-    trpc.post.getPostsByCategoryIds.useQuery({
-      ...params,
-      categoryIds: getChildrenIds(topLevelCategory, []),
-    });
-
-  const { data: titlePosts, isLoading: titleLoading } =
-    trpc.post.getPostsByTitle.useQuery(params);
-
-  const filteredTitlePosts = titlePosts?.filter((post) => {
-    if (selectedType && selectedType !== post.type) {
-      return false;
-    }
-    if (selectedCondition && selectedCondition !== post.condition) {
-      return false;
-    }
-    return true;
+  const { data: posts, isLoading } = trpc.post.getPostsByCategoryIds.useQuery({
+    ...params,
+    categoryIds: getChildrenIds(topLevelCategory, []),
   });
-
-  const filteredCategoryPosts = categoryPosts?.filter((post) => {
-    if (selectedType && selectedType !== post.type) {
-      return false;
-    }
-    if (selectedCondition && selectedCondition !== post.condition) {
-      return false;
-    }
-    return true;
-  });
-
-  const filteredPosts = [
-    ...(categoryPosts ?? []),
-    ...(titlePosts?.filter(
-      (post) =>
-        !categoryPosts?.some(
-          (categoryPost) =>
-            categoryPost.id === post.id && categoryPost.title === post.title
-        )
-    ) ?? []),
-  ];
-
-  const filteredFilteredPosts = filteredPosts?.filter((post) => {
-    // Filter posts by type and condition
-    let isMatch = true;
-    if (selectedType && post.type !== selectedType) {
-      isMatch = false;
-    }
-    if (selectedCondition && post.condition !== selectedCondition) {
-      isMatch = false;
-    }
-    return isMatch;
-  });
-
-  // fitler Filter posts by type and condition
 
   function getChildrenIds(category, allIds) {
     if (category?.id) {
@@ -86,6 +39,19 @@ const SearchPage: NextPage = () => {
     }
     return allIds;
   }
+
+  // filter posts by type and condition if they have been clicked
+  const filteredPosts = posts?.filter((post) => {
+    if (selectedType && selectedCondition) {
+      return post.type === selectedType && post.condition === selectedCondition;
+    } else if (selectedType) {
+      return post.type === selectedType;
+    } else if (selectedCondition) {
+      return post.condition === selectedCondition;
+    } else {
+      return post;
+    }
+  });
 
   function handleClickType(type: string): void {
     // if the clicked type is the same as the selected type, deselect it, otherwise select it
@@ -106,140 +72,84 @@ const SearchPage: NextPage = () => {
   return (
     <Layout>
       <main>
-        {/* display how many posts were found if the title was inputted */}
-        {params.title && (
-          <div className="mb-2 text-sm font-medium text-center text-gray-700">
-            {filteredTitlePosts?.length}{' '}
-            {filteredTitlePosts?.length === 1 ? 'tulemus' : 'tulemust'}{' '}
-            {params.title && `otsingule "${params.title}"`}
-          </div>
-        )}
         <Search />
-
-        {/* buttons for selecting post type then filtering posts by that post type */}
-        <div className="flex flex-wrap gap-2 my-2">
+        {params?.title && (
+          <p className="mt-2 text-center text-gray-900 bold">
+            <strong>{posts?.length}</strong> tulemu
+            {posts?.length == 1 ? 's' : 'st'} otsingule "{params.title}"
+          </p>
+        )}
+        <div className="flex flex-wrap mt-2">
           {typeValues.map((type) => (
             <button
               type="button"
               className={`${
                 selectedType === type ? 'bg-blue-500 text-white' : 'bg-gray-100'
-              } px-4 py-2 rounded-md text-gray-700 font-medium text-sm`}
+              }  px-2 py-2 m-1 ${
+                selectedType === type
+                  ? '!bg-blue-500 text-white'
+                  : 'bg-gray-100'
+              }  px-4 py-2 rounded-md text-gray-700 font-medium text-sm`}
               onClick={() => handleClickType(type)}
             >
-              {type.charAt(0).toUpperCase() + type.slice(1)}{' '}
-              {/* give the amount of posts for that type based on what posts are being rendered */}
-              (
-              {params.title &&
-                params.category &&
-                filteredPosts?.filter((post) => post.type === type).length}
-              {params.title &&
-                !params.category &&
-                titlePosts?.filter((post) => post.type === type).length}
-              {!params.title &&
-                categoryPosts?.filter((post) => post.type === type).length}
-              )
+              {type.charAt(0).toUpperCase() +
+                type.slice(1) +
+                ' (' +
+                posts?.filter((post) => post.type === type).length +
+                ')'}
             </button>
           ))}
         </div>
-
-        {/* buttons for selecting post condition */}
-        <div className="flex flex-wrap gap-2">
+        {/* buttons for selecting whether the post type is new ('Uus') or used ('Kasutatud'), if the user has clicked on a type, render how many posts go for that type, on click of a condition, dont render a different number on the condition  */}
+        <div className="flex flex-wrap mt-2">
           <button
             type="button"
             className={`${
               selectedCondition === 'new'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100'
-            } px-4 py-2 rounded-md text-gray-700 text-sm font-medium`}
+            }  px-2 py-2 m-1 ${
+              selectedCondition === 'new'
+                ? '!bg-blue-500 text-white'
+                : 'bg-gray-100'
+            }  px-4 py-2 rounded-md text-gray-700 font-medium text-sm`}
             onClick={() => handleClickCondition('new')}
           >
-            Uus{' '}
-            {/* give the amount of posts for that condition based on what posts are being rendered and what type is selected */}
-            (
-            {params.title &&
-              params.category &&
-              filteredPosts?.filter(
-                (post) =>
-                  (post.condition === 'new' && post.type == selectedType) ||
-                  (selectedType === '' && post.condition === 'new')
-              ).length}
-            {params.title &&
-              !params.category &&
-              titlePosts?.filter(
-                (post) =>
-                  (post.condition === 'new' && post.type == selectedType) ||
-                  (selectedType === '' && post.condition === 'new')
-              ).length}
-            {!params.title &&
-              categoryPosts?.filter(
-                (post) =>
-                  (post.condition === 'new' && post.type == selectedType) ||
-                  (selectedType === '' && post.condition === 'new')
-              ).length}
+            Uus{' ('}
+            {
+              posts?.filter(
+                (post) => post.condition === 'new' && post.type === selectedType
+              ).length
+            }
             )
           </button>
-
           <button
             type="button"
             className={`${
               selectedCondition === 'used'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100'
-            } px-4 py-2 rounded-md text-gray-700 text-sm font-medium`}
+            }  px-2 py-2 m-1 ${
+              selectedCondition === 'used'
+                ? '!bg-blue-500 text-white'
+                : 'bg-gray-100'
+            }  px-4 py-2 rounded-md text-gray-700 font-medium text-sm`}
             onClick={() => handleClickCondition('used')}
           >
-            Kasutatud{' '}
-            {/* give the amount of posts for that condition based on what posts are being rendered and what type is selected */}
-            (
-            {params.title &&
-              params.category &&
-              filteredPosts?.filter(
+            Kasutatud{' ('}
+            {
+              posts?.filter(
                 (post) =>
-                  (post.condition === 'used' && post.type == selectedType) ||
-                  (selectedType === '' && post.condition === 'used')
-              ).length}
-            {params.title &&
-              !params.category &&
-              titlePosts?.filter(
-                (post) =>
-                  (post.condition === 'used' && post.type == selectedType) ||
-                  (selectedType === '' && post.condition === 'used')
-              ).length}
-            {!params.title &&
-              categoryPosts?.filter(
-                (post) =>
-                  (post.condition === 'used' && post.type == selectedType) ||
-                  (selectedType === '' && post.condition === 'used')
-              ).length}
+                  post.condition === 'used' && post.type === selectedType
+              ).length
+            }
             )
           </button>
         </div>
 
-        {!params.title &&
-          filteredCategoryPosts?.map((post) => (
-            <Post
-              key={post.id}
-              post={post}
-            />
-          ))}
-
-        {params.title &&
-          !params.category &&
-          filteredTitlePosts?.map((post) => (
-            <Post
-              key={post.id}
-              post={post}
-            />
-          ))}
-
-        {params.title &&
-          params.category &&
-          filteredFilteredPosts?.map((post) => (
-            <Post
-              key={post.id}
-              post={post}
-            />
-          ))}
+        {filteredPosts?.map((post) => (
+          <Post post={post} />
+        ))}
         {isLoading && <PostSkeleton />}
       </main>
     </Layout>

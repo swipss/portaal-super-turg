@@ -9,32 +9,31 @@ export const typeValues = [
   'soovin teenust',
 ];
 
-const PostTypes = ({ obj, setObj }) => {
-  const handleSelect = (value) => {
-    // if the value is already selected, remove it, otherwise set it
-    if (obj?.type === value) {
-      const { type: _, ...rest } = obj;
-      setObj(rest);
-    } else {
-      setObj({ ...obj, type: value });
-    }
-    // setObj({ ...obj, type: value });
-  };
-
+const PostTypes = ({ handleChange }) => {
   return (
-    <div>
-      {typeValues.map((value) => (
-        <button
-          onClick={() => handleSelect(value)}
-          type="button"
-          className={` px-4 py-2 m-1 text-sm font-medium text-gray-700  ${
-            value === obj?.type ? 'bg-blue-500 text-white' : 'bg-gray-100'
-          } rounded hover:bg-blue-500 hover:text-white min-w-max transition-all duration-75`}
+    <select
+      onChange={handleChange}
+      name="type"
+      id="type"
+      className="block  py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+    >
+      <option
+        value=""
+        className="text-gray-500"
+      >
+        -
+      </option>
+      {typeValues.map((type) => (
+        <option
+          selected={type === 'müük'}
+          key={type}
+          value={type}
+          className="text-gray-500"
         >
-          {value.charAt(0).toUpperCase() + value.slice(1)}
-        </button>
+          {type.charAt(0).toUpperCase() + type.slice(1)}
+        </option>
       ))}
-    </div>
+    </select>
   );
 };
 

@@ -65,7 +65,10 @@ const RecentSearches = () => {
 
 const Search: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchParams, setSearchParams] = useState<any>({ postAge: '30' });
+  const [searchParams, setSearchParams] = useState<any>({
+    postAge: '30',
+    type: 'müük',
+  });
   const ref: any = useRef(null);
   const { data: session } = useSession();
   const { mutate } = trpc.home.addRecentSearch.useMutation();
@@ -151,7 +154,7 @@ const Search: React.FC = () => {
           name="title"
           onChange={handleChange}
           type={'text'}
-          className="w-full ml-2 text-lg font-medium appearance-none text-slate-900 focus:outline-none"
+          className="w-full ml-2 text-lg font-medium border-b appearance-none text-slate-900 focus:outline-none"
           placeholder="Otsi märksõna järgi"
         />
 
@@ -286,18 +289,11 @@ const Search: React.FC = () => {
         </div>
       </div>
 
-      <label
-        htmlFor="postAge"
-        className="text-sm text-gray-500 "
-      >
-        Kuulutuse vanus kuni
-      </label>
-
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center justify-center gap-2 mb-2">
         <svg
           fill="none"
           stroke="grey"
-          className="w-6 h-6"
+          className="w-7 h-7"
           stroke-width="1.5"
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
@@ -311,6 +307,12 @@ const Search: React.FC = () => {
         </svg>
         <label
           htmlFor="postAge"
+          className="text-sm text-gray-500 whitespace-nowrap"
+        >
+          Kuulutuse vanus kuni
+        </label>
+        <label
+          htmlFor="postAge"
           className="sr-only"
         >
           Underline select
@@ -319,7 +321,7 @@ const Search: React.FC = () => {
           onChange={handleChange}
           name="postAge"
           id="postAge"
-          className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+          className="block  py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
         >
           <option value={9999}>Puudub</option>
           {Array.from({ length: 30 }, (_, index) => index + 1).map((item) => (
@@ -334,17 +336,18 @@ const Search: React.FC = () => {
           ))}
         </select>
       </div>
-      <label
-        htmlFor="price"
-        className="text-sm text-gray-500"
-      >
-        Tehingu tüüp
-      </label>
 
-      <PostTypes
-        obj={searchParams}
-        setObj={setSearchParams}
-      />
+      <div className="flex items-center gap-2">
+        <label
+          htmlFor="price"
+          className="text-sm text-gray-500 whitespace-nowrap"
+        >
+          Tehingu tüüp
+        </label>
+
+        <PostTypes handleChange={handleChange} />
+      </div>
+
       <button
         type="submit"
         className="w-full p-2 mt-2 text-white rounded bg-messenger hover:bg-blue-600"
