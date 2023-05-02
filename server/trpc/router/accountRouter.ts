@@ -130,4 +130,35 @@ export const accountRouter = router({
         },
       });
     }),
+  addNewChannel: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        link: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.user.update({
+        where: {
+          email: ctx.session.user?.email ?? '',
+        },
+        data: {
+          socials: {
+            create: {
+              name: input.name,
+              link: input.link,
+            },
+          },
+        },
+      });
+    }),
+  deleteChannel: protectedProcedure
+    .input(z.string())
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.social.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
 });

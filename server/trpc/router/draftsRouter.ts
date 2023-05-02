@@ -13,6 +13,7 @@ export const draftsRouter = router({
       include: {
         posts: true,
         otherLanguages: true,
+        socials: true,
       },
     });
   }),
