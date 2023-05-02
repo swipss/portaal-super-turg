@@ -836,14 +836,14 @@ const Account: NextPage = () => {
                   <div className="absolute z-10 w-full bg-white divide-y divide-gray-100 rounded-lg shadow-md">
                     <ul className="p-2 text-sm text-gray-700 dark:text-gray-200">
                       {languages
-                        .filter(
+                        ?.filter(
                           (language) =>
-                            !otherLanguages.some(
+                            !otherLanguages?.some(
                               ({ language: userLanguage }) =>
                                 userLanguage === language
                             )
                         )
-                        .map((language) => (
+                        ?.map((language) => (
                           <li>
                             <p
                               onClick={() => handleNewLanguageClick(language)}
@@ -889,7 +889,7 @@ const Account: NextPage = () => {
                   {isNewLanguageLevelDropdownOpen && (
                     <div className="absolute z-10 w-full bg-white divide-y divide-gray-100 rounded-lg shadow-md">
                       <ul className="p-2 text-sm text-gray-700 dark:text-gray-200">
-                        {levels.map((level) => (
+                        {levels?.map((level) => (
                           <>
                             <p className="pl-4 m-2 text-xs font-semibold text-neutral-500">
                               Tasemed
