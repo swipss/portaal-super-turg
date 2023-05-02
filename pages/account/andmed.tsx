@@ -257,7 +257,10 @@ const Account: NextPage = () => {
     <Layout>
       <div className="flex flex-col items-center w-full gap-5">
         <Image
-          src={user?.image!}
+          src={
+            user?.image ??
+            'https://st3.depositphotos.com/1767687/16607/v/600/depositphotos_166074422-stock-illustration-default-avatar-profile-icon-grey.jpg'
+          }
           alt="user image"
           width={170}
           height={170}
