@@ -340,7 +340,7 @@ const Search: React.FC = () => {
           onChange={handleChange}
           name="postAge"
           id="postAge"
-          className="block px-6 py-2 text-sm text-white bg-blue-500 border-0 border-b border-gray-200 rounded-md appearance-none w-max hover:bg-blue-600 dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+          className="block px-6 py-2 text-sm text-white border-0 border-b border-gray-200 rounded-md appearance-none w-max hover:bg-blue-600 dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
         >
           <option value={9999}>Puudub</option>
           {Array.from({ length: 30 }, (_, index) => index + 1).map((item) => (
@@ -348,7 +348,7 @@ const Search: React.FC = () => {
               selected={item === 30}
               key={item}
               value={item}
-              className="text-gray-500"
+              className="text-neutral-900"
             >
               {item === 1 ? '1 päev' : `${item} päeva`}
             </option>
