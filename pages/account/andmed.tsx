@@ -379,7 +379,7 @@ const Account: NextPage = () => {
             className="flex items-center justify-center w-full py-2 text-base font-normal text-white bg-indigo-600 rounded-lg disabled:bg-indigo-400 hover:bg-indigo-700"
           >
             {isUserAddingNewChannel && !isAddingNewChannelLoading && 'Lisa'}
-            {!isUserAddingNewChannel && 'Lisa võõrkeel'}
+            {!isUserAddingNewChannel && 'Lisa kanal'}
             {isAddingNewChannelLoading && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
