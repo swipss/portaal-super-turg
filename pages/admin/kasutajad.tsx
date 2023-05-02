@@ -105,7 +105,10 @@ const UsersPage = () => {
                   </td>
                   <td className="px-6 py-4 font-semibold">
                     {user.name ? (
-                      <Link href={`/user/${user.id}`}>
+                      <Link
+                        href={`/user/${user.id}`}
+                        legacyBehavior
+                      >
                         <a className="text-blue-500 hover:underline">
                           {user.name}
                         </a>

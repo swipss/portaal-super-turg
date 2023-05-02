@@ -37,13 +37,17 @@ const PostsCarousel = ({ carouselPosts, postId }) => {
             } text-sm text-center flex flex-col`}
           >
             <Image
+              alt="post image"
               src={post.images[0].secureUrl}
               width={125}
               height={75}
               objectFit="cover"
               objectPosition={'center center'}
             />
-            <Link href={`/kuulutus/${post.id}`}>
+            <Link
+              href={`/kuulutus/${post.id}`}
+              legacyBehavior
+            >
               <a className="underline">{post.title}</a>
             </Link>
             <p className="font-bold">{post.price.toFixed()}€</p>
@@ -210,7 +214,10 @@ const NewPostPage: NextPage = () => {
           />
           <div className="p-5 text-center bg-gray-100 border rounded">
             {data?.location ?? 'Asukoht määramata'}
-            <Link href={`/user/${data?.author?.id}`}>
+            <Link
+              href={`/user/${data?.author?.id}`}
+              legacyBehavior
+            >
               <a className="flex items-center justify-center gap-1 p-2 mx-auto my-2 bg-white border rounded shadow w-max hover:bg-gray-100">
                 <img
                   src={data?.author?.image ?? ''}

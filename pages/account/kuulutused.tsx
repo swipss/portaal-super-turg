@@ -165,7 +165,10 @@ const Drafts: NextPage = () => {
     return (
       <Unauthorized>
         Kuulutuse kuvamiseks
-        <Link href="/api/auth/signin">
+        <Link
+          href="/api/auth/signin"
+          legacyBehavior
+        >
           <a className="ml-1 underline">logi sisse</a>
         </Link>
       </Unauthorized>

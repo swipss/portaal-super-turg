@@ -109,7 +109,14 @@ model User {
   locations Location[]
   comments Comment[]
   phone    String?
+  isPhoneNumberVisible Boolean @default(false)
   socials  Social[]
+  primaryAddress String?
+  secondaryAddress String?
+  otherAddresses String[]
+  primaryLanguage String?
+otherLanguages OtherLanguages[]
+additionalInfoText String?
   reports Report[]
   likes LikeOnPost[]
   searches String[]
@@ -117,6 +124,14 @@ model User {
 
   @@map("users")
   
+}
+
+model OtherLanguages {
+  id String @id @default(cuid())
+  language String?
+  level String?
+  user User? @relation(fields: [userId], references: [id])
+  userId String?
 }
 
 model LikeOnPost {

@@ -41,6 +41,7 @@ const DraftsPost = ({
       {post.images?.length ? (
         <div className="sm:h-[150px] h-[250px] w-full sm:w-[300px] relative rounded ">
           <Image
+            alt="post image"
             src={
               post.images?.reduce((prev, curr) => {
                 return prev?.orderIndex < curr?.orderIndex ? prev : curr;
@@ -131,7 +132,10 @@ const DraftsPost = ({
                   {post?.type?.charAt(0).toUpperCase() + post?.type?.slice(1)}
                 </span>
               )}
-              <Link href={`/kuulutus/${post.id}`}>
+              <Link
+                href={`/kuulutus/${post.id}`}
+                legacyBehavior
+              >
                 <a className="underline title">{post.title}</a>
               </Link>
             </div>

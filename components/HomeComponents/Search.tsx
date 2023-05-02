@@ -9,6 +9,7 @@ import CategorySelect from './CategorySelect';
 
 const RecentSearches = () => {
   const [searchHistory, setSearchHistory] = useState([]);
+  const [recentSearchesCount, setRecentSearchesCount] = useState(-5);
 
   useEffect(() => {
     const searchHistoryString = document?.cookie
@@ -28,15 +29,24 @@ const RecentSearches = () => {
         <div className="text-sm text-gray-500">Viimati sisestatud: </div>
         <div className="flex flex-wrap justify-center gap-1">
           {user.searches
-            .slice(-5)
+            .slice(recentSearchesCount)
             .reverse()
             .map((search) => (
-              <Link href={`/otsing?title=${search}`}>
+              <Link
+                href={`/otsing?title=${search}`}
+                legacyBehavior
+              >
                 <a className="text-sm text-blue-500 underline cursor-pointer hover:text-gray-700">
                   {search + ','}
                 </a>
               </Link>
             ))}
+          <p
+            onClick={() => setRecentSearchesCount((prev) => prev - 5)}
+            className="text-sm  px-0.5 rounded hover:bg-gray-200 bg-gray-100 cursor-pointer hover:text-gray-700"
+          >
+            ...
+          </p>
         </div>
       </div>
     );
@@ -46,15 +56,24 @@ const RecentSearches = () => {
         <div className="text-sm text-gray-500">Viimati sisestatud: </div>
         <div className="flex flex-wrap justify-center gap-1">
           {searchHistory
-            .slice(-5)
+            .slice(recentSearchesCount)
             .reverse()
             .map((search) => (
-              <Link href={`/otsing?title=${search}`}>
+              <Link
+                href={`/otsing?title=${search}`}
+                legacyBehavior
+              >
                 <a className="text-sm text-blue-500 underline cursor-pointer hover:text-gray-700">
                   {search + ','}
                 </a>
               </Link>
             ))}
+          <p
+            onClick={() => setRecentSearchesCount((prev) => prev - 5)}
+            className="text-sm  px-0.5 rounded hover:bg-gray-200 bg-gray-100 cursor-pointer hover:text-gray-700"
+          >
+            ...
+          </p>
         </div>
       </div>
     );
@@ -289,7 +308,7 @@ const Search: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2">
         <svg
           fill="none"
           stroke="grey"
@@ -321,7 +340,7 @@ const Search: React.FC = () => {
           onChange={handleChange}
           name="postAge"
           id="postAge"
-          className="block  py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
+          className="block px-6 py-2 text-sm text-white bg-blue-500 border-0 border-b border-gray-200 rounded-md appearance-none w-max hover:bg-blue-600 dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
         >
           <option value={9999}>Puudub</option>
           {Array.from({ length: 30 }, (_, index) => index + 1).map((item) => (

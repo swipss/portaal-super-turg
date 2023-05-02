@@ -31,7 +31,10 @@ const Header: React.FC = () => {
           {onlineUsers} kasutaja(t) online
         </p> */}
         <div className="relative flex items-center justify-between h-16 max-w-5xl px-2 mx-auto text-white">
-          <Link href={'/'}>
+          <Link
+            href={'/'}
+            legacyBehavior
+          >
             <a
               className="mr-4 text-lg font-bold text-messenger "
               data-active={isActive('/')}
@@ -41,19 +44,28 @@ const Header: React.FC = () => {
           </Link>
           <div>
             {!user ? (
-              <Link href="/api/auth/signin">
+              <Link
+                href="/api/auth/signin"
+                legacyBehavior
+              >
                 <a className="font-bold text-slate-900">Logi sisse</a>
               </Link>
             ) : (
               <div className="flex">
                 {user?.role === 'ADMIN' && (
-                  <Link href={'/admin/teavitused'}>
+                  <Link
+                    href={'/admin/teavitused'}
+                    legacyBehavior
+                  >
                     <a className="flex items-center px-4 mr-2 text-sm font-medium text-black bg-white border rounded-full hover:bg-gray-100">
                       Admin
                     </a>
                   </Link>
                 )}
-                <Link href={'/account/kuulutused'}>
+                <Link
+                  href={'/account/kuulutused'}
+                  legacyBehavior
+                >
                   <a
                     href="#"
                     className="flex items-center justify-center p-2 mr-2 text-base font-normal text-white bg-gray-100 rounded-full hover:bg-gray-200"
@@ -67,7 +79,10 @@ const Header: React.FC = () => {
                     </span>
                   </a>
                 </Link>
-                <Link href={'#'}>
+                <Link
+                  href={'#'}
+                  legacyBehavior
+                >
                   <a
                     href="#"
                     className="relative flex items-center justify-center p-2 mr-2 text-base font-normal bg-gray-100 rounded-full text-slate-900 hover:bg-gray-200"

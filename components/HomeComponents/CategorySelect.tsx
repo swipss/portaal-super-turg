@@ -59,7 +59,7 @@ const Categories = ({
                   ? '!bg-blue-500 text-white'
                   : 'bg-gray-100'
               }  px-2 py-2 m-1 ${
-                depth > 1 && 'text-[9px]'
+                depth > 1 && '!text-[10px]'
               } font-medium text-gray-700 text-xs  rounded hover:bg-blue-500 hover:text-white  transition-all duration-75`}
               onClick={() => handleCategoryClick(category)}
             >

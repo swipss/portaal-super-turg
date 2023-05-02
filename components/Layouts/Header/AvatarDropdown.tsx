@@ -53,7 +53,10 @@ export const AvatarDropdown = ({ user }) => {
               </div>
             </li>
             <li>
-              <Link href="/account/kuulutused">
+              <Link
+                href="/account/kuulutused"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="flex gap-2 px-4 py-2 transition-all duration-100 hover:bg-gray-100 "
@@ -66,7 +69,10 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link
+                href="#"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"
@@ -76,7 +82,10 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link
+                href="#"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"
@@ -86,7 +95,10 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link
+                href="#"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"
@@ -96,7 +108,10 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link
+                href="#"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"
@@ -106,7 +121,10 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link
+                href="#"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"
@@ -116,14 +134,20 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="/account/lemmikud">
+              <Link
+                href="/account/lemmikud"
+                legacyBehavior
+              >
                 <a className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100">
                   Lemmikud
                 </a>
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link
+                href="#"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"
@@ -133,7 +157,10 @@ export const AvatarDropdown = ({ user }) => {
               </Link>
             </li>
             <li>
-              <Link href="/account/andmed">
+              <Link
+                href="/account/andmed"
+                legacyBehavior
+              >
                 <a
                   href="#"
                   className="block px-4 py-2 transition-all duration-100 hover:bg-gray-100"

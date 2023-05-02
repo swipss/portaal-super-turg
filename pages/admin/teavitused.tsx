@@ -33,6 +33,7 @@ export const AdminTabs = () => {
         <Link
           href={route.path}
           key={route.path}
+          legacyBehavior
         >
           <a
             className={`${
@@ -190,7 +191,10 @@ const ReportsPage = () => {
                 <>
                   <tr className="bg-white hover:bg-gray-50">
                     <td className="w-32 p-4">
-                      <Link href={`/kuulutus/${report.post?.id}`}>
+                      <Link
+                        href={`/kuulutus/${report.post?.id}`}
+                        legacyBehavior
+                      >
                         <a>
                           <img
                             src={report.post?.images[0].secureUrl ?? ''}
@@ -245,7 +249,10 @@ const ReportsPage = () => {
                   >
                     <tr className="text-xs text-gray-500">
                       Teatatud {moment(report.date).format('DD.MM h:mm')}{' '}
-                      <Link href={`/user/${report.post?.author?.id}`}>
+                      <Link
+                        href={`/user/${report.post?.author?.id}`}
+                        legacyBehavior
+                      >
                         <a className="text-blue-500 hover:underline">
                           {report.reportedBy?.name}
                         </a>
