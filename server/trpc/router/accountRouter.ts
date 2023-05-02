@@ -161,4 +161,33 @@ export const accountRouter = router({
         },
       });
     }),
+  addNewAddress: protectedProcedure
+    .input(z.string())
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.user.update({
+        where: {
+          email: ctx.session.user?.email ?? '',
+        },
+        data: {
+          otherAddresses: {
+            push: input,
+          },
+        },
+      });
+    }),
+  // delete addres by name
+  deleteAddress: protectedProcedure
+    .input(z.array(z.string()))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.user.update({
+        where: {
+          email: ctx.session.user?.email ?? '',
+        },
+        data: {
+          otherAddresses: {
+            set: input,
+          },
+        },
+      });
+    }),
 });

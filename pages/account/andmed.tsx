@@ -50,6 +50,10 @@ const Account: NextPage = () => {
     trpc.account.addNewChannel.useMutation();
   const { mutate: deleteChannel, isLoading: isDeletingChannelLoading } =
     trpc.account.deleteChannel.useMutation();
+  const { mutate: addNewAddress, isLoading: isAddingNewAddressLoading } =
+    trpc.account.addNewAddress.useMutation();
+  const { mutate: deleteAddress, isLoading: isDeletingAddressLoading } =
+    trpc.account.deleteAddress.useMutation();
 
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -90,6 +94,9 @@ const Account: NextPage = () => {
     link: '',
     name: '',
   });
+  const [addAddress, setAddAddress] = useState('');
+  const [isUserAddingNewAddress, setIsUserAddingNewAddress] = useState(false);
+  const [aadresses, setAddAddresses] = useState(user?.otherAddresses);
 
   useEffect(() => {
     if (username) {
@@ -144,6 +151,7 @@ const Account: NextPage = () => {
     setOtherLanguages(user?.otherLanguages);
     setAdditionalInfo(user?.additionalInfoText);
     setSocialChannels(user?.socials);
+    setAddAddresses(user?.otherAddresses);
   }, [user]);
 
   const changePhoneNumberVisibility = () => {
@@ -205,6 +213,31 @@ const Account: NextPage = () => {
   const handleAddNewChannelLink = (link: string) => {
     setNewChannel({ ...newChannel, link });
   };
+
+  const handleAddNewAddress = () => {
+    if (isUserAddingNewAddress) {
+      addNewAddress(addAddress, {
+        onSuccess: () => {
+          refetch();
+          setIsUserAddingNewAddress(false);
+          setAddAddress('');
+        },
+      });
+    } else {
+      setIsUserAddingNewAddress(true);
+    }
+  };
+
+  // filter out the address that was clicked
+  const handleDeleteAddress = (address: string) => {
+    const filteredAddresses = aadresses?.filter(
+      (item: string) => item !== address
+    );
+    setAddAddresses(filteredAddresses);
+    deleteAddress(filteredAddresses!);
+  };
+  console.log(aadresses);
+
   if (!user) {
     return (
       <Unauthorized>
@@ -566,9 +599,151 @@ const Account: NextPage = () => {
             )}
           </PlacesAutocomplete>
         </div>
-        <button className="w-full py-2 text-base font-normal text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
-          Lisa asukoht
-        </button>
+
+        {aadresses?.map((address, index) => (
+          <div className="flex items-end w-full gap-1">
+            <TextInput
+              label={`Alternatiivne asukoht ${index + 1}`}
+              value={address}
+              onChange={{}}
+              disabled
+              isSaving={false}
+            />
+            <button
+              onClick={() => handleDeleteAddress(address)}
+              className="flex items-center justify-center w-10 h-10 py-2 text-base font-normal rounded-lg hover:bg-neutral-200 text-neutral-900 bg-neutral-100"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-5 h-5"
+              >
+                <path
+                  d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20"
+                  stroke="#0F172A"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        ))}
+        {isUserAddingNewAddress && (
+          <div className="w-full">
+            <PlacesAutocomplete
+              value={addAddress}
+              onChange={(value: string) => setAddAddress(value)}
+              onSelect={setAddAddress}
+            >
+              {({
+                getInputProps,
+                suggestions,
+                getSuggestionItemProps,
+                loading,
+              }) => (
+                <div className="relative w-full">
+                  <div className="relative flex items-center">
+                    <input
+                      {...getInputProps({
+                        placeholder: 'Alusta aadressi kirjutamisega...',
+                      })}
+                      className="w-full px-3 py-2 border border-b rounded-lg outline-none appearance-none border-neutral-400"
+                    />
+                  </div>
+
+                  <div className="rounded-lg shadow-md">
+                    {loading ? <div>Otsin...</div> : null}
+
+                    {suggestions.map((suggestion) => {
+                      const style = {
+                        backgroundColor: suggestion.active ? '#ccc' : '#fff',
+                      };
+
+                      return (
+                        <div
+                          {...getSuggestionItemProps(suggestion)}
+                          key={suggestion.description}
+                          className="p-2 m-2 text-sm bg-white rounded hover:bg-indigo-100"
+                        >
+                          {suggestion.description}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </PlacesAutocomplete>
+          </div>
+        )}
+        <div className="flex w-full gap-1">
+          <div className="flex w-full gap-1">
+            {isUserAddingNewAddress && (
+              <button
+                onClick={() => setIsUserAddingNewAddress(false)}
+                className="w-full py-2 text-base font-normal rounded-lg hover:bg-neutral-200 text-neutral-900 bg-neutral-100 "
+              >
+                Tühista
+              </button>
+            )}
+
+            <button
+              onClick={() => handleAddNewAddress()}
+              className="flex items-center justify-center w-full py-2 text-base font-normal text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+              disabled={
+                (!addAddress && isUserAddingNewAddress) ||
+                isAddingNewAddressLoading
+              }
+            >
+              {isUserAddingNewAddress && !isAddingNewAddressLoading && 'Lisa'}
+              {!isUserAddingNewAddress && 'Lisa asukoht'}
+              {isAddingNewAddressLoading && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="animate-spin"
+                >
+                  <path
+                    opacity="0.15"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                    fill="#6366F1"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20C12.5523 20 13 20.4477 13 21C13 21.5523 12.5523 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 12.5523 21.5523 13 21 13C20.4477 13 20 12.5523 20 12C20 7.58172 16.4183 4 12 4Z"
+                    fill="url(#paint0_linear_2435_9909)"
+                  />
+                  <defs>
+                    <linearGradient
+                      id="paint0_linear_2435_9909"
+                      x1="12"
+                      y1="12.5"
+                      x2="12"
+                      y2="20"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stop-color="#6366F1" />
+                      <stop
+                        offset="1"
+                        stopColor="#6366F1"
+                        stopOpacity="0"
+                      />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
         <h1 className="w-full text-left">Keeled</h1>
         <div className="w-full">
           <label className="inline-block w-full text-sm font-semibold text-left">
